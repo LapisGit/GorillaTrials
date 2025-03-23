@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\LiamT\\source\\repos\\GorillaTrials\\GorillaTrials.csproj",
+      "projectUniqueName": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\GorillaTrials.csproj",
       "projectName": "GorillaTrials",
-      "projectPath": "C:\\Users\\LiamT\\source\\repos\\GorillaTrials\\GorillaTrials.csproj",
+      "projectPath": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\GorillaTrials.csproj",
       "packagesPath": "C:\\Users\\LiamT\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\LiamT\\source\\repos\\GorillaTrials\\obj\\",
+      "outputPath": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\LiamT\\AppData\\Roaming\\NuGet\\NuGet.Config",
