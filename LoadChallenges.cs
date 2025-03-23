@@ -51,7 +51,7 @@ namespace GorillaTrials
                 return;
             }
 
-            Vector3 spawnPositionchallenge2 = new Vector3(-68.5785f, 11.8871f, -82.7937f);
+            Vector3 spawnPositionchallenge2 = new Vector3(-67.5785f, 11.8871f, -83.7937f);
             Plugin.loadedPrefab = Instantiate(challenge2, spawnPositionchallenge2, Quaternion.identity);
 
             Debug.Log($"Prefab Instantiated at {spawnPositionchallenge2}");
