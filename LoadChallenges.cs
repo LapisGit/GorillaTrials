@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using GorillaTrials.Behaviors.UI;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +9,8 @@ namespace GorillaTrials
 {
     public class LoadChallenges : BaseUnityPlugin
     {
+        public static GameObject buttonObject { get; private set; }
+
         public static void LoadAssetBundle()
         {
             Debug.Log("Loading AssetBundle...");
@@ -57,6 +60,45 @@ namespace GorillaTrials
 
             Debug.Log($"Prefab Instantiated at {spawnPositionchallenge2}");
 
+
+        }
+
+        public static void FindAndModifyButton()
+        {
+            // Locate the button in the scene
+            buttonObject = GameObject.Find("ForestZoneTrial1(Copy)/Stool/Button");
+
+            if (buttonObject == null)
+            {
+                Debug.LogError("Button not found in scene!");
+                return;
+            }
+
+            // Ensure it's on the correct layer
+            if (buttonObject.layer != 18)
+            {
+                Debug.LogWarning("Button is not on the GorillaInteraction layer!");
+            }
+
+            // Locate the FinishZone object that needs to be activated
+            GameObject finishZone = GameObject.Find("ForestZoneTrial1(Copy)/FinishZone");
+            if (finishZone == null)
+            {
+                Debug.LogError("FinishZone not found in scene!");
+                return;
+            }
+
+            // Add the Button script if not already present
+            Button buttonScript = buttonObject.GetComponent<Button>();
+            if (buttonScript == null)
+                buttonScript = buttonObject.AddComponent<Button>();
+
+            // Assign an action to log a message and activate FinishZone
+            buttonScript.action = () =>
+            {
+                Debug.Log("Trial Button Pressed!");
+                finishZone.SetActive(true);  // Activate FinishZone
+            };
         }
     }
 }

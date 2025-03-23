@@ -7,5 +7,6 @@ namespace GorillaTrials
 {
     internal class ChallengeManager
     {
+
     }
 }

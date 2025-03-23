@@ -3,36 +3,44 @@
   "WorkspaceRootPath": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\challengebuttons\\forestboxtrial1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:challengebuttons\\forestboxtrial1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\challengebuttons\\forestzonetrial1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:challengebuttons\\forestzonetrial1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\behaviors\\ui\\button.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:behaviors\\ui\\button.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\behaviors\\ui\\buttonlistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:behaviors\\ui\\buttonlistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\models\\buttontype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:models\\buttontype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\loadchallenges.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:loadchallenges.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\challengemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:challengemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\behaviors\\ui\\button.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:behaviors\\ui\\button.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\models\\buttontype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:models\\buttontype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\challengebuttons\\forestboxtrial1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:challengebuttons\\forestboxtrial1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\gorillatrials.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:gorillatrials.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\behaviors\\ui\\buttonlistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:behaviors\\ui\\buttonlistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\challengebuttons\\forestzonetrial1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:challengebuttons\\forestzonetrial1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
@@ -40,10 +48,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\LiamT\\GorillaTrials\\Assets\\MonoBehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\gorillatrials.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:gorillatrials.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
@@ -57,11 +61,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 12,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
+              "Title": "ChallengeManager.cs",
+              "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\ChallengeManager.cs",
+              "RelativeDocumentMoniker": "ChallengeManager.cs",
+              "ToolTip": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\ChallengeManager.cs",
+              "RelativeToolTip": "ChallengeManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-23T16:01:46.419Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "ForestBoxTrial1.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\ChallengeButtons\\ForestBoxTrial1.cs",
               "RelativeDocumentMoniker": "ChallengeButtons\\ForestBoxTrial1.cs",
@@ -74,7 +91,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 9,
               "Title": "ForestZoneTrial1.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\ChallengeButtons\\ForestZoneTrial1.cs",
               "RelativeDocumentMoniker": "ChallengeButtons\\ForestZoneTrial1.cs",
@@ -82,12 +99,11 @@
               "RelativeToolTip": "ChallengeButtons\\ForestZoneTrial1.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-23T12:55:38.565Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-23T12:55:38.565Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "ButtonType.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Models\\ButtonType.cs",
               "RelativeDocumentMoniker": "Models\\ButtonType.cs",
@@ -100,7 +116,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "MonoBehavior.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\GorillaTrials\\Assets\\MonoBehavior.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\GorillaTrials\\Assets\\MonoBehavior.cs",
@@ -108,25 +124,24 @@
               "RelativeToolTip": "..\\..\\..\\..\\GorillaTrials\\Assets\\MonoBehavior.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-23T12:24:03.984Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-23T12:24:03.984Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 1,
               "Title": "LoadChallenges.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\LoadChallenges.cs",
               "RelativeDocumentMoniker": "LoadChallenges.cs",
               "ToolTip": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\LoadChallenges.cs",
               "RelativeToolTip": "LoadChallenges.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAmwDkAAAA9AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-23T02:50:59.283Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "README.md",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\README.md",
               "RelativeDocumentMoniker": "README.md",
@@ -134,12 +149,11 @@
               "RelativeToolTip": "README.md",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-03-23T02:49:06.981Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-23T02:49:06.981Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": ".gitignore",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\.gitignore",
               "RelativeDocumentMoniker": ".gitignore",
@@ -151,7 +165,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 2,
               "Title": "Constants.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Constants.cs",
               "RelativeDocumentMoniker": "Constants.cs",
@@ -164,33 +178,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 8,
               "Title": "ButtonListener.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Behaviors\\UI\\ButtonListener.cs",
               "RelativeDocumentMoniker": "Behaviors\\UI\\ButtonListener.cs",
               "ToolTip": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Behaviors\\UI\\ButtonListener.cs",
               "RelativeToolTip": "Behaviors\\UI\\ButtonListener.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAxwA0AAAA0AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-23T02:39:29.451Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Button.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Behaviors\\UI\\Button.cs",
               "RelativeDocumentMoniker": "Behaviors\\UI\\Button.cs",
               "ToolTip": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Behaviors\\UI\\Button.cs",
               "RelativeToolTip": "Behaviors\\UI\\Button.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAowGIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-23T02:23:35.028Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 7,
               "Title": "GorillaTrials.csproj",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\GorillaTrials.csproj",
               "RelativeDocumentMoniker": "GorillaTrials.csproj",
@@ -198,17 +212,18 @@
               "RelativeToolTip": "GorillaTrials.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-03-22T23:44:16.398Z"
+              "WhenOpened": "2025-03-22T23:44:16.398Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 0,
               "Title": "Plugin.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Plugin.cs",
               "RelativeDocumentMoniker": "Plugin.cs",
               "ToolTip": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Plugin.cs",
               "RelativeToolTip": "Plugin.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAAAB0AAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAcwEYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-22T23:22:18.404Z",
               "EditorCaption": ""
