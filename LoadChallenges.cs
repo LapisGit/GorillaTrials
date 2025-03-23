@@ -11,7 +11,7 @@ namespace GorillaTrials
     {
         public static void LoadAssetBundle()
         {
-            Logger.LogInfo("Loading AssetBundle...");
+            Debug.Log("Loading AssetBundle...");
 
             string resourceName = Assembly.GetExecutingAssembly().GetManifestResourceNames()
                                           .FirstOrDefault(name => name.EndsWith(Constants.AssetBundleName));
@@ -27,21 +27,21 @@ namespace GorillaTrials
             AssetBundle bundle = AssetBundle.LoadFromFile(tempPath);
             if (bundle == null)
             {
-                Logger.LogError("Failed to load AssetBundle!");
+                Debug.Log("Failed to load AssetBundle!");
                 return;
             }
 
             GameObject prefab = bundle.LoadAsset<GameObject>("ForestTrial");
             if (prefab == null)
             {
-                Logger.LogError("Failed to load prefab from AssetBundle!");
+                Debug.Log("Failed to load prefab from AssetBundle!");
                 return;
             }
 
             Vector3 spawnPosition = new Vector3(-66.5785f, 11.8871f, -82.7937f);
             Plugin.loadedPrefab = Instantiate(prefab, spawnPosition, Quaternion.identity);
 
-            Logger.LogInfo($"Prefab Instantiated at {spawnPosition}");
+            Debug.Log($"Prefab Instantiated at {spawnPosition}");
         }
     }
 }

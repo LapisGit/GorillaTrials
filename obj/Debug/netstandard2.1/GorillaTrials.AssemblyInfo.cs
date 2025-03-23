@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GorillaTrials")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b81dd9330f5d74e60c957ce2e7324c1d3264e113")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a965fe07b8c536cd6311ef3332e34ff95631f692")]
 [assembly: System.Reflection.AssemblyProductAttribute("GorillaTrials")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GorillaTrials")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
