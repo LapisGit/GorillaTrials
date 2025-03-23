@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace GorillaTrials
 {
-    [BepInPlugin("com.Lapis.GorillaTrials", "GorillaTrials", "0.0.1")]
+    [BepInPlugin(Constants.PluginGuid, Constants.PluginName, Constants.PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
         private GameObject loadedPrefab;
@@ -34,9 +34,9 @@ namespace GorillaTrials
             Logger.LogInfo("Loading AssetBundle...");
 
             string resourceName = Assembly.GetExecutingAssembly().GetManifestResourceNames()
-                                          .FirstOrDefault(name => name.EndsWith("mybundle"));
+                                          .FirstOrDefault(name => name.EndsWith(Constants.AssetBundleName));
 
-            string tempPath = Path.Combine(Path.GetTempPath(), "mybundle");
+            string tempPath = Path.Combine(Path.GetTempPath(), Constants.AssetBundleName);
 
             using (Stream resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
             using (FileStream fileStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write))
