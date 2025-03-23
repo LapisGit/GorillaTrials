@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-namespace GorillaTrials
+﻿namespace GorillaTrials
 {
     public class Constants
     {
