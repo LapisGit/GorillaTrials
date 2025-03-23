@@ -2,6 +2,7 @@
 using System.IO;
 using UnityEngine;
 using System.Collections;
+using GorillaTrials.Behaviors.UI;
 
 namespace GorillaTrials
 {
@@ -12,7 +13,7 @@ namespace GorillaTrials
 
         void Awake()
         {
-            Logger.LogInfo("GorillaTrials - Waiting for game to load...");
+            Logger.LogInfo("Waiting for game to load to run LoadChallenges...");
             StartCoroutine(WaitForGameLoad());
         }
 
@@ -22,7 +23,9 @@ namespace GorillaTrials
             {
                 yield return new WaitForSeconds(1f);
             }
-
+            GameObject manager = new GameObject("ButtonManager");
+            manager.AddComponent<ButtonListener>();
+            DontDestroyOnLoad(manager);
             Logger.LogInfo("Game Loaded! Now initializing mod...");
             LoadChallenges.LoadAssetBundle();
         }

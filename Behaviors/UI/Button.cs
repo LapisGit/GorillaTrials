@@ -12,7 +12,9 @@ namespace GorillaTrials.Behaviors.UI
         public const float Debounce = 0.25f;
         private float _timeStamp = 1;
         private float _lastPress;
-        public event Action<GorillaTriggerColliderHandIndicator> OnPress;
+
+        // Updated event to include GameObject
+        public event Action<GorillaTriggerColliderHandIndicator, GameObject> OnPress;
 
         public void Start()
         {
@@ -27,7 +29,7 @@ namespace GorillaTrials.Behaviors.UI
                 _timeStamp = 0;
                 _lastPress = Time.time;
 
-                OnPress?.Invoke(component);
+                OnPress?.Invoke(component, gameObject); // Passes the button object
                 GorillaTagger.Instance.StartVibration(component.isLeftHand, GorillaTagger.Instance.tapHapticStrength / 1.25f, GorillaTagger.Instance.tapHapticDuration / 1.1f);
             }
         }

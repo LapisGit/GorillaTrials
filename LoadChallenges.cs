@@ -42,6 +42,7 @@ namespace GorillaTrials
 
             Debug.Log($"Prefab Instantiated at {spawnPositionchallenge1}");
 
+
             // challenge2
 
             GameObject challenge2 = bundle.LoadAsset<GameObject>("ForestZoneTrial1");
