@@ -7,8 +7,41 @@ using System.Collections;
 
 namespace GorillaTrials
 {
-    internal class LoadChallenges
+    public class LoadChallenges : BaseUnityPlugin
     {
-        // adding later lol im too lazy
+        public static void LoadAssetBundle()
+        {
+            Logger.LogInfo("Loading AssetBundle...");
+
+            string resourceName = Assembly.GetExecutingAssembly().GetManifestResourceNames()
+                                          .FirstOrDefault(name => name.EndsWith(Constants.AssetBundleName));
+
+            string tempPath = Path.Combine(Path.GetTempPath(), Constants.AssetBundleName);
+
+            using (Stream resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+            using (FileStream fileStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write))
+            {
+                resourceStream.CopyTo(fileStream);
+            }
+
+            AssetBundle bundle = AssetBundle.LoadFromFile(tempPath);
+            if (bundle == null)
+            {
+                Logger.LogError("Failed to load AssetBundle!");
+                return;
+            }
+
+            GameObject prefab = bundle.LoadAsset<GameObject>("ForestTrial");
+            if (prefab == null)
+            {
+                Logger.LogError("Failed to load prefab from AssetBundle!");
+                return;
+            }
+
+            Vector3 spawnPosition = new Vector3(-66.5785f, 11.8871f, -82.7937f);
+            Plugin.loadedPrefab = Instantiate(prefab, spawnPosition, Quaternion.identity);
+
+            Logger.LogInfo($"Prefab Instantiated at {spawnPosition}");
+        }
     }
 }
