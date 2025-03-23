@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\loadchallenges.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:loadchallenges.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,14 +21,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\challengebuttons\\forestchallenge1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:challengebuttons\\forestchallenge1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|solutionrelative:constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{013EFFE6-41EC-4A78-8354-F496ECE24152}|GorillaTrials.csproj|c:\\users\\liamt\\documents\\ii--forward\\liamsynapse\\gorillatrials\\gorillatrials.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -42,11 +42,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "LoadChallenges.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\LoadChallenges.cs",
               "RelativeDocumentMoniker": "LoadChallenges.cs",
@@ -85,7 +85,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "Constants.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Constants.cs",
               "RelativeDocumentMoniker": "Constants.cs",
@@ -98,7 +98,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "ForestChallenge1.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\ChallengeButtons\\ForestChallenge1.cs",
               "RelativeDocumentMoniker": "ChallengeButtons\\ForestChallenge1.cs",
@@ -111,7 +111,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Button.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Behaviors\\UI\\Button.cs",
               "RelativeDocumentMoniker": "Behaviors\\UI\\Button.cs",
@@ -128,8 +128,8 @@
               "Title": "GorillaTrials.csproj",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\GorillaTrials.csproj",
               "RelativeDocumentMoniker": "GorillaTrials.csproj",
-              "ToolTip": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\GorillaTrials.csproj",
-              "RelativeToolTip": "GorillaTrials.csproj",
+              "ToolTip": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\GorillaTrials.csproj*",
+              "RelativeToolTip": "GorillaTrials.csproj*",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
               "WhenOpened": "2025-03-22T23:44:16.398Z",
@@ -137,13 +137,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "Plugin.cs",
               "DocumentMoniker": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Plugin.cs",
               "RelativeDocumentMoniker": "Plugin.cs",
               "ToolTip": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\Plugin.cs",
               "RelativeToolTip": "Plugin.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAAABUAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-22T23:22:18.404Z",
               "EditorCaption": ""
