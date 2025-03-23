@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using System.Collections;
 
 namespace GorillaTrials
 {
@@ -31,15 +30,15 @@ namespace GorillaTrials
                 return;
             }
 
-            GameObject prefab = bundle.LoadAsset<GameObject>("ForestTrial");
-            if (prefab == null)
+            GameObject challenge1 = bundle.LoadAsset<GameObject>("ForestTrial");
+            if (challenge1 == null)
             {
                 Debug.Log("Failed to load prefab from AssetBundle!");
                 return;
             }
 
             Vector3 spawnPosition = new Vector3(-66.5785f, 11.8871f, -82.7937f);
-            Plugin.loadedPrefab = Instantiate(prefab, spawnPosition, Quaternion.identity);
+            Plugin.loadedPrefab = Instantiate(challenge1, spawnPosition, Quaternion.identity);
 
             Debug.Log($"Prefab Instantiated at {spawnPosition}");
         }
