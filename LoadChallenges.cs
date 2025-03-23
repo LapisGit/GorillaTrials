@@ -30,17 +30,32 @@ namespace GorillaTrials
                 return;
             }
 
-            GameObject challenge1 = bundle.LoadAsset<GameObject>("ForestTrial");
+            GameObject challenge1 = bundle.LoadAsset<GameObject>("ForestBoxTrial1");
             if (challenge1 == null)
             {
                 Debug.Log("Failed to load prefab from AssetBundle!");
                 return;
             }
 
-            Vector3 spawnPosition = new Vector3(-66.5785f, 11.8871f, -82.7937f);
-            Plugin.loadedPrefab = Instantiate(challenge1, spawnPosition, Quaternion.identity);
+            Vector3 spawnPositionchallenge1 = new Vector3(-66.5785f, 11.8871f, -82.7937f);
+            Plugin.loadedPrefab = Instantiate(challenge1, spawnPositionchallenge1, Quaternion.identity);
 
-            Debug.Log($"Prefab Instantiated at {spawnPosition}");
+            Debug.Log($"Prefab Instantiated at {spawnPositionchallenge1}");
+
+            // challenge2
+
+            GameObject challenge2 = bundle.LoadAsset<GameObject>("ForestZoneTrial1");
+            if (challenge1 == null)
+            {
+                Debug.Log("Failed to load prefab from AssetBundle!");
+                return;
+            }
+
+            Vector3 spawnPositionchallenge2 = new Vector3(-68.5785f, 11.8871f, -82.7937f);
+            Plugin.loadedPrefab = Instantiate(challenge1, spawnPositionchallenge2, Quaternion.identity);
+
+            Debug.Log($"Prefab Instantiated at {spawnPositionchallenge2}");
+
         }
     }
 }
