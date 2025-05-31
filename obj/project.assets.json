@@ -13,21 +13,19 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\GorillaTrials.csproj",
+      "projectUniqueName": "C:\\Users\\LiamT\\Documents\\GitHub\\GorillaTrials\\GorillaTrials.csproj",
       "projectName": "GorillaTrials",
-      "projectPath": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\GorillaTrials.csproj",
+      "projectPath": "C:\\Users\\LiamT\\Documents\\GitHub\\GorillaTrials\\GorillaTrials.csproj",
       "packagesPath": "C:\\Users\\LiamT\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\LiamT\\Documents\\ii--forward\\LiamSynapse\\GorillaTrials\\obj\\",
+      "outputPath": "C:\\Users\\LiamT\\Documents\\GitHub\\GorillaTrials\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\LiamT\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\LiamT\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.1"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -66,7 +64,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.406\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.313\\RuntimeIdentifierGraph.json"
       }
     }
   }
