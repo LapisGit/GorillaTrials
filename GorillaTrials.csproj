@@ -41,7 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Behaviors\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Models\" />
   </ItemGroup>
