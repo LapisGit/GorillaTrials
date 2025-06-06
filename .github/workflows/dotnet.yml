@@ -26,3 +26,9 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.build.outputs.filename }}
+        path: ${{ steps.build.outputs.artifactpath }}
