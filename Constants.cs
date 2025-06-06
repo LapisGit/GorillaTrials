@@ -4,7 +4,7 @@
     {
         public const string PluginGuid = "com.Lapis.GorillaTrials";
         public const string PluginName = "GorillaTrials";
-        public const string PluginVersion = "0.0.1";
-        public const string AssetBundleName = "mybundle";
+        public const string PluginVersion = "1.0.0";
+        public const string AssetBundleName = "GorillaTrials.Assets.bundle";
     }
 }

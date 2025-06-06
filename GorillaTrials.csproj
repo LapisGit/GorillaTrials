@@ -5,13 +5,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Assets\bundle"/>
-  </ItemGroup>
-
   <PropertyGroup>
     <GameAssemblyPath>$(MSBuildProjectDirectory)\..\Libs\Managed</GameAssemblyPath>
     <BepInExAssemblyPath>$(MSBuildProjectDirectory)\..\Libs\BepInEx</BepInExAssemblyPath>
+    <GamePath>E:\SteamLibrary\steamapps\common\Gorilla Tag</GamePath>
     <PluginsPath>$(GamePath)\BepInEx\plugins</PluginsPath>
   </PropertyGroup>
 
@@ -40,12 +37,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Models\" />
+    <None Remove="Assets\bundle" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\bundle" />
+    <EmbeddedResource Include="Assets\bundle" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <MakeDir Directories="$(GamePath)\BepInEx\plugins\GorillaTrials" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\BepInEx\plugins\GorillaTrials" />
+  </Target>
 
 </Project>
