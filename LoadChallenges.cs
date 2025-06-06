@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using TMPro;
 using UnityEngine;
 
 namespace GorillaTrials
@@ -26,18 +27,27 @@ namespace GorillaTrials
             
             if (bundle == null)
             {
-                Debug.Log("Failed to load AssetBundle!");
+                Debug.LogError("Failed to load AssetBundle! Please report this to Lapis!");
                 return;
             }
             
-            CreateChallenge("Test Trial", "testtrial", new Vector3(0,0,0));
+            CreateChallenge("Test Trial", "testtrial", new Vector3(-65.6918f,2.5123f,-72.0744f), false);
         }
 
-        public static void CreateChallenge(string triallongname, string trialservername, Vector3 position)
+        public static void CreateChallenge(string triallongname, string trialservername, Vector3 position, bool ZoneTrial)
         {
             trialUIObject = bundle.LoadAsset<GameObject>("Trial");
-            trialUIObject.name = triallongname;
+            trialUIObject.name = trialservername;
             trialUIObject.transform.position = position;
+            trialUIObject.transform.Find(trialservername+"UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = triallongname;
+            if (ZoneTrial == false)
+            { 
+                trialUIObject.transform.Find(trialservername+"UI/Info/TrialType").gameObject.GetComponent<TextMeshProUGUI>().text = "Box Trial";
+            }
+            else
+            { 
+                trialUIObject.transform.Find(trialservername+"UI/Info/TrialType").gameObject.GetComponent<TextMeshProUGUI>().text = "Zone Trial";
+            }
         }
         
         }
