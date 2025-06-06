@@ -1,0 +1,44 @@
+name: Build release
+
+on:
+  workflow_call:
+    inputs:
+      additional-project-paths:
+        required: false
+        type: string
+        default: '[]'
+      project-path:
+        required: true
+        type: string
+      game-version:
+        required: true
+        type: string
+      additional-sources:
+        required: false
+        type: string
+        default: '[]'
+
+jobs:
+  build_release:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ inputs.project-path }}
+
+    - name: Build
+      id: build
+      run: dotnet build ${{ inputs.project-path }} --no-restore -c Release
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.build.outputs.filename }}
+        path: ${{ steps.build.outputs.artifactpath }}
