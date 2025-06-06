@@ -1,26 +1,10 @@
-name: Build release
+name: im boutta build!!!!!!!!
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_call:
-    inputs:
-      additional-project-paths:
-        required: false
-        type: string
-        default: '[]'
-      project-path:
-        required: true
-        type: string
-      game-version:
-        required: true
-        type: string
-      additional-sources:
-        required: false
-        type: string
-        default: '[]'
 
 jobs:
   build_release:
