@@ -47,21 +47,6 @@ namespace GorillaTrials
             Debug.Log($"Prefab Instantiated at {spawnPositionchallenge1}");
 
 
-            // challenge2
-
-            GameObject challenge2 = bundle.LoadAsset<GameObject>("ForestZoneTrial1");
-            if (challenge1 == null)
-            {
-                Debug.Log("Failed to load prefab from AssetBundle!");
-                return;
-            }
-
-            Vector3 spawnPositionchallenge2 = new Vector3(-67.5785f, 11.8871f, -83.7937f);
-            Plugin.loadedPrefab = Instantiate(challenge2, spawnPositionchallenge2, Quaternion.identity);
-
-            Debug.Log($"Prefab Instantiated at {spawnPositionchallenge2}");
-
-
         }
         
         }
