@@ -42,14 +42,13 @@ namespace GorillaTrials
 
             // Forest Trials
             CreateChallenge("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, false, TrialPositions.stumpClimbBoxes);
-            Plugin.customProperties.Add("stumpclimb", "N/A");
             CreateChallenge("Cross The Forest", "ctf", new Vector3(-46.75191f,5.50911f,-26.79142f), 180, false, TrialPositions.ctfBoxes);
             // City Trials
             CreateChallenge("Shopping Spree Basics", "shoppingspreebasics", new Vector3(-65.72206f,16.42499f,-121.2781f), 180, false, TrialPositions.shoppingSpreeBasicsBoxes);
             CreateChallenge("Wraparound", "wraparound", new Vector3(-30.88225f,14.99187f,-108.6642f),269.5f, false, TrialPositions.wraparoundBoxes);
             
             // Canyons Trials
-            
+            CreateChallenge("Canyon Run", "canyonrun", new Vector3(-80.93035f,10.34146f,-103.9011f),0f, false, TrialPositions.canyonRunBoxes);
             // Caves (NEW) Trials
             
             // Caves (OLD) Trials
