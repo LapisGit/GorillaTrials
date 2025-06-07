@@ -77,7 +77,7 @@ namespace GorillaTrials
 
             trialButton.onPressed = () =>
             {
-                Trials.StartTrial(trial);
+                Trials.StartTrial(Trials.All[0]);
                 Debug.Log("TrialButton pressed!");
             };
         }

@@ -67,7 +67,7 @@ namespace GorillaTrials
                 GameObject box = GameObject.Find(boxName);
                 if (box != null)
                 {
-                    GameObject.Destroy(box);
+                    Destroy(box);
                 }
             }
             index = 0;
