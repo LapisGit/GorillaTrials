@@ -16,7 +16,7 @@ namespace GorillaTrials
 
         public void Load()
         {
-            Trials.Initialize();
+            //Trials.Initialize();
 #if DEBUG
             gameObject.AddComponent<DebugEditor>();
 #endif

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using CjLib;
@@ -17,6 +18,7 @@ namespace GorillaTrials.Behaviors
         public List<Vector3> boxPositions;
         public string trialName = "DebugTrial";
         public TrialType trialType = TrialType.Box;
+        public static string ExecutablePath { get; }
 
         void Awake()
         {
@@ -71,11 +73,25 @@ namespace GorillaTrials.Behaviors
             GUILayout.Space(40);
             if (GUILayout.Button("Save trial data"))
             {
-                string trialTextData = "new Trial(){\n}";
+               // string trialTextData = "new Trial(){\n}"; codegen, commented for now just so we can make it later, currently just going to spit out a txt file with all box positions and feed it in.
+               SaveVector3ListToFile(boxPositions, ExecutablePath+"vec3.txt");
             }
 
             GUILayout.EndVertical();
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+        }
+        public static void SaveVector3ListToFile(List<Vector3> vectors, string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                foreach (Vector3 vec in vectors)
+                {
+                    string line = $"{vec.x},{vec.y},{vec.z}";
+                    writer.WriteLine(line);
+                }
+            }
+
+            Debug.Log($"Saved {vectors.Count} vectors to {filePath}");
         }
     }
 #endif

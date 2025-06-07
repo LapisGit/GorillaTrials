@@ -10,7 +10,7 @@ namespace GorillaTrials
     {
         public static List<Trial> All = new List<Trial>()
         {
-            new Trial("")
+           // new Trial("")
         };
 
         public static bool trialStarted;
