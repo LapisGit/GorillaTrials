@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using GorillaTrials.Behaviors.UI;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,8 +27,9 @@ namespace GorillaTrials
             {
                 Debug.Log("Bundle isn't null.");
             }
-            
-            CreateChallenge("Test Trial", "testtrial", new Vector3(-65.6918f,2.5123f,-72.0744f), false);
+#if DEBUG
+            CreateChallenge("Test Trial", "testtrial", new Vector3(-65.6918f, 2.5123f, -72.0744f), false);
+#endif
         }
 
         public static void CreateChallenge(string triallongname, string trialservername, Vector3 position, bool ZoneTrial)
@@ -35,8 +37,9 @@ namespace GorillaTrials
             trialUIObject = Instantiate(bundle.LoadAsset<GameObject>("Trial"));
             trialUIObject.name = trialservername;
             trialUIObject.transform.position = position;
-            trialUIObject.transform.Find("UI/Info/TrialName").gameObject
-                .GetComponent<TextMeshProUGUI>().text = triallongname;
+            trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = triallongname;
+            trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
+            UIButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<UIButton>();
             if (ZoneTrial == false)
             {
                 trialUIObject.transform.Find("UI/Info/TrialType").gameObject
@@ -47,6 +50,9 @@ namespace GorillaTrials
                 trialUIObject.transform.Find("UI/Info/TrialType").gameObject
                     .GetComponent<TextMeshProUGUI>().text = "Zone Trial";
             }
+            trialButton.onPressed = () =>
+            {
+            };
         }
     }
 }
