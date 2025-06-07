@@ -11,6 +11,7 @@ namespace GorillaTrials.Models
         public static List<Vector3> ctfBoxes;
         public static List<Vector3> canyonRunBoxes;
         public static List<Vector3> swingBoxes;
+        public static List<Vector3> caveRunBoxes;
         
         public static void Initialize()
         {
@@ -107,6 +108,38 @@ namespace GorillaTrials.Models
             swingBoxes.Add(new Vector3(-105.5165f,10.14793f,-138.5076f));
             swingBoxes.Add(new Vector3(-107.4023f,10.02634f,-142.6389f));
             swingBoxes.Add(new Vector3(-120.9869f,17.83341f,-142.1236f));
+            
+            caveRunBoxes = new List<Vector3>();
+            caveRunBoxes.Add(new Vector3(-65.97836f,-13.97495f,-44.06382f));
+            caveRunBoxes.Add(new Vector3(-72.69279f,-15.36273f,-39.33559f));
+            caveRunBoxes.Add(new Vector3(-74.78378f,-16.61712f,-34.55975f));
+            caveRunBoxes.Add(new Vector3(-74.73085f,-19.96908f,-27.97591f));
+            caveRunBoxes.Add(new Vector3(-69.96481f,-19.96586f,-24.98577f));
+            caveRunBoxes.Add(new Vector3(-66.31364f,-20.96729f,-25.85603f));
+            caveRunBoxes.Add(new Vector3(-64.46914f,-24.21059f,-31.92958f));
+            caveRunBoxes.Add(new Vector3(-67.56017f,-27.19415f,-32.0918f));
+            caveRunBoxes.Add(new Vector3(-73.40561f,-27.32014f,-34.65099f));
+            caveRunBoxes.Add(new Vector3(-78.20628f,-27.13052f,-38.51123f));
+            caveRunBoxes.Add(new Vector3(-80.57037f,-26.08961f,-40.24037f));
+            caveRunBoxes.Add(new Vector3(-75.43208f,-24.91459f,-41.77291f));
+            caveRunBoxes.Add(new Vector3(-75.32088f,-23.15848f,-42.73833f));
+            caveRunBoxes.Add(new Vector3(-82.74161f,-23.10038f,-40.99244f));
+            caveRunBoxes.Add(new Vector3(-86.9641f,-23.30623f,-38.27695f));
+            caveRunBoxes.Add(new Vector3(-88.39337f,-23.14931f,-34.9588f));
+            caveRunBoxes.Add(new Vector3(-88.33712f,-23.99468f,-25.89679f));
+            caveRunBoxes.Add(new Vector3(-87.67078f,-24.89686f,-32.98079f));
+            caveRunBoxes.Add(new Vector3(-89.60739f,-24.66315f,-30.12817f));
+            caveRunBoxes.Add(new Vector3(-86.21545f,-24.08111f,-24.87182f));
+            caveRunBoxes.Add(new Vector3(-83.4324f,-24.07364f,-21.26532f));
+            caveRunBoxes.Add(new Vector3(-79.95529f,-23.96792f,-17.55959f));
+            caveRunBoxes.Add(new Vector3(-72.61205f,-24.29199f,-17.19219f));
+            caveRunBoxes.Add(new Vector3(-68.30682f,-24.11769f,-16.06422f));
+            caveRunBoxes.Add(new Vector3(-63.18027f,-24.1005f,-16.39038f));
+            caveRunBoxes.Add(new Vector3(-59.66733f,-24.29091f,-24.36161f));
+            caveRunBoxes.Add(new Vector3(-60.37058f,-27.18257f,-29.99792f));
+            caveRunBoxes.Add(new Vector3(-59.53126f,-26.86858f,-38.34457f));
+            caveRunBoxes.Add(new Vector3(-65.24681f,-27.196f,-40.25776f));
+            caveRunBoxes.Add(new Vector3(-70.74526f,-27.20573f,-40.85057f));
         }
     }
 }

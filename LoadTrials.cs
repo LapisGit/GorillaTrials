@@ -51,7 +51,7 @@ namespace GorillaTrials
             CreateChallenge("Canyon Run", "canyonrun", new Vector3(-80.93035f,10.34146f,-103.9011f),0f, false, TrialPositions.canyonRunBoxes);
             CreateChallenge("Swing", "swing", new Vector3(-87.95385f,9.952705f,-117.7568f),0f, false, TrialPositions.swingBoxes);
             // Caves (NEW) Trials
-            
+            CreateChallenge("Cave Run", "caverun", new Vector3(-87.95385f,9.952705f,-117.7568f),0f, false, TrialPositions.caveRunBoxes);
             // Caves (OLD) Trials
             
             // MonkeBlocks Trials
