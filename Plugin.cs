@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using GorillaTrials.Behaviors;
 using UnityEngine;
 
 namespace GorillaTrials
@@ -6,7 +7,7 @@ namespace GorillaTrials
     [BepInPlugin(Constants.PluginGuid, Constants.PluginName, Constants.PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public static LoadChallenges challenges;
+        public static LoadTrials trials;
         
         void Awake()
         {
@@ -15,10 +16,14 @@ namespace GorillaTrials
 
         public void Load()
         {
-            GameObject tempChallengesObj = new GameObject("GorillaTrials Challenges");
-            tempChallengesObj.AddComponent<LoadChallenges>();
-            challenges = tempChallengesObj.GetComponent<LoadChallenges>();
-            LoadChallenges.LoadAssetBundle();
+            Trials.Initialize();
+#if DEBUG
+            gameObject.AddComponent<DebugEditor>();
+#endif
+            GameObject tempTrialsObj = new GameObject("GorillaTrials Challenges");
+            tempTrialsObj.AddComponent<LoadTrials>();
+            trials = tempTrialsObj.GetComponent<LoadTrials>();
+            LoadTrials.LoadAssetBundle();
         }
     }
 }

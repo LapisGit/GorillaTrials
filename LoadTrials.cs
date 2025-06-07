@@ -1,23 +1,34 @@
 ﻿using BepInEx;
 using GorillaTrials.Behaviors.UI;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
+using GorillaTrials.Models;
 
 namespace GorillaTrials
 {
-    public class LoadChallenges : MonoBehaviour
+    public class LoadTrials : MonoBehaviour
     {
-        public static GameObject trialUIObject;
         public static AssetBundle bundle;
+        public static GameObject gorillaTrialsAssets;
+
+        public static GameObject TrialUIPrefab;
+        public static GameObject TrialBoxPrefab;
+
         public static void LoadAssetBundle()
         {
             Debug.Log("Loading Trials...");
             Stream str = Assembly.GetExecutingAssembly().GetManifestResourceStream("GorillaTrials.Assets.bundle");
             bundle = AssetBundle.LoadFromStream(str);
-            
+            gorillaTrialsAssets = Instantiate(bundle.LoadAsset<GameObject>("GorillaTrials"));
+            gorillaTrialsAssets.SetActive(false);
+
+            TrialUIPrefab = gorillaTrialsAssets.transform.Find("Trial").gameObject;
+            TrialBoxPrefab = gorillaTrialsAssets.transform.Find("Trial Box").gameObject;
+
             if (bundle == null)
             {
                 Debug.LogError("Failed to load AssetBundle! Please report this to Lapis!");
@@ -34,7 +45,7 @@ namespace GorillaTrials
 
         public static void CreateChallenge(string triallongname, string trialservername, Vector3 position, bool ZoneTrial)
         {
-            trialUIObject = Instantiate(bundle.LoadAsset<GameObject>("Trial"));
+            GameObject trialUIObject = Instantiate(TrialUIPrefab);
             trialUIObject.name = trialservername;
             trialUIObject.transform.position = position;
             trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = triallongname;
@@ -50,8 +61,21 @@ namespace GorillaTrials
                 trialUIObject.transform.Find("UI/Info/TrialType").gameObject
                     .GetComponent<TextMeshProUGUI>().text = "Zone Trial";
             }
+
+            Trial trial = new Trial()
+            {
+                trialObject = trialUIObject,
+                TrialServerName = trialservername,
+                TrialLongName = triallongname,
+                TrialType = (int)TrialType.Box,
+                zoneData = null,
+            };
+
+            Trials.All.Add(trial);
+
             trialButton.onPressed = () =>
             {
+                Trials.StartTrial(trial);
             };
         }
     }

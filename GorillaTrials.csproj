@@ -34,6 +34,9 @@
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>$(GameAssemblyPath)\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
+	  <Reference Include="UnityEngine.IMGUIModule">
+		  <HintPath>$(GameAssemblyPath)\UnityEngine.IMGUIModule.dll</HintPath>
+	  </Reference>
   </ItemGroup>
 
   <ItemGroup>

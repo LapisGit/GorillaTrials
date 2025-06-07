@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2968850434
+CRC: 1427209069
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 4de572dc50e54b9219e3b103ef85f07d
+    Hash: 411f25a90a46ca9bce7894f7fd94c776
   TypeTreeHash:
     serializedVersion: 2
     Hash: dffff168bff229e504961346f10eee1c
@@ -77,5 +77,5 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
 Assets:
-- Assets/Trial.prefab
+- Assets/GorillaTrials.prefab
 Dependencies: []
