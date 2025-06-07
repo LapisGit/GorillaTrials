@@ -10,6 +10,7 @@ namespace GorillaTrials.Models
         public static List<Vector3> wraparoundBoxes;
         public static List<Vector3> ctfBoxes;
         public static List<Vector3> canyonRunBoxes;
+        public static List<Vector3> swingBoxes;
         
         public static void Initialize()
         {
@@ -98,6 +99,14 @@ namespace GorillaTrials.Models
             canyonRunBoxes.Add(new Vector3(-92.50083f,6.765745f,-133.9864f));
             canyonRunBoxes.Add(new Vector3(-92.36173f,8.88239f,-133.0593f));
             canyonRunBoxes.Add(new Vector3(-89.62206f,9.734635f,-132.942f));
+            
+            swingBoxes = new List<Vector3>();
+            swingBoxes.Add(new Vector3(-112.4501f,12.04811f,-122.3286f));
+            swingBoxes.Add(new Vector3(-110.983f,12.30052f,-128.8504f));
+            swingBoxes.Add(new Vector3(-109.4048f,11.49467f,-133.8225f));
+            swingBoxes.Add(new Vector3(-105.5165f,10.14793f,-138.5076f));
+            swingBoxes.Add(new Vector3(-107.4023f,10.02634f,-142.6389f));
+            swingBoxes.Add(new Vector3(-120.9869f,17.83341f,-142.1236f));
         }
     }
 }
