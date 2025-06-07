@@ -9,6 +9,7 @@ namespace GorillaTrials.Models
         public static List<Vector3> shoppingSpreeBasicsBoxes;
         public static List<Vector3> wraparoundBoxes;
         public static List<Vector3> ctfBoxes;
+        public static List<Vector3> canyonRunBoxes;
         
         public static void Initialize()
         {
@@ -56,6 +57,9 @@ namespace GorillaTrials.Models
             ctfBoxes.Add(new Vector3(-49.99929f,20.37433f,-77.93771f));
             ctfBoxes.Add(new Vector3(-56.89211f,20.87017f,-79.26311f));
             ctfBoxes.Add(new Vector3(-65.93003f,21.95213f,-83.13269f));
+            
+            canyonRunBoxes = new List<Vector3>();
+            
         }
     }
 }

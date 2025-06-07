@@ -16,7 +16,7 @@ namespace GorillaTrials.Behaviors
         public Rect windowRect = new Rect(20, 20, 350, 500);
 
         public List<Vector3> boxPositions;
-        public string trialName = "DebugTrial";
+        public static string trialName = "DebugTrial";
         public TrialType trialType = TrialType.Box;
         public static string ExecutablePath { get; }
 
@@ -73,8 +73,7 @@ namespace GorillaTrials.Behaviors
             GUILayout.Space(40);
             if (GUILayout.Button("Save trial data"))
             {
-               // string trialTextData = "new Trial(){\n}"; (codegen, commented for now just so we can make it later, currently just going to spit out a txt file with all box positions and feed it in.)
-               SaveVector3ListToFile(boxPositions, ExecutablePath+"vec3.txt");
+               SaveVector3ListToFile(boxPositions, ExecutablePath+trialName+".txt");
             }
 
             GUILayout.EndVertical();
@@ -86,7 +85,7 @@ namespace GorillaTrials.Behaviors
             {
                 foreach (Vector3 vec in vectors)
                 {
-                    string line = $"{vec.x},{vec.y},{vec.z}";
+                    string line = trialName+$".Add(new Vector3({vec.x}f,{vec.y}f,{vec.z}f));";
                     writer.WriteLine(line);
                 }
             }
