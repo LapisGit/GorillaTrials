@@ -40,7 +40,7 @@ namespace GorillaTrials
             }
 
             // Forest Trials
-            CreateChallenge("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, false, TrialPositions.trialTestBoxes);
+            CreateChallenge("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, false, TrialPositions.stumpClimbBoxes);
             
             // City Trials
             CreateChallenge("Shopping Spree Basics", "shoppingspreebasics", new Vector3(-65.72206f,16.42499f,-121.2781f), 180, false, TrialPositions.shoppingSpreeBasicsBoxes);
