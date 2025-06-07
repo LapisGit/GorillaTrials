@@ -9,6 +9,8 @@ using UnityEngine.Networking;
 using System.Text;
 using GorillaLocomotion;
 using GorillaNetworking;
+using Photon.Pun;
+using TMPro;
 
 
 namespace GorillaTrials
@@ -18,6 +20,7 @@ namespace GorillaTrials
         private static readonly System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
 
         public static List<Trial> All = new List<Trial>()
+       
         
         {
            // new Trial("")
@@ -52,11 +55,11 @@ namespace GorillaTrials
                     break;
                 case (int)TrialType.Zone:
                     Debug.LogError("Not implemented yet.  (Guys we're not Another Axiom chill.)");
-                    EndTrial();
+                    EndTrial(false);
                     break;
                 default:
                     Console.WriteLine("default isn't supposed to be called what.");
-                    EndTrial();
+                    EndTrial(false);
                     break;
             }
         }
@@ -99,9 +102,8 @@ namespace GorillaTrials
             }
         }
 
-        public static void EndTrial()
+        public static void EndTrial(bool shouldSubmit = true)
         {
-
             Debug.Log("Trial " + currentTrial.TrialLongName + " completed!");
             stopwatch.Stop();
 
@@ -109,17 +111,50 @@ namespace GorillaTrials
             double submitTime = Math.Round(elapsed.TotalSeconds, 3);
             Debug.Log($"Trial ended. Duration: {submitTime} seconds.");
 
-            string playerName = NetworkSystem.Instance.LocalPlayer.NickName;
-            string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
-            
-            string jsonBody = JsonUtility.ToJson(new TrialResult
+            if (shouldSubmit)
             {
-                PlayerName = playerName,
-                Time = submitTime,
-                PlayerId = playerId
-            });
+                string playerName = NetworkSystem.Instance.LocalPlayer.NickName;
+                string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
             
-            SendTrialResult(jsonBody);
+                string jsonBody = JsonUtility.ToJson(new TrialResult
+                {
+                    PlayerName = playerName,
+                    Time = submitTime,
+                    PlayerId = playerId
+                });
+            
+                SendTrialResult(jsonBody);
+            
+            
+            
+                string pbKey = $"PB_{currentTrial.TrialServerName}";
+
+                if (PlayerPrefs.HasKey(pbKey))
+                {
+                    if (PlayerPrefs.GetFloat(pbKey) > submitTime)
+                    {
+                        PlayerPrefs.SetFloat(pbKey, (float)submitTime);
+                        PlayerPrefs.Save();
+                        var props = new CustomProps();
+                        props.AddPB(pbKey, (float)submitTime);
+                        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(pbKey, out object value) && value is double pb)
+                        {
+                            GameObject.Find(currentTrial.TrialServerName).transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: "+value;
+                        }
+                    }
+                }
+                else
+                {
+                    PlayerPrefs.SetFloat(pbKey, (float)submitTime);    
+                    PlayerPrefs.Save();
+                    var props = new CustomProps();
+                    props.AddPB(pbKey, (float)submitTime);
+                    if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(pbKey, out object value) && value is double pb)
+                    {
+                        GameObject.Find(currentTrial.TrialServerName).transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: "+value;
+                    }
+                }
+            }
             
             for (int i = 0; i < index; i++)
             {
@@ -136,6 +171,7 @@ namespace GorillaTrials
             currentTrial.trialObject.SetActive(true);
             currentTrial = null; //keep this line at the end of the method kplsthx :3
         }
+        
         
         public static void SendTrialResult(string json)
         {

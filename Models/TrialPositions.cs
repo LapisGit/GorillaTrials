@@ -8,6 +8,7 @@ namespace GorillaTrials.Models
         public static List<Vector3> stumpClimbBoxes;
         public static List<Vector3> shoppingSpreeBasicsBoxes;
         public static List<Vector3> wraparoundBoxes;
+        public static List<Vector3> ctfBoxes;
         
         public static void Initialize()
         {
@@ -39,6 +40,22 @@ namespace GorillaTrials.Models
             wraparoundBoxes.Add(new Vector3(-33.18779f,19.42347f,-105.0206f));
             wraparoundBoxes.Add(new Vector3(-28.63275f,19.38772f,-111.9691f));
             wraparoundBoxes.Add(new Vector3(-35.1727f,15.51514f,-113.6914f));
+
+            ctfBoxes = new List<Vector3>();
+            ctfBoxes.Add(new Vector3(-46.99637f,4.963249f,-29.63624f));
+            ctfBoxes.Add(new Vector3(-47.38862f,3.277501f,-33.39424f));
+            ctfBoxes.Add(new Vector3(-48.2356f,5.87801f,-42.433f));
+            ctfBoxes.Add(new Vector3(-48.85529f,7.890433f,-49.30875f));
+            ctfBoxes.Add(new Vector3(-47.95044f,10.19269f,-53.72191f));
+            ctfBoxes.Add(new Vector3(-49.01791f,13.00496f,-59.56395f));
+            ctfBoxes.Add(new Vector3(-47.13469f,17.63213f,-64.51656f));
+            ctfBoxes.Add(new Vector3(-43.82056f,18.08991f,-68.964f));
+            ctfBoxes.Add(new Vector3(-39.98576f,17.43815f,-73.62633f));
+            ctfBoxes.Add(new Vector3(-40.3922f,17.79181f,-78.49303f));
+            ctfBoxes.Add(new Vector3(-45.61953f,18.1948f,-79.74636f));
+            ctfBoxes.Add(new Vector3(-49.99929f,20.37433f,-77.93771f));
+            ctfBoxes.Add(new Vector3(-56.89211f,20.87017f,-79.26311f));
+            ctfBoxes.Add(new Vector3(-65.93003f,21.95213f,-83.13269f));
         }
     }
 }

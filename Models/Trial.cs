@@ -37,6 +37,13 @@ namespace GorillaTrials.Models
             trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
             trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
             UIButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<UIButton>();
+            var player = Photon.Pun.PhotonNetwork.LocalPlayer;
+            string key = $"PB_{trialServerName}";
+            if (player.CustomProperties.TryGetValue(key, out object value) && value is double pb)
+            {
+                trialUIObject.transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: "+value;
+            }
+
             if (trialType == Models.TrialType.Box)
             {
                 trialUIObject.transform.Find("UI/Info/TrialType").gameObject

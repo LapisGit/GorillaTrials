@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System.Collections;
+using BepInEx;
 using BepInEx.Configuration;
 using GorillaTrials.Behaviors;
 using GorillaTrials.Models;
@@ -10,6 +11,7 @@ namespace GorillaTrials
     public class Plugin : BaseUnityPlugin
     {
         public static LoadTrials trials;
+        public static Hashtable customProperties = new Hashtable();
         public static ConfigEntry<string> apiKeyEntry;
         
         void Awake()
