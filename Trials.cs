@@ -134,9 +134,7 @@ namespace GorillaTrials
                     if (PlayerPrefs.GetFloat(pbKey) > submitTime)
                     {
                         PlayerPrefs.SetFloat(pbKey, (float)submitTime);
-                        PlayerPrefs.Save();
-                        var props = new CustomProps();
-                        props.AddPB(pbKey, (float)submitTime);
+                        PlayerPrefs.Save();;
                         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(pbKey, out object value) && value is double pb)
                         {
                             GameObject.Find(currentTrial.TrialServerName).transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: "+value;
@@ -147,8 +145,6 @@ namespace GorillaTrials
                 {
                     PlayerPrefs.SetFloat(pbKey, (float)submitTime);    
                     PlayerPrefs.Save();
-                    var props = new CustomProps();
-                    props.AddPB(pbKey, (float)submitTime);
                     if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(pbKey, out object value) && value is double pb)
                     {
                         GameObject.Find(currentTrial.TrialServerName).transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: "+value;
