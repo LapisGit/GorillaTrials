@@ -38,14 +38,36 @@ namespace GorillaTrials
             {
                 Debug.Log("Bundle isn't null.");
             }
-#if DEBUG
-            CreateChallenge("Test Trial", "testtrial", new Vector3(-65.6918f, 2.5123f, -72.0744f), false);
-#endif
+
+            // Forest Trials
+            CreateChallenge("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, false, TrialPositions.trialTestBoxes);
+            
+            // City Trials
+            CreateChallenge("Shopping Spree Basics", "shoppingspreebasics", new Vector3(-65.72206f,16.42499f,-121.2781f), 180, false, TrialPositions.shoppingSpreeBasicsBoxes);
+            CreateChallenge("Wraparound", "wraparound", new Vector3(-30.88225f,14.99187f,-108.6642f),269.5f, false, TrialPositions.wraparoundBoxes);
+            
+            // Canyons Trials
+            
+            // Caves (NEW) Trials
+            
+            // Caves (OLD) Trials
+            
+            // MonkeBlocks Trials
+            
+            // Clouds Trials
+            
+            // Beach Trials
+            
+            // Hoverpark Trials
+            
+            // Hoverpark2 Trials
+            
+            
         }
 
-        public static void CreateChallenge(string triallongname, string trialservername, Vector3 position, bool ZoneTrial)
+        public static void CreateChallenge(string triallongname, string trialservername, Vector3 position, float yRotation, bool ZoneTrial, List<Vector3> boxData)
         {
-            Trial trial = new Trial(position, triallongname, trialservername, (int)TrialType.Box, null, TrialPositions.trialTestBoxes);
+            Trial trial = new Trial(position, yRotation, triallongname, trialservername, (int)TrialType.Box, null, boxData);
         }
     }
 }

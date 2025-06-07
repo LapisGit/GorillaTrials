@@ -20,6 +20,7 @@ namespace GorillaTrials.Models
     public class Trial
     {
         public Vector3 position;
+        public float y_rotation;
         public GameObject trialObject; //DO NOT SERIALIZE/DESERIALIZE FROM SERVER, THE MOD IS SUPPOSED TO AUTOMATICALLY ASSIGN THIS.
         public string TrialLongName;
         public string TrialServerName;
@@ -27,11 +28,12 @@ namespace GorillaTrials.Models
         public ZoneData? zoneData;
         public List<Vector3>? boxPositions;
 
-        public Trial(Vector3 trialPosition, string trialLongName, string trialServerName, TrialType trialType, ZoneData zoneData = null, List<Vector3> boxPositions = null)
+        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, TrialType trialType, ZoneData zoneData = null, List<Vector3> boxPositions = null)
         {
             GameObject trialUIObject = GameObject.Instantiate(LoadTrials.TrialUIPrefab);
             trialUIObject.name = trialServerName;
             trialUIObject.transform.position = trialPosition;
+            trialUIObject.transform.eulerAngles = new Vector3(0,yRotation,0);
             trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
             trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
             UIButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<UIButton>();
@@ -49,6 +51,7 @@ namespace GorillaTrials.Models
             trialObject = trialUIObject;
 
             position = trialPosition;
+            y_rotation = yRotation;
             TrialLongName = trialLongName;
             TrialServerName = trialServerName;
             TrialType = (int)trialType;
