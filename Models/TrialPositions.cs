@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace GorillaTrials.Models
 {
-    public class TrialPositions : MonoBehaviour
+    public class TrialPositions
     {
         public static List<Vector3> trialTestBoxes;
         
-        void Awake()
+        public static void Initialize()
         {
             trialTestBoxes = new List<Vector3>();
             trialTestBoxes.Add(new Vector3(-65.5062f,2.556363f,-72.94588f));

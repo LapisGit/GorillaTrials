@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using GorillaTrials.Behaviors.UI;
+using TMPro;
 using UnityEngine;
 
 namespace GorillaTrials.Models
@@ -27,12 +29,39 @@ namespace GorillaTrials.Models
 
         public Trial(Vector3 trialPosition, string trialLongName, string trialServerName, TrialType trialType, ZoneData zoneData = null, List<Vector3> boxPositions = null)
         {
+            GameObject trialUIObject = GameObject.Instantiate(LoadTrials.TrialUIPrefab);
+            trialUIObject.name = trialServerName;
+            trialUIObject.transform.position = trialPosition;
+            trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
+            trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
+            UIButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<UIButton>();
+            if (trialType == Models.TrialType.Box)
+            {
+                trialUIObject.transform.Find("UI/Info/TrialType").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = "Box Trial";
+            }
+            else
+            {
+                trialUIObject.transform.Find("UI/Info/TrialType").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = "Zone Trial";
+            }
+
+            trialObject = trialUIObject;
+
             position = trialPosition;
             TrialLongName = trialLongName;
             TrialServerName = trialServerName;
             TrialType = (int)trialType;
             this.zoneData = zoneData;
             this.boxPositions = boxPositions;
+
+            trialButton.onPressed = () =>
+            {
+                Trials.StartTrial(this);
+                Debug.Log("TrialButton pressed!");
+            };
+
+            Trials.All.Add(this);
         }
     }
 }

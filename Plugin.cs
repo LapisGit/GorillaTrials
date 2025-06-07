@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using GorillaTrials.Behaviors;
+using GorillaTrials.Models;
 using UnityEngine;
 
 namespace GorillaTrials
@@ -19,6 +20,7 @@ namespace GorillaTrials
             //Trials.Initialize();
 #if DEBUG
             gameObject.AddComponent<DebugEditor>();
+            TrialPositions.Initialize();
 #endif
             GameObject tempTrialsObj = new GameObject("GorillaTrials Challenges");
             tempTrialsObj.AddComponent<LoadTrials>();

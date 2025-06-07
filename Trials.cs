@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GorillaTrials.Behaviors;
 using GorillaTrials.Models;
 using UnityEngine;
 
@@ -14,14 +15,25 @@ namespace GorillaTrials
         };
 
         public static bool trialStarted;
+        public static int boxesCollected;
+        public static int boxesToCollect;
+
+        public static float trialTime;
 
         public static Trial currentTrial;
         
         public static int index = 0;
         public static void StartTrial(Trial trialData)
         {
+            if (trialStarted == true)
+            {
+                return;
+            }
+
             currentTrial = trialData;
             currentTrial.trialObject.SetActive(false);
+
+            trialTime = Time.time;
 
             switch (currentTrial.TrialType)
             {
@@ -42,25 +54,45 @@ namespace GorillaTrials
 
         public static void PopulateTrialBoxes()
         {
+            index = 0;
+            boxesCollected = 0;
+            boxesToCollect = currentTrial.boxPositions.Count;
             if (currentTrial != null)
             {
-                if (currentTrial.boxPositions == null) //literally should never happen unless in debugging.
+                if (currentTrial.boxPositions == null)
+                {
+                    Debug.LogError("Current trial box positions are null.");
                     return;
+                }
                 
                 foreach (Vector3 boxPosition in currentTrial.boxPositions)
                 {
                     GameObject box = Instantiate(LoadTrials.TrialBoxPrefab);
+                    box.SetActive(true);
+                    box.layer = 15; //Gorilla Boundary layer (body collider only triggers this with OnTriggerEnter iirc)
+
+                    box.GetComponent<SphereCollider>().isTrigger = true;
+
+                    TrialBoxCollider trialBoxCollider = box.AddComponent<TrialBoxCollider>();
+                    trialBoxCollider.index = index;
+                    trialBoxCollider.trialservername = currentTrial.TrialServerName;
+
                     box.transform.position = boxPosition;
                     box.name = $"Box_{index}";
+                    Debug.Log("Instantiated box (" + index + ")");
                     index++;
                 }
-
+            }
+            else
+            {
+                Debug.LogError("Current trial is null.");
             }
         }
 
         public static void EndTrial()
         {
-            trialStarted = false;
+            Debug.Log("Trial " + currentTrial.TrialLongName + " completed!");
+
             for (int i = 0; i < index; i++)
             {
                 string boxName = $"Box_{i}";
@@ -70,7 +102,10 @@ namespace GorillaTrials
                     Destroy(box);
                 }
             }
+
+            trialStarted = false;
             index = 0;
+            currentTrial.trialObject.SetActive(true);
             currentTrial = null; //keep this line at the end of the method kplsthx :3
         }
     }

@@ -45,41 +45,7 @@ namespace GorillaTrials
 
         public static void CreateChallenge(string triallongname, string trialservername, Vector3 position, bool ZoneTrial)
         {
-            GameObject trialUIObject = Instantiate(TrialUIPrefab);
-            trialUIObject.name = trialservername;
-            trialUIObject.transform.position = position;
-            trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = triallongname;
-            trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
-            UIButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<UIButton>();
-            if (ZoneTrial == false)
-            {
-                trialUIObject.transform.Find("UI/Info/TrialType").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = "Box Trial";
-            }
-            else
-            {
-                trialUIObject.transform.Find("UI/Info/TrialType").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = "Zone Trial";
-            }
-
-           // Trial trial = new Trial()
-           // {
-           //     trialObject = trialUIObject,
-           //     TrialServerName = trialservername,
-           //     TrialLongName = triallongname,
-           //     TrialType = (int)TrialType.Box,
-           //     zoneData = null,
-           // };
-           Trial trial = new Trial(position, triallongname, trialservername, (int)TrialType.Box, null, TrialPositions.trialTestBoxes);
-            
-
-            Trials.All.Add(trial);
-
-            trialButton.onPressed = () =>
-            {
-                Trials.StartTrial(Trials.All[0]);
-                Debug.Log("TrialButton pressed!");
-            };
+            Trial trial = new Trial(position, triallongname, trialservername, (int)TrialType.Box, null, TrialPositions.trialTestBoxes);
         }
     }
 }
