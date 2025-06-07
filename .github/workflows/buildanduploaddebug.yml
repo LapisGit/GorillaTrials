@@ -29,6 +29,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: GorillaTrials.dll
-        path: bin\Release\netstandard2.1\GorillaTrials.dll
+        path: bin\Debug\netstandard2.1\GorillaTrials.dll
 
           
