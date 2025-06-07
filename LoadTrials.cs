@@ -62,20 +62,22 @@ namespace GorillaTrials
                     .GetComponent<TextMeshProUGUI>().text = "Zone Trial";
             }
 
-            //Trial trial = new Trial()
-            //{
-            //    trialObject = trialUIObject,
-            //    TrialServerName = trialservername,
-            //    TrialLongName = triallongname,
-            //    TrialType = (int)TrialType.Box,
-            //    zoneData = null,
-            //};
+           // Trial trial = new Trial()
+           // {
+           //     trialObject = trialUIObject,
+           //     TrialServerName = trialservername,
+           //     TrialLongName = triallongname,
+           //     TrialType = (int)TrialType.Box,
+           //     zoneData = null,
+           // };
+           Trial trial = new Trial(position, triallongname, trialservername, (int)TrialType.Box, null, TrialPositions.trialTestBoxes);
+            
 
-            //Trials.All.Add(trial);
+            Trials.All.Add(trial);
 
             trialButton.onPressed = () =>
             {
-                //Trials.StartTrial(trial);
+                Trials.StartTrial(trial);
                 Debug.Log("TrialButton pressed!");
             };
         }

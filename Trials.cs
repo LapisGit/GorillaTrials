@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace GorillaTrials
 {
-    public class Trials
+    public class Trials : MonoBehaviour
     {
         public static List<Trial> All = new List<Trial>()
         {
@@ -16,6 +16,8 @@ namespace GorillaTrials
         public static bool trialStarted;
 
         public static Trial currentTrial;
+        
+        public static int index = 0;
         public static void StartTrial(Trial trialData)
         {
             currentTrial = trialData;
@@ -44,17 +46,31 @@ namespace GorillaTrials
             {
                 if (currentTrial.boxPositions == null) //literally should never happen unless in debugging.
                     return;
-
+                
                 foreach (Vector3 boxPosition in currentTrial.boxPositions)
                 {
-                    //ahuhawhuahwuahuuhwa :3
+                    GameObject box = Instantiate(LoadTrials.TrialBoxPrefab);
+                    box.transform.position = boxPosition;
+                    box.name = $"Box_{index}";
+                    index++;
                 }
+
             }
         }
 
         public static void EndTrial()
         {
             trialStarted = false;
+            for (int i = 0; i < index; i++)
+            {
+                string boxName = $"Box_{i}";
+                GameObject box = GameObject.Find(boxName);
+                if (box != null)
+                {
+                    GameObject.Destroy(box);
+                }
+            }
+            index = 0;
             currentTrial = null; //keep this line at the end of the method kplsthx :3
         }
     }

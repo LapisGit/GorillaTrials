@@ -31,6 +31,8 @@ namespace GorillaTrials.Models
             TrialLongName = trialLongName;
             TrialServerName = trialServerName;
             TrialType = (int)trialType;
+            this.zoneData = zoneData;
+            this.boxPositions = boxPositions;
         }
     }
 }

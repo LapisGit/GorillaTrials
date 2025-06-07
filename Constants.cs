@@ -1,4 +1,7 @@
-﻿namespace GorillaTrials
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace GorillaTrials
 {
     public class Constants
     {
