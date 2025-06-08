@@ -14,7 +14,10 @@ namespace GorillaTrials.Models
         public static List<Vector3> caveRunBoxes;
         public static List<Vector3> goingUpBoxes;
         public static List<Vector3> compCourseBoxes;
-
+        public static List<Vector3> runBoxes;
+        public static List<Vector3> loopBackBoxes;
+        public static List<Vector3> tallestTreeBoxes;
+        public static List<Vector3> zipliningBoxes;
         public static void Initialize()
         {
             stumpClimbBoxes = new List<Vector3>();
@@ -175,6 +178,82 @@ namespace GorillaTrials.Models
             compCourseBoxes.Add(new Vector3(-56.81472f,18.30876f,-146.8588f));
             compCourseBoxes.Add(new Vector3(-60.0997f,19.67417f,-151.5796f));
             compCourseBoxes.Add(new Vector3(-64.0005f,20.7448f,-153.9263f));
+            
+            runBoxes = new List<Vector3>();
+            runBoxes.Add(new Vector3(-19.26546f,-29.94593f,-80.03615f));
+            runBoxes.Add(new Vector3(-16.45297f,-29.96387f,-79.7501f));
+            runBoxes.Add(new Vector3(-13.99422f,-30.00624f,-80.96046f));
+            runBoxes.Add(new Vector3(-10.71639f,-29.97418f,-82.32221f));
+            runBoxes.Add(new Vector3(-5.799641f,-29.98318f,-83.90822f));
+            runBoxes.Add(new Vector3(-3.43502f,-30.03826f,-87.20483f));
+            runBoxes.Add(new Vector3(-4.412796f,-30.03776f,-92.79861f));
+            runBoxes.Add(new Vector3(-3.886368f,-29.99503f,-97.37181f));
+            runBoxes.Add(new Vector3(-2.211555f,-29.94278f,-100.5344f));
+            runBoxes.Add(new Vector3(2.041908f,-29.93016f,-102.9216f));
+            runBoxes.Add(new Vector3(4.660416f,-29.96324f,-104.2513f));
+            runBoxes.Add(new Vector3(4.211273f,-30.00537f,-107.784f));
+            runBoxes.Add(new Vector3(2.453552f,-30.13645f,-111.738f));
+            runBoxes.Add(new Vector3(-0.07878876f,-30.23842f,-114.0818f));
+            
+            loopBackBoxes = new List<Vector3>();
+            loopBackBoxes.Add(new Vector3(-65.38795f,-7.596756f,-29.73819f));
+            loopBackBoxes.Add(new Vector3(-67.61881f,-9.380259f,-29.49923f));
+            loopBackBoxes.Add(new Vector3(-73.39856f,-9.157642f,-29.74654f));
+            loopBackBoxes.Add(new Vector3(-77.61632f,-6.809504f,-35.09034f));
+            loopBackBoxes.Add(new Vector3(-76.45189f,-12.58162f,-41.59992f));
+            loopBackBoxes.Add(new Vector3(-72.57357f,-13.1224f,-46.42322f));
+            loopBackBoxes.Add(new Vector3(-69.8139f,-13.02278f,-51.86484f));
+            loopBackBoxes.Add(new Vector3(-68.18675f,-12.54894f,-56.33278f));
+            loopBackBoxes.Add(new Vector3(-63.42852f,-11.95049f,-59.04166f));
+            loopBackBoxes.Add(new Vector3(-66.14711f,-10.322f,-64.76591f));
+            loopBackBoxes.Add(new Vector3(-60.84754f,-7.759315f,-69.83279f));
+            loopBackBoxes.Add(new Vector3(-61.0013f,-4.550224f,-76.00993f));
+            loopBackBoxes.Add(new Vector3(-65.42614f,-0.4562569f,-80.57002f));
+            loopBackBoxes.Add(new Vector3(-66.87044f,2.685546f,-84.1671f));
+            
+            tallestTreeBoxes = new List<Vector3>();
+            tallestTreeBoxes.Add(new Vector3(-25.58732f,2.67129f,-72.5556f));
+            tallestTreeBoxes.Add(new Vector3(-22.86387f,4.913779f,-72.92065f));
+            tallestTreeBoxes.Add(new Vector3(-22.10656f,6.56805f,-68.42055f));
+            tallestTreeBoxes.Add(new Vector3(-22.41829f,8.035854f,-65.11611f));
+            tallestTreeBoxes.Add(new Vector3(-27.81845f,5.071994f,-62.83406f));
+            tallestTreeBoxes.Add(new Vector3(-27.81062f,7.706868f,-62.43214f));
+            tallestTreeBoxes.Add(new Vector3(-30.63455f,9.439949f,-62.32906f));
+            tallestTreeBoxes.Add(new Vector3(-37.18272f,12.28869f,-60.14269f));
+            tallestTreeBoxes.Add(new Vector3(-40.84543f,14.5786f,-60.21743f));
+            tallestTreeBoxes.Add(new Vector3(-43.72237f,14.57861f,-63.27828f));
+            tallestTreeBoxes.Add(new Vector3(-49.04667f,13.83378f,-63.1678f));
+            tallestTreeBoxes.Add(new Vector3(-49.95546f,12.68871f,-57.64261f));
+            tallestTreeBoxes.Add(new Vector3(-51.39735f,13.83378f,-52.36434f));
+            tallestTreeBoxes.Add(new Vector3(-58.0529f,13.75826f,-48.62063f));
+            tallestTreeBoxes.Add(new Vector3(-59.31351f,15.85259f,-50.94551f));
+            tallestTreeBoxes.Add(new Vector3(-61.46102f,18.08597f,-50.97398f));
+            tallestTreeBoxes.Add(new Vector3(-67.48252f,17.51233f,-51.52329f));
+            tallestTreeBoxes.Add(new Vector3(-70.95536f,17.98f,-49.0023f));
+            tallestTreeBoxes.Add(new Vector3(-75.95602f,20.03881f,-48.51898f));
+            tallestTreeBoxes.Add(new Vector3(-75.5173f,22.56195f,-45.90806f));
+            tallestTreeBoxes.Add(new Vector3(-75.74582f,24.20921f,-48.80383f));
+            tallestTreeBoxes.Add(new Vector3(-73.67922f,25.84142f,-49.56076f));
+            tallestTreeBoxes.Add(new Vector3(-73.66713f,29.01478f,-47.766f));
+            tallestTreeBoxes.Add(new Vector3(-73.63406f,32.23495f,-47.56679f));
+            tallestTreeBoxes.Add(new Vector3(-73.66061f,35.23291f,-47.42342f));
+            tallestTreeBoxes.Add(new Vector3(-73.79775f,37.83677f,-47.14853f));
+
+            zipliningBoxes = new List<Vector3>();
+            zipliningBoxes.Add(new Vector3(-9.182732f,28.98355f,-21.58583f));
+            zipliningBoxes.Add(new Vector3(-0.1400681f,27.05854f,-19.79563f));
+            zipliningBoxes.Add(new Vector3(9.037498f,26.92503f,-14.80058f));
+            zipliningBoxes.Add(new Vector3(14.40597f,23.78102f,-10.11507f));
+            zipliningBoxes.Add(new Vector3(21.99334f,18.9321f,-2.715515f));
+            zipliningBoxes.Add(new Vector3(28.04623f,14.76201f,4.490959f));
+            zipliningBoxes.Add(new Vector3(34.13986f,10.28911f,14.95452f));
+            zipliningBoxes.Add(new Vector3(36.09749f,9.122077f,24.9608f));
+            zipliningBoxes.Add(new Vector3(34.41002f,10.78505f,31.06032f));
+            zipliningBoxes.Add(new Vector3(30.91286f,12.60232f,34.00468f));
+            zipliningBoxes.Add(new Vector3(24.3414f,11.68311f,37.5724f));
+            zipliningBoxes.Add(new Vector3(16.94199f,11.88656f,41.21679f));
+            zipliningBoxes.Add(new Vector3(11.55125f,13.56605f,43.89849f));
+            zipliningBoxes.Add(new Vector3(8.693192f,16.35617f,45.3834f));
         }
     }
 }

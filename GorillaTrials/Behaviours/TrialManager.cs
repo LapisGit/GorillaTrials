@@ -35,6 +35,7 @@ namespace GorillaTrials.Behaviours
             // Forest Trials
             CreateTrial("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, ETrialType.Box, TrialPositions.stumpClimbBoxes);
             CreateTrial("Cross The Forest", "ctf", new Vector3(-46.75191f, 5.50911f, -26.79142f), 180, ETrialType.Box, TrialPositions.ctfBoxes);
+            CreateTrial("Tallest Tree", "tallesttree", new Vector3(-26.4936f,2.137212f,-77.43867f), 300, ETrialType.Box, TrialPositions.tallestTreeBoxes);
 
             // City Trials
             CreateTrial("Shopping Spree Basics", "shoppingspreebasics", new Vector3(-65.72206f, 16.42499f, -121.2781f), 180, ETrialType.Box, TrialPositions.shoppingSpreeBasicsBoxes);
@@ -48,6 +49,7 @@ namespace GorillaTrials.Behaviours
 
             // Caves Trials
             CreateTrial("Cave Run", "caverun", new Vector3(-62.76687f, -12.5016f, -50.1683f), 0f, ETrialType.Box, TrialPositions.caveRunBoxes);
+            CreateTrial("Loopback", "loopback", new Vector3(-63.18544f,-7.311106f,-35.69535f), 0f, ETrialType.Box, TrialPositions.loopBackBoxes);
 
             // Mines Trials
 
@@ -56,10 +58,14 @@ namespace GorillaTrials.Behaviours
             // Clouds Trials
 
             // Beach Trials
-
+            CreateTrial("Ziplining", "ziplining", new Vector3(-13.08672f,28.29308f,-19.87826f), 100f, ETrialType.Box, TrialPositions.zipliningBoxes);
+            
             // Hoverpark Trials
 
             // Hoverpark2 Trials
+            
+            // Ghost Reactor Trials
+            CreateTrial("RUN!!", "run", new Vector3(-22.25639f,-29.7322f,-80.10743f), 90f, ETrialType.Box, TrialPositions.runBoxes);
 
             // END OF OLD CODE
         }
