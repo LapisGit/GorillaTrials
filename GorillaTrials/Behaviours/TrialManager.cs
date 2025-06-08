@@ -17,20 +17,19 @@ namespace GorillaTrials.Behaviours
         public Trial CurrentTrial => currentTrial;
         public bool Started => currentTrial is not null;
         public List<Trial> Trials => trials;
-
+        public string refreshBoard = null;
         private Trial currentTrial;
         private readonly List<Trial> trials = [];
-
         public GameObject trialAssets, trialUIAsset, trialBoxAsset;
 
         public async override void Initialize()
         {
+            
             trialAssets = await AssetLoader.LoadAsset<GameObject>("GorillaTrials");
             trialUIAsset = trialAssets.transform.Find("Trial").gameObject;
             trialBoxAsset = trialAssets.transform.Find("Trial Box").gameObject;
 
             TrialPositions.Initialize();
-
             // START OF OLD CODE
 
             // Forest Trials
@@ -76,7 +75,7 @@ namespace GorillaTrials.Behaviours
             {
                 Logging.Info($"Created trial '{displayName}' ({trialId})");
                 trials.Add(trial);
-                StartCoroutine(trial.GetLeaderboardCoroutine());
+                StartCoroutine(trial.GetLeaderboardCoroutine(trialId));
                 return;
             }
 
@@ -104,13 +103,14 @@ namespace GorillaTrials.Behaviours
                 Logging.Info($"Submiting time {submitTime.Value}");
                 SubmitTrial(submitTime.Value);
             }
-
+            StartCoroutine(currentTrial.GetLeaderboardCoroutine(currentTrial.TrialServerName));
             currentTrial = null;
         }
 
         public void SubmitTrial(double submitTime)
         {
             string pbKey = string.Concat("PB_", currentTrial.TrialServerName);
+            refreshBoard = currentTrial.TrialServerName;
 
             if (submitTime > PlayerPrefs.GetFloat(pbKey, 0))
             {
@@ -158,7 +158,7 @@ namespace GorillaTrials.Behaviours
                 Logging.Error(request.downloadHandler.text);
                 yield break;
             }
-
+            refreshBoard = "";
             Logging.Info("Trial results uploaded");
         }
 

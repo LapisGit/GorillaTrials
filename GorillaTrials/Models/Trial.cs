@@ -74,9 +74,9 @@ namespace GorillaTrials.Models
             };
         }
 
-        public IEnumerator GetLeaderboardCoroutine()
+        public IEnumerator GetLeaderboardCoroutine(string trialID)
         {
-            string url = $"https://trials.freebranchcoins.xyz/leaderboard/{TrialServerName}";
+            string url = $"https://trials.freebranchcoins.xyz/leaderboard/{trialID}";
             using (UnityWebRequest www = UnityWebRequest.Get(url))
             {
                 string apiKey = Plugin.APIKey.Value;
