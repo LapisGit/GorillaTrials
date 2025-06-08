@@ -21,7 +21,7 @@ namespace GorillaTrials
             apiKeyEntry = Config.Bind(
                 "Server",
                 "APIKey",
-                "Your-Default-API-Key-Here",
+                "Your-API-Key-Here",
                 "The API key used to authenticate HTTP requests for trials."
             );
         }
@@ -31,8 +31,8 @@ namespace GorillaTrials
             //Trials.Initialize();
 #if DEBUG
             gameObject.AddComponent<DebugEditor>();
-            TrialPositions.Initialize();
 #endif
+            TrialPositions.Initialize();
             GameObject tempTrialsObj = new GameObject("GorillaTrials Challenges");
             tempTrialsObj.AddComponent<LoadTrials>();
             trials = tempTrialsObj.GetComponent<LoadTrials>();
