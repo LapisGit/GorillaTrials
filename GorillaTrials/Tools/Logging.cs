@@ -20,7 +20,7 @@ namespace GorillaTrials.Tools
             Plugin.Logger?.Log(level, message);
 #else
             if (!DebugLogExclusive)
-                Plugin.PluginLogSource?.Log(level, message);
+                Plugin.Logger?.Log(level, message);
 #endif
         }
     }

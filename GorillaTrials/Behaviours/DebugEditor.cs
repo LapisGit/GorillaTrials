@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if DEBUG
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CjLib;
@@ -10,7 +11,6 @@ namespace GorillaTrials.Behaviours
 {
     public class DebugEditor : MonoBehaviour
     {
-#if DEBUG
         public Rect windowRect = new Rect(20, 20, 350, 500);
 
         public List<Vector3> boxPositions;
@@ -61,10 +61,12 @@ namespace GorillaTrials.Behaviours
                 {
                     boxPositions.Add(GTPlayer.Instance.bodyCollider.transform.position);
                 }
+
                 if (GUILayout.Button("remove last box position"))
                 {
                     boxPositions.Remove(boxPositions.Last());
                 }
+
                 GUILayout.EndHorizontal();
             }
 
@@ -77,6 +79,7 @@ namespace GorillaTrials.Behaviours
             GUILayout.EndVertical();
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
+
         public static void SaveVector3ListToFile(List<Vector3> vectors, string filePath)
         {
             using (StreamWriter writer = new(filePath))
@@ -91,5 +94,6 @@ namespace GorillaTrials.Behaviours
             Debug.Log($"Saved {vectors.Count} vectors to {filePath}");
         }
     }
-#endif
 }
+#endif
+
