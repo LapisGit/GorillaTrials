@@ -25,3 +25,21 @@ Open the game with the mod, then go to your configuration (Located inside of you
 Restart your game, and you should be authenticated.
 
 Please contact Lapis on discord if any issues arrise.
+
+## Credits
+Lapis: Developer
+
+Will: Developer
+
+developer9998: Developer
+
+BP15: Tester
+
+Entity_B: Tester
+
+H4RNS: Tester
+
+Kronichal: Tester
+
+# This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2021 Another Axiom LLC.
+
