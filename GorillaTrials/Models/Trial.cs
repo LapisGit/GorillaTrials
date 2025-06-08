@@ -42,8 +42,10 @@ namespace GorillaTrials.Models
             trialUIObject.transform.eulerAngles = new Vector3(0, yRotation, 0);
             trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
             trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
+            trialUIObject.transform.Find("UI/Buttons/RefreshBoard").gameObject.layer = 18; //Gorilla Interactable
             
             TrialButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<TrialButton>();
+            TrialButton refreshButton = trialUIObject.transform.Find("UI/Buttons/RefreshBoard").AddComponent<TrialButton>();
 
             SetPersonalBest(PlayerPrefs.GetFloat(string.Concat("PB_", trialServerName), 0));
 
@@ -71,6 +73,10 @@ namespace GorillaTrials.Models
             trialButton.onPressed = () =>
             {
                 Singleton<TrialManager>.Instance.StartTrial(this);
+            };
+            refreshButton.onPressed = () =>
+            {
+                Singleton<TrialManager>.Instance.StartCoroutine(this.GetLeaderboardCoroutine(TrialServerName));
             };
         }
 

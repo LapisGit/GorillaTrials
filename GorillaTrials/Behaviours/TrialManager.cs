@@ -121,8 +121,8 @@ namespace GorillaTrials.Behaviours
         {
             string pbKey = string.Concat("PB_", currentTrial.TrialServerName);
             refreshBoard = currentTrial.TrialServerName;
-
-            if (submitTime < PlayerPrefs.GetFloat(pbKey, 0))
+            Logging.Info(PlayerPrefs.GetFloat(pbKey,0));
+            if (submitTime < PlayerPrefs.GetFloat(pbKey, 0) || PlayerPrefs.GetFloat(pbKey, 0) == 0)
             {
                 Logging.Info($"New personal best for {currentTrial.TrialServerName}: {submitTime} seconds");
 
@@ -198,6 +198,5 @@ namespace GorillaTrials.Behaviours
             }
             
         }
-
     }
 }
