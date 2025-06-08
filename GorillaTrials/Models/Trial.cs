@@ -1,16 +1,20 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Models.StateMachine;
+using GorillaTrials.Tools;
+using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 using Object = UnityEngine.Object;
 
 namespace GorillaTrials.Models
 {
-    public class Trial
+    public class Trial : MonoBehaviour
     {
         public readonly TrialStateMachine stateMachine = new();
 
@@ -26,6 +30,8 @@ namespace GorillaTrials.Models
         public int TrialType; // When deserializing this, make sure to convert the enum on the server (ex: challenge type set to "box") and set it to its corresponding value (ex box challenge type is 0 and zone type is 1, refer to TrialType)
         public TrialZone zoneData;
         public List<Vector3> boxPositions;
+        public List<LeaderboardEntry> leaderboardEntries;
+        public string formattedLeaderboardText = "";
 
         public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, TrialZone zoneData = null, List<Vector3> boxPositions = null)
         {
@@ -36,6 +42,7 @@ namespace GorillaTrials.Models
             trialUIObject.transform.eulerAngles = new Vector3(0, yRotation, 0);
             trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
             trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
+            
             TrialButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<TrialButton>();
 
             SetPersonalBest(PlayerPrefs.GetFloat(string.Concat("PB_", trialServerName), 0));
@@ -67,6 +74,49 @@ namespace GorillaTrials.Models
             };
         }
 
+        public IEnumerator GetLeaderboardCoroutine()
+        {
+            string url = $"https://trials.freebranchcoins.xyz/leaderboard/{TrialServerName}";
+            using (UnityWebRequest www = UnityWebRequest.Get(url))
+            {
+                string apiKey = Plugin.APIKey.Value;
+                www.SetRequestHeader("Authorization", apiKey);
+                
+                yield return www.SendWebRequest();
+
+                if (www.result == UnityWebRequest.Result.ConnectionError || 
+                    www.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Logging.Error("Error fetching leaderboard: " + www.error);
+                }
+                else
+                {
+                    string json = www.downloadHandler.text;
+
+                    try
+                    {
+                        leaderboardEntries = JsonConvert.DeserializeObject<List<LeaderboardEntry>>(json);
+                        formattedLeaderboardText = "";
+
+                        foreach (var entry in leaderboardEntries)
+                        {
+                            if (entry.rank > 10) continue;
+                            TimeSpan timeSpan = TimeSpan.FromSeconds(entry.time);
+                            string formattedTime = timeSpan.TotalHours >= 1
+                                ? timeSpan.ToString(@"h\:mm\:ss\.fff")
+                                : timeSpan.ToString(@"mm\:ss\.fff");
+                            string line = $"{entry.rank}. {entry.playerName} - {formattedTime}\n\n";
+                            formattedLeaderboardText += line;
+                            trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject.GetComponent<TextMeshProUGUI>().text = formattedLeaderboardText;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logging.Error("Failed to parse leaderboard JSON: " + e.Message);
+                    }
+                }
+            }
+        }
         public void SetPersonalBest(double value)
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(value);

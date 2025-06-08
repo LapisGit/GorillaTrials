@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -75,6 +76,7 @@ namespace GorillaTrials.Behaviours
             {
                 Logging.Info($"Created trial '{displayName}' ({trialId})");
                 trials.Add(trial);
+                StartCoroutine(trial.GetLeaderboardCoroutine());
                 return;
             }
 
