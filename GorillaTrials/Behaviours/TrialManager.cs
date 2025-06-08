@@ -6,8 +6,6 @@ using GorillaNetworking;
 using GorillaTrials.Models;
 using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
-using Photon.Pun;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -101,7 +99,7 @@ namespace GorillaTrials.Behaviours
 
             if (submitTime.HasValue)
             {
-                Logging.Info($"Submiting time {submitTime.Value}"); 
+                Logging.Info($"Submiting time {submitTime.Value}");
                 SubmitTrial(submitTime.Value);
             }
 
@@ -110,42 +108,32 @@ namespace GorillaTrials.Behaviours
 
         public void SubmitTrial(double submitTime)
         {
-            string playerName = NetworkSystem.Instance.GetMyNickName();
-            string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+            string pbKey = string.Concat("PB_", currentTrial.TrialServerName);
 
-            string jsonBody = JsonUtility.ToJson(new TrialResult
+            if (submitTime > PlayerPrefs.GetFloat(pbKey, 0))
             {
-                PlayerName = playerName,
-                Time = submitTime,
-                PlayerId = playerId
-            });
+                Logging.Info($"New personal best for {currentTrial.TrialServerName}: {submitTime} seconds");
 
-            StartCoroutine(PostRequest
-            (
-                string.Concat("https://trials.freebranchcoins.xyz/leaderboard/", currentTrial.TrialServerName),
-                jsonBody)
-            );
+                currentTrial.SetPersonalBest(submitTime);
 
-            string pbKey = $"PB_{currentTrial.TrialServerName}";
-
-            if (PlayerPrefs.GetFloat(pbKey, 0) > submitTime)
-            {
                 PlayerPrefs.SetFloat(pbKey, (float)submitTime);
                 PlayerPrefs.Save();
 
-                if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(pbKey, out object value) && value is double pb)
+                string playerName = NetworkSystem.Instance.GetMyNickName();
+                string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+
+                string jsonBody = JsonUtility.ToJson(new TrialResult
                 {
-                    GameObject.Find(currentTrial.TrialServerName).transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: " + value;
-                }
-            }
-            else
-            {
-                PlayerPrefs.SetFloat(pbKey, (float)submitTime);
-                PlayerPrefs.Save();
-                if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(pbKey, out object value) && value is double pb)
-                {
-                    GameObject.Find(currentTrial.TrialServerName).transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: " + value;
-                }
+                    PlayerName = playerName,
+                    Time = submitTime,
+                    PlayerId = playerId
+                });
+
+                StartCoroutine(PostRequest
+                (
+                    string.Concat("https://trials.freebranchcoins.xyz/leaderboard/", currentTrial.TrialServerName),
+                    jsonBody)
+                );
             }
         }
 

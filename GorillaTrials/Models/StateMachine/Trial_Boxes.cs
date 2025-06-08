@@ -40,6 +40,8 @@ namespace GorillaTrials.Models.StateMachine
 
                 newBox.transform.position = Trial.boxPositions[i];
                 newBox.name = $"Trial Box #{i + 1} ({Trial.TrialServerName})";
+
+                newBox.transform.localScale = Vector3.one * GetBoxScaleFactor(i);
             }
         }
 
@@ -48,11 +50,25 @@ namespace GorillaTrials.Models.StateMachine
             base.Exit();
 
             List<GameObject> boxObjects = boxes.Select(box => box.gameObject).ToList();
-            for(int i = 0; i < boxes.Count; i++)
+            for (int i = 0; i < boxes.Count; i++)
             {
                 Object.Destroy(boxObjects[i]);
             }
             boxes.Clear();
+        }
+
+        public float GetBoxScaleFactor(int index)
+        {
+            if (index < boxesCollected)
+                return Mathf.Epsilon; // closest number to 0
+
+            for (int i = 0; i < 5; i++)
+            {
+                if (index == boxesCollected + i)
+                    return 0.5f - (i * 0.1f);
+            }
+
+            return 0.05f;
         }
 
         public override void BoxTriggered(TrialBoxCollider box)
@@ -86,6 +102,12 @@ namespace GorillaTrials.Models.StateMachine
                 {
                     Logging.Info("Boxes collected!");
                     Trial.stateMachine.SwitchState(new Trial_End(Trial, true));
+                    return;
+                }
+
+                for (int i = 0; i < boxes.Count; i++)
+                {
+                    boxes[i].transform.localScale = Vector3.one * GetBoxScaleFactor(i);
                 }
 
                 return;

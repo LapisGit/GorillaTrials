@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GorillaTrials.Behaviours;
@@ -5,6 +6,7 @@ using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Models.StateMachine;
 using TMPro;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace GorillaTrials.Models
 {
@@ -35,12 +37,8 @@ namespace GorillaTrials.Models
             trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
             trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
             TrialButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<TrialButton>();
-            var player = Photon.Pun.PhotonNetwork.LocalPlayer;
-            string key = $"PB_{trialServerName}";
-            if (player.CustomProperties.TryGetValue(key, out object value) && value is double pb)
-            {
-                trialUIObject.transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: " + value;
-            }
+
+            SetPersonalBest(PlayerPrefs.GetFloat(string.Concat("PB_", trialServerName), 0));
 
             if (trialType == ETrialType.Box)
             {
@@ -67,6 +65,13 @@ namespace GorillaTrials.Models
             {
                 Singleton<TrialManager>.Instance.StartTrial(this);
             };
+        }
+
+        public void SetPersonalBest(double value)
+        {
+            TimeSpan timeSpan = TimeSpan.FromSeconds(value);
+
+            trialUIObject.transform.Find("UI/Info/PB").GetComponent<TextMeshProUGUI>().text = string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss") : timeSpan.ToString(@"mm\:ss"));
         }
     }
 }
