@@ -11,6 +11,8 @@
         {
             base.Enter();
 
+            VRRig.LocalRig.PlayTagSoundLocal(0, 0.25f, true);
+
             Trial.stopwatch.Restart();
 
             Trial.trialObject.SetActive(false);

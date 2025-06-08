@@ -42,6 +42,13 @@ namespace GorillaTrials.Models.StateMachine
                 newBox.name = $"Trial Box #{i + 1} ({Trial.TrialServerName})";
 
                 newBox.transform.localScale = Vector3.one * GetBoxScaleFactor(i);
+
+                AudioSource audioSource = newBox.AddComponent<AudioSource>();
+                audioSource.volume = 0.125f;
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 1;
+                audioSource.dopplerLevel = 0;
+                audioSource.clip = VRRig.LocalRig.clipToPlay[5];
             }
         }
 
@@ -62,13 +69,16 @@ namespace GorillaTrials.Models.StateMachine
             if (index < boxesCollected)
                 return Mathf.Epsilon; // closest number to 0
 
-            for (int i = 0; i < 5; i++)
+            int apparentBoxCount = 3;
+            float fullSize = 0.5f;
+
+            for (int i = 0; i < apparentBoxCount; i++)
             {
                 if (index == boxesCollected + i)
-                    return 0.5f - (i * 0.1f);
+                    return fullSize - (i * (fullSize / apparentBoxCount));
             }
 
-            return 0.05f;
+            return 0.1f;
         }
 
         public override void BoxTriggered(TrialBoxCollider box)
@@ -108,6 +118,8 @@ namespace GorillaTrials.Models.StateMachine
                 for (int i = 0; i < boxes.Count; i++)
                 {
                     boxes[i].transform.localScale = Vector3.one * GetBoxScaleFactor(i);
+                    if (i == boxesCollected && boxes[i].TryGetComponent(out AudioSource audioSource))
+                        audioSource.Play();
                 }
 
                 return;
