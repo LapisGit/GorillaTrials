@@ -31,15 +31,48 @@ namespace GorillaTrials
 
             GorillaTagger.OnPlayerSpawned(() =>
             {
+                
+                
                 GameObject root = new(Constants.Name);
                 DontDestroyOnLoad(root);
-
                 root.AddComponent<TrialManager>();
                 root.AddComponent<NetworkHandler>();
 #if DEBUG
                 root.AddComponent<DebugEditor>();
 #endif
+                CheckVersion();
             });
+            
+            async void CheckVersion()
+            {
+                string url = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt";
+
+                using var request = UnityEngine.Networking.UnityWebRequest.Get(url);
+                var asyncOp = request.SendWebRequest();
+
+                while (!asyncOp.isDone)
+                    await System.Threading.Tasks.Task.Yield();
+                
+                if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
+                {
+                    Logger.LogWarning($"[Version Check] Failed to fetch version info: {request.error}");
+                    return;
+                }
+
+                string remoteVersion = request.downloadHandler.text.Trim();
+
+                if (remoteVersion != Constants.Version)
+                {
+                    Logger.LogWarning($"[Version Check] Your version ({Constants.Version}) is out of date! Latest is {remoteVersion}.");
+                    Constants.UpToDate = false;
+                }
+                else
+                {
+                    Logger.LogInfo($"[Version Check] Plugin is up to date. Version: {Constants.Version}");
+                    Constants.UpToDate = true;
+                }
+            }
+
 
             Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
         }

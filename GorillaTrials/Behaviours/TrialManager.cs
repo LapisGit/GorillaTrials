@@ -97,7 +97,10 @@ namespace GorillaTrials.Behaviours
         public void StartTrial(Trial trialData)
         {
             if (Started)
+            {
                 return;
+            }
+            
 
             currentTrial = trialData;
             currentTrial.stateMachine.SwitchState(new Trial_Start(currentTrial));

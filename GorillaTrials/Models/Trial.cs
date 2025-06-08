@@ -72,7 +72,16 @@ namespace GorillaTrials.Models
 
             trialButton.onPressed = () =>
             {
-                Singleton<TrialManager>.Instance.StartTrial(this);
+                if (!Constants.UpToDate)
+                {
+                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
+                            .GetComponent<TextMeshProUGUI>().text =
+                        "Please update your mod. It is out of date.";
+                }
+                else
+                {
+                    Singleton<TrialManager>.Instance.StartTrial(this);   
+                }
             };
             refreshButton.onPressed = () =>
             {

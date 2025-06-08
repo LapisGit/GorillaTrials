@@ -11,5 +11,7 @@
         public const float NetworkSetInterval = 0.25f;
 
         public const string CustomProperty = "GTrials";
+
+        public static bool UpToDate = false;
     }
 }
