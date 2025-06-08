@@ -1,50 +1,48 @@
 using System.Collections.Generic;
-using GorillaTrials.Behaviors.UI;
+using System.Diagnostics;
+using GorillaTrials.Behaviours;
+using GorillaTrials.Behaviours.UI;
+using GorillaTrials.Models.StateMachine;
 using TMPro;
 using UnityEngine;
 
 namespace GorillaTrials.Models
 {
-    public enum TrialType
-    {
-        Box,
-        Zone
-    }
-
-    public class ZoneData
-    {
-        public Vector3 startPosition;
-        public Vector3 endPosition;
-    }
-    
     public class Trial
     {
+        public readonly TrialStateMachine stateMachine = new();
+
+        public readonly Stopwatch stopwatch = new();
+
+        public GameObject trialUIObject;
+
         public Vector3 position;
         public float y_rotation;
         public GameObject trialObject; //DO NOT SERIALIZE/DESERIALIZE FROM SERVER, THE MOD IS SUPPOSED TO AUTOMATICALLY ASSIGN THIS.
         public string TrialLongName;
         public string TrialServerName;
         public int TrialType; // When deserializing this, make sure to convert the enum on the server (ex: challenge type set to "box") and set it to its corresponding value (ex box challenge type is 0 and zone type is 1, refer to TrialType)
-        public ZoneData? zoneData;
-        public List<Vector3>? boxPositions;
+        public TrialZone zoneData;
+        public List<Vector3> boxPositions;
 
-        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, TrialType trialType, ZoneData zoneData = null, List<Vector3> boxPositions = null)
+        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, TrialZone zoneData = null, List<Vector3> boxPositions = null)
         {
-            GameObject trialUIObject = GameObject.Instantiate(LoadTrials.TrialUIPrefab);
+            trialUIObject = Object.Instantiate(Singleton<TrialManager>.Instance.trialUIAsset);
+            trialUIObject.transform.SetParent(Singleton<TrialManager>.Instance.transform);
             trialUIObject.name = trialServerName;
             trialUIObject.transform.position = trialPosition;
-            trialUIObject.transform.eulerAngles = new Vector3(0,yRotation,0);
+            trialUIObject.transform.eulerAngles = new Vector3(0, yRotation, 0);
             trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
             trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
-            UIButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<UIButton>();
+            TrialButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<TrialButton>();
             var player = Photon.Pun.PhotonNetwork.LocalPlayer;
             string key = $"PB_{trialServerName}";
             if (player.CustomProperties.TryGetValue(key, out object value) && value is double pb)
             {
-                trialUIObject.transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: "+value;
+                trialUIObject.transform.Find("UI/Info/PB").gameObject.GetComponent<TextMeshProUGUI>().text = "PB: " + value;
             }
 
-            if (trialType == Models.TrialType.Box)
+            if (trialType == ETrialType.Box)
             {
                 trialUIObject.transform.Find("UI/Info/TrialType").gameObject
                     .GetComponent<TextMeshProUGUI>().text = "Box Trial";
@@ -67,11 +65,8 @@ namespace GorillaTrials.Models
 
             trialButton.onPressed = () =>
             {
-                Trials.StartTrial(this);
-                Debug.Log("TrialButton pressed!");
+                Singleton<TrialManager>.Instance.StartTrial(this);
             };
-
-            Trials.All.Add(this);
         }
     }
 }

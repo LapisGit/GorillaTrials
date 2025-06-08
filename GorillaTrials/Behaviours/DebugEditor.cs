@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using CjLib;
 using GorillaLocomotion;
 using GorillaTrials.Models;
 using UnityEngine;
 
-namespace GorillaTrials.Behaviors
+namespace GorillaTrials.Behaviours
 {
     public class DebugEditor : MonoBehaviour
     {
@@ -17,7 +15,7 @@ namespace GorillaTrials.Behaviors
 
         public List<Vector3> boxPositions;
         public static string trialName = "DebugTrial";
-        public TrialType trialType = TrialType.Box;
+        public ETrialType trialType = ETrialType.Box;
         public static string ExecutablePath { get; }
 
         void Awake()
@@ -27,7 +25,7 @@ namespace GorillaTrials.Behaviors
 
         public void Update()
         {
-            foreach(Vector3 boxPos in boxPositions)
+            foreach (Vector3 boxPos in boxPositions)
             {
                 DebugUtil.DrawBox(boxPos, Quaternion.identity, Vector3.one, Color.magenta, false);
             }
@@ -44,17 +42,17 @@ namespace GorillaTrials.Behaviors
             GUILayout.Label("Trial Name");
             trialName = GUILayout.TextField(trialName);
             GUILayout.Space(20);
-            GUILayout.Label("Trial Type : "+trialType);
+            GUILayout.Label("Trial Type : " + trialType);
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Box"))
-                trialType = TrialType.Box;
+                trialType = ETrialType.Box;
             if (GUILayout.Button("Zone"))
-                trialType = TrialType.Zone;
+                trialType = ETrialType.Zone;
             GUILayout.EndHorizontal();
             GUILayout.Space(40);
 
-            if (trialType == TrialType.Box)
+            if (trialType == ETrialType.Box)
             {
                 GUILayout.Box("Box Positions");
                 GUILayout.Space(10);
@@ -73,7 +71,7 @@ namespace GorillaTrials.Behaviors
             GUILayout.Space(40);
             if (GUILayout.Button("Save trial data"))
             {
-               SaveVector3ListToFile(boxPositions, ExecutablePath+trialName+".txt");
+                SaveVector3ListToFile(boxPositions, ExecutablePath + trialName + ".txt");
             }
 
             GUILayout.EndVertical();
@@ -81,11 +79,11 @@ namespace GorillaTrials.Behaviors
         }
         public static void SaveVector3ListToFile(List<Vector3> vectors, string filePath)
         {
-            using (StreamWriter writer = new StreamWriter(filePath))
+            using (StreamWriter writer = new(filePath))
             {
                 foreach (Vector3 vec in vectors)
                 {
-                    string line = trialName+$".Add(new Vector3({vec.x}f,{vec.y}f,{vec.z}f));";
+                    string line = trialName + $".Add(new Vector3({vec.x}f,{vec.y}f,{vec.z}f));";
                     writer.WriteLine(line);
                 }
             }

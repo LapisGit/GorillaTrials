@@ -1,43 +1,48 @@
-﻿using System.Collections;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Configuration;
-using GorillaTrials.Behaviors;
-using GorillaTrials.Models;
+using BepInEx.Logging;
+using GorillaTrials.Behaviours;
+using GorillaTrials.Behaviours.Networking;
+using HarmonyLib;
 using UnityEngine;
 
 namespace GorillaTrials
 {
-    [BepInPlugin(Constants.PluginGuid, Constants.PluginName, Constants.PluginVersion)]
+    [BepInPlugin(Constants.GUID, Constants.Name, Constants.Version)]
     public class Plugin : BaseUnityPlugin
     {
-        public static LoadTrials trials;
-        public static Hashtable customProperties = new Hashtable();
-        public static ConfigEntry<string> apiKeyEntry;
-        
-        void Awake()
+        public static new ManualLogSource Logger;
+
+        public static new ConfigFile Config;
+        public static ConfigEntry<string> APIKey;
+
+        public void Awake()
         {
-            GorillaTagger.OnPlayerSpawned(() => { Load(); });
-            
-            apiKeyEntry = Config.Bind(
+            Logger = base.Logger;
+
+            Config = base.Config;
+            APIKey = Config.Bind
+            (
                 "Server",
                 "APIKey",
                 "Your-API-Key-Here",
-                "The API key used to authenticate HTTP requests for trials."
+                "The API key used to authenticate server requests for trials. DO NOT SEND YOUR KEY TO ANYONE!"
             );
-        }
 
-        public void Load()
-        {
-            //Trials.Initialize();
+            GorillaTagger.OnPlayerSpawned(() =>
+            {
+                GameObject root = new(Constants.Name);
+                DontDestroyOnLoad(root);
+
+                root.AddComponent<TrialManager>();
+                root.AddComponent<NetworkHandler>();
 #if DEBUG
-            gameObject.AddComponent<DebugEditor>();
+                root.AddComponent<DebugEditor>();
 #endif
-            TrialPositions.Initialize();
-            GameObject tempTrialsObj = new GameObject("GorillaTrials Challenges");
-            tempTrialsObj.AddComponent<LoadTrials>();
-            trials = tempTrialsObj.GetComponent<LoadTrials>();
-            LoadTrials.LoadAssetBundle();
+            });
+
+            Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
         }
     }
 }
-    
+
