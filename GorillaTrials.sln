@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.11.35208.52
+VisualStudioVersion = 17.13.35919.96 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GorillaTrials", "GorillaTrials.csproj", "{013EFFE6-41EC-4A78-8354-F496ECE24152}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GorillaTrials", "GorillaTrials\GorillaTrials.csproj", "{80BF73CE-A32D-E342-24F9-089A965820EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{013EFFE6-41EC-4A78-8354-F496ECE24152}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{013EFFE6-41EC-4A78-8354-F496ECE24152}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{013EFFE6-41EC-4A78-8354-F496ECE24152}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{013EFFE6-41EC-4A78-8354-F496ECE24152}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80BF73CE-A32D-E342-24F9-089A965820EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80BF73CE-A32D-E342-24F9-089A965820EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80BF73CE-A32D-E342-24F9-089A965820EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80BF73CE-A32D-E342-24F9-089A965820EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D5B078AB-C2D3-4147-97DC-0E8D179C22EA}
+		SolutionGuid = {73594C55-ACDD-4A71-AE18-A8A71FD4A0B6}
 	EndGlobalSection
 EndGlobal
