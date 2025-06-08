@@ -6,6 +6,7 @@ Go to the latest release, and put the .dll inside of your plugins folder.
 
 ## Authentication
 To be able to use the leaderboard, and submit times, you must authenticate your Gorilla Tag account with your Discord account.
+
 To do this, join the Discord Server (https://discord.gg/Yc8VXZSPQK) and run /createaccount in any channel, and then input your PlayerID there.
 
 Then, the bot will ask you to set your name in-game to a specific name, do that, and join any lobby, then hit the green button under it.
