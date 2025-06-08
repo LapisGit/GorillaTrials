@@ -39,6 +39,8 @@ namespace GorillaTrials.Behaviours
             // City Trials
             CreateTrial("Shopping Spree Basics", "shoppingspreebasics", new Vector3(-65.72206f, 16.42499f, -121.2781f), 180, ETrialType.Box, TrialPositions.shoppingSpreeBasicsBoxes);
             CreateTrial("Wraparound", "wraparound", new Vector3(-30.88225f, 14.99187f, -108.6642f), 269.5f, ETrialType.Box, TrialPositions.wraparoundBoxes);
+            CreateTrial("Going Up!", "goingup", new Vector3(-52.92646f,19.07714f,-101.7573f), 75f, ETrialType.Box, TrialPositions.goingUpBoxes);
+            CreateTrial("Competitive Course", "compcourse", new Vector3(-44.25076f,11.05946f,-127.3902f), 110f, ETrialType.Box, TrialPositions.compCourseBoxes);
 
             // Canyons Trials
             CreateTrial("Canyon Run", "canyonrun", new Vector3(-80.93035f, 10.34146f, -103.9011f), 180f, ETrialType.Box, TrialPositions.canyonRunBoxes);
