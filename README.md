@@ -15,7 +15,7 @@ If all goes well, you should see an API Key pop up, copy this.
 Make sure to ONLY copy the key, so not like this: ``{\"message\":\"Account created successfully.\",\"api_key\":\"2A7F0CS4DEBE9FG6GDD5GD6EHB8DAGD1744D9D7827499BFF514EF648F6B82B19\"}``
 But like this: ``2A7F0CS4DEBE9FG6GDD5GD6EHB8DAGD1744D9D7827499BFF514EF648F6B82B19`` (This API Key is NOT valid.)
 
-***WARNING!!!**
+***WARNING!!!***
 ***NEVER SHARE THIS KEY WITH ANYONE, EVER, NO MATTER WHAT THEY SAY. IT HOLDS YOUR ENTIRE ACCOUNT.***
 
 Open the game with the mod, then go to your configuration (Located inside of your BepInEx folder/config/Lapis.GorillaTrials.cfg) and put your API Key that you copied earlier into there, replacing the "Your-API-Key-Here" part.
