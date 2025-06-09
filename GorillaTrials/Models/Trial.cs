@@ -33,6 +33,7 @@ namespace GorillaTrials.Models
         public List<LeaderboardEntry> leaderboardEntries;
         public string formattedLeaderboardText = "";
 
+
         public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, TrialZone zoneData = null, List<Vector3> boxPositions = null)
         {
             trialUIObject = Object.Instantiate(Singleton<TrialManager>.Instance.trialUIAsset);

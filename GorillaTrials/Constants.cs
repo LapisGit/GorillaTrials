@@ -12,6 +12,6 @@
 
         public const string CustomProperty = "GTrials";
 
-        public static bool UpToDate = false;
+        public static bool UpToDate = true;
     }
 }

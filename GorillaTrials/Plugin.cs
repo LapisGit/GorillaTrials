@@ -40,7 +40,7 @@ namespace GorillaTrials
 #if DEBUG
                 root.AddComponent<DebugEditor>();
 #endif
-                CheckVersion();
+               // CheckVersion();
             });
             
             async void CheckVersion()
