@@ -17,6 +17,10 @@ namespace GorillaTrials.Behaviours.UI
             if (enabled && Time.realtimeSinceStartup > lastButtonClick && collider.TryGetComponent(out HandIndicator handIndicator))
             {
                 lastButtonClick = Time.realtimeSinceStartup + debounceTime;
+
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(67, handIndicator.isLeftHand, 0.05f);
+                GorillaTagger.Instance.StartVibration(handIndicator.isLeftHand, GorillaTagger.Instance.tapHapticStrength / 2f, GorillaTagger.Instance.tapHapticDuration);
+
                 onPressed?.Invoke();
             }
         }

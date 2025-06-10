@@ -1,10 +1,15 @@
-﻿using BepInEx;
+﻿using System;
+using System.Collections;
+using System.Threading.Tasks;
+using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.Networking;
+using GorillaTrials.Models;
 using HarmonyLib;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace GorillaTrials
 {
@@ -15,6 +20,8 @@ namespace GorillaTrials
 
         public static new ConfigFile Config;
         public static ConfigEntry<string> APIKey;
+
+        public static bool WrongVersion;
 
         public void Awake()
         {
@@ -40,41 +47,44 @@ namespace GorillaTrials
 #if DEBUG
                 root.AddComponent<DebugEditor>();
 #endif
-               // CheckVersion();
+                CompareVersion("https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt", version =>
+                {
+#if RELEASE
+                    WrongVersion = version == EVersionCompareResult.Outdated;
+#endif
+                });
             });
             
-            async void CheckVersion()
+            Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
+        }
+
+        public async void CompareVersion(string url, Action<EVersionCompareResult> onVersionRecieved)
+        {
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+            TaskCompletionSource<UnityWebRequest> completionSource = new();
+
+            StartCoroutine(YieldWebRequest(request, completionSource));
+            await completionSource.Task;
+
+            if (request.result != UnityWebRequest.Result.Success)
             {
-                string url = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt";
+                Logger.LogFatal($"Failed to check version {url}");
+                Logger.LogError(request.error);
 
-                using var request = UnityEngine.Networking.UnityWebRequest.Get(url);
-                var asyncOp = request.SendWebRequest();
-
-                while (!asyncOp.isDone)
-                    await System.Threading.Tasks.Task.Yield();
-                
-                if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
-                {
-                    Logger.LogWarning($"[Version Check] Failed to fetch version info: {request.error}");
-                    return;
-                }
-
-                string remoteVersion = request.downloadHandler.text.Trim();
-
-                if (remoteVersion != Constants.Version)
-                {
-                    Logger.LogWarning($"[Version Check] Your version ({Constants.Version}) is out of date! Latest is {remoteVersion}.");
-                    Constants.UpToDate = false;
-                }
-                else
-                {
-                    Logger.LogInfo($"[Version Check] Plugin is up to date. Version: {Constants.Version}");
-                    Constants.UpToDate = true;
-                }
+                onVersionRecieved?.Invoke(EVersionCompareResult.Invalid);
+                return;
             }
 
+            Version current = new(Constants.Version);
+            Version remote = new(request.downloadHandler.text.Trim());
 
-            Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
+            onVersionRecieved?.Invoke(remote > current ? EVersionCompareResult.Outdated : EVersionCompareResult.UpToDate);
+        }
+
+        private IEnumerator YieldWebRequest(UnityWebRequest webRequest, TaskCompletionSource<UnityWebRequest> completionSource)
+        {
+            yield return webRequest.SendWebRequest();
+            completionSource.SetResult(webRequest);
         }
     }
 }

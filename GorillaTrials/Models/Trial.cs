@@ -42,9 +42,9 @@ namespace GorillaTrials.Models
             trialUIObject.transform.position = trialPosition;
             trialUIObject.transform.eulerAngles = new Vector3(0, yRotation, 0);
             trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
-            trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = 18; //Gorilla Interactable
-            trialUIObject.transform.Find("UI/Buttons/RefreshBoard").gameObject.layer = 18; //Gorilla Interactable
-            
+            trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = (int)UnityLayer.GorillaInteractable;
+            trialUIObject.transform.Find("UI/Buttons/RefreshBoard").gameObject.layer = (int)UnityLayer.GorillaInteractable;
+
             TrialButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<TrialButton>();
             TrialButton refreshButton = trialUIObject.transform.Find("UI/Buttons/RefreshBoard").AddComponent<TrialButton>();
 
@@ -73,16 +73,14 @@ namespace GorillaTrials.Models
 
             trialButton.onPressed = () =>
             {
-                if (!Constants.UpToDate)
+                if (Plugin.WrongVersion)
                 {
-                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
-                            .GetComponent<TextMeshProUGUI>().text =
+                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").GetComponent<TextMeshProUGUI>().text =
                         "Please update your mod. It is out of date.";
+                    return;
                 }
-                else
-                {
-                    Singleton<TrialManager>.Instance.StartTrial(this);   
-                }
+
+                Singleton<TrialManager>.Instance.StartTrial(this);
             };
             refreshButton.onPressed = () =>
             {

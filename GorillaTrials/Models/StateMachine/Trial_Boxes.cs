@@ -78,7 +78,7 @@ namespace GorillaTrials.Models.StateMachine
                     return fullSize - (i * (fullSize / apparentBoxCount));
             }
 
-            return 0.1f;
+            return 0.05f;
         }
 
         public override void BoxTriggered(TrialBoxCollider box)
