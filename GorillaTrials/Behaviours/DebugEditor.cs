@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using CjLib;
 using GorillaLocomotion;
+using GorillaNetworking;
 using GorillaTrials.Models;
+using GorillaTrials.Tools;
 using UnityEngine;
 
 namespace GorillaTrials.Behaviours
@@ -39,6 +41,12 @@ namespace GorillaTrials.Behaviours
         void windowFunc(int windowID)
         {
             GUILayout.BeginVertical();
+            
+            if (GUILayout.Button("get playfab ticket"))
+            {
+                Logging.Info(PlayFabAuthenticator.instance._sessionTicket);
+            }
+            
             GUILayout.Label("Trial Name");
             trialName = GUILayout.TextField(trialName);
             GUILayout.Space(20);
