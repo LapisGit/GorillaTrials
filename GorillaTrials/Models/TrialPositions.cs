@@ -18,6 +18,7 @@ namespace GorillaTrials.Models
         public static List<Vector3> loopBackBoxes;
         public static List<Vector3> tallestTreeBoxes;
         public static List<Vector3> zipliningBoxes;
+        public static List<Vector3> ZoneTest;
         public static void Initialize()
         {
             stumpClimbBoxes = new List<Vector3>();
@@ -254,6 +255,10 @@ namespace GorillaTrials.Models
             zipliningBoxes.Add(new Vector3(16.94199f,11.88656f,41.21679f));
             zipliningBoxes.Add(new Vector3(11.55125f,13.56605f,43.89849f));
             zipliningBoxes.Add(new Vector3(8.693192f,16.35617f,45.3834f));
+
+            ZoneTest = new List<Vector3>();
+            ZoneTest.Add(new Vector3(-68.12432f,11.54318f,-82.65667f)); // start area
+            ZoneTest.Add(new Vector3(-63.60493f,12.03568f,-82.9546f)); // end area
         }
     }
 }

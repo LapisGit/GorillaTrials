@@ -163,7 +163,6 @@ namespace GorillaTrials.Models
         public void SetPersonalBest(double value)
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(value);
-
             trialUIObject.transform.Find("UI/Info/PB").GetComponent<TextMeshProUGUI>().text = string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
             
         }
@@ -171,7 +170,6 @@ namespace GorillaTrials.Models
         public void SetLastTime(double value)
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(value);
-            
             trialUIObject.transform.Find("UI/Info/LastTime").GetComponent<TextMeshProUGUI>().text = string.Concat("Last Time: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
         }
     }

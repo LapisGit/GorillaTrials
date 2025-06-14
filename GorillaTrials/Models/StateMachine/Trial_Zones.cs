@@ -43,7 +43,7 @@ namespace GorillaTrials.Models.StateMachine
             TrialBoxCollider endZone1 = endZone.GetOrAddComponent<TrialBoxCollider>();
             zones.Add(endZone1);
 
-            endZone.transform.position = Trial.zoneData.startPosition;
+            endZone.transform.position = Trial.zoneData.endPosition;
             endZone.name = $"Trial Start Zone ({Trial.TrialServerName})";
         }
 

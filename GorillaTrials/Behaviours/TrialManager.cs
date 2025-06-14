@@ -37,6 +37,7 @@ namespace GorillaTrials.Behaviours
             CreateTrial("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, ETrialType.Box, TrialPositions.stumpClimbBoxes);
             CreateTrial("Cross The Forest", "ctf", new Vector3(-46.75191f, 5.50911f, -26.79142f), 180, ETrialType.Box, TrialPositions.ctfBoxes);
             CreateTrial("Tallest Tree", "tallesttree", new Vector3(-26.4936f,2.137212f,-77.43867f), 300, ETrialType.Box, TrialPositions.tallestTreeBoxes);
+            CreateTrial("Zone Test", "zonetest", new Vector3(-68.12813f,11.5433f,-82.66145f), 0, ETrialType.Zone, TrialPositions.ZoneTest);
 
             // City Trials
             CreateTrial("Shopping Spree Basics", "shoppingspreebasics", new Vector3(-65.72206f, 16.42499f, -121.2781f), 180, ETrialType.Box, TrialPositions.shoppingSpreeBasicsBoxes);

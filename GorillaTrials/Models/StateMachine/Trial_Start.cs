@@ -22,7 +22,12 @@
                 Trial.stateMachine.SwitchState(new Trial_Boxes(Trial));
                 return;
             }
-
+            if (Trial.TrialType == (int)ETrialType.Zone)
+            {
+                Trial.stateMachine.SwitchState(new Trial_Zones(Trial));
+                return;
+            }
+            
             Trial.stateMachine.SwitchState(new Trial_End(Trial, false));
         }
     }
