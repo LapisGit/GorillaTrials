@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using GorillaNetworking;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Models.StateMachine;
@@ -84,7 +85,17 @@ namespace GorillaTrials.Models
                     return;
                 }
 
-                Singleton<TrialManager>.Instance.StartTrial(this);
+                if (GorillaComputer.instance.currentGameMode._value == "MODDED_Casual" || GorillaComputer.instance.currentGameMode._value == "Casual")
+                {
+                    Singleton<TrialManager>.Instance.StartTrial(this);
+                }
+                else
+                {
+                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").GetComponent<TextMeshProUGUI>().text =
+                        "Please enter a casual lobby to begin a trial.";
+                    Logging.Error($"Gamemode is {GorillaComputer.instance.currentGameMode._value}, and that is not a casual lobby. Not beginning trial.");
+                }
+                
             };
             refreshButton.onPressed = () =>
             {
