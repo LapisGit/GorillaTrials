@@ -33,6 +33,8 @@ namespace GorillaTrials.Models
         public List<LeaderboardEntry> leaderboardEntries;
         public string formattedLeaderboardText = "";
 
+        public enum TrialDifficulty;
+
 
         public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, TrialZone zoneData = null, List<Vector3> boxPositions = null)
         {
@@ -60,6 +62,8 @@ namespace GorillaTrials.Models
                 trialUIObject.transform.Find("UI/Info/TrialType").gameObject
                     .GetComponent<TextMeshProUGUI>().text = "Zone Trial";
             }
+            
+            
 
             trialObject = trialUIObject;
 
@@ -90,7 +94,7 @@ namespace GorillaTrials.Models
 
         public IEnumerator GetLeaderboardCoroutine(string trialID)
         {
-            string url = $"https://trials.freebranchcoins.xyz/leaderboard/{trialID}";
+            string url = $"https://trials.freebranchcoins.xyz/leaderboard/{trialID}?limit=10";
             using (UnityWebRequest www = UnityWebRequest.Get(url))
             {
                 string apiKey = Plugin.APIKey.Value;
