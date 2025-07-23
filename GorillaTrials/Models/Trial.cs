@@ -34,6 +34,7 @@ namespace GorillaTrials.Models
         public List<LeaderboardEntry> leaderboardEntries;
         public string formattedLeaderboardText = "";
 
+
         public enum TrialDifficulty;
 
 
@@ -172,5 +173,6 @@ namespace GorillaTrials.Models
             TimeSpan timeSpan = TimeSpan.FromSeconds(value);
             trialUIObject.transform.Find("UI/Info/LastTime").GetComponent<TextMeshProUGUI>().text = string.Concat("Last Time: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
         }
+
     }
 }

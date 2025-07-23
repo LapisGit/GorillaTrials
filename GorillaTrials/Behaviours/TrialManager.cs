@@ -19,7 +19,7 @@ namespace GorillaTrials.Behaviours
         public bool Started => currentTrial is not null;
         public List<Trial> Trials => trials;
         public string refreshBoard = null;
-        private Trial currentTrial;
+        public Trial currentTrial;
         private readonly List<Trial> trials = [];
         public GameObject trialAssets, trialUIAsset, trialBoxAsset;
 

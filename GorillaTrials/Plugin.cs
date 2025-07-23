@@ -44,6 +44,7 @@ namespace GorillaTrials
                 DontDestroyOnLoad(root);
                 root.AddComponent<TrialManager>();
                 root.AddComponent<NetworkHandler>();
+                root.AddComponent<EarlyEnd>();
 #if DEBUG
                 root.AddComponent<DebugEditor>();
 #endif
