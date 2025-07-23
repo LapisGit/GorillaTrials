@@ -33,12 +33,10 @@ namespace GorillaTrials.Models
         public List<Vector3> boxPositions;
         public List<LeaderboardEntry> leaderboardEntries;
         public string formattedLeaderboardText = "";
+        public ETrialDifficulty TrialDifficulty;
 
 
-        public enum TrialDifficulty;
-
-
-        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, TrialZone zoneData = null, List<Vector3> boxPositions = null)
+        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, TrialZone zoneData = null, List<Vector3> boxPositions = null)
         {
             trialUIObject = Object.Instantiate(Singleton<TrialManager>.Instance.trialUIAsset);
             trialUIObject.transform.SetParent(Singleton<TrialManager>.Instance.transform);
@@ -64,7 +62,31 @@ namespace GorillaTrials.Models
                 trialUIObject.transform.Find("UI/Info/TrialType").gameObject
                     .GetComponent<TextMeshProUGUI>().text = "Zone Trial";
             }
-            
+            if (trialDifficulty == ETrialDifficulty.Easy)
+            {
+                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#90EE90>Easy";
+            }
+            if (trialDifficulty == ETrialDifficulty.Medium)
+            {
+                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#FDFA72>Medium";
+            }
+            if (trialDifficulty == ETrialDifficulty.Hard)
+            {
+                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#FF6700>Hard";
+            }
+            if (trialDifficulty == ETrialDifficulty.Insane)
+            {
+                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#EE61BD>Insane";
+            }
+            if (trialDifficulty == ETrialDifficulty.Extreme)
+            {
+                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#FF474D>Extreme";
+            }
             
 
             trialObject = trialUIObject;
@@ -74,6 +96,7 @@ namespace GorillaTrials.Models
             TrialLongName = trialLongName;
             TrialServerName = trialServerName;
             TrialType = (int)trialType;
+            TrialDifficulty = trialDifficulty;
             this.zoneData = zoneData;
             this.boxPositions = boxPositions;
 

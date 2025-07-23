@@ -34,24 +34,24 @@ namespace GorillaTrials.Behaviours
             // START OF OLD CODE
 
             // Forest Trials
-            CreateTrial("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, ETrialType.Box, TrialPositions.stumpClimbBoxes);
-            CreateTrial("Cross The Forest", "ctf", new Vector3(-46.75191f, 5.50911f, -26.79142f), 180, ETrialType.Box, TrialPositions.ctfBoxes);
-            CreateTrial("Tallest Tree", "tallesttree", new Vector3(-26.4936f,2.137212f,-77.43867f), 300, ETrialType.Box, TrialPositions.tallestTreeBoxes);
-            CreateTrial("Zone Test", "zonetest", new Vector3(-68.12813f,11.5433f,-82.66145f), 0, ETrialType.Zone, TrialPositions.ZoneTest);
+            CreateTrial("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, ETrialType.Box, ETrialDifficulty.Easy, new object[] { TrialPositions.stumpClimbBoxes });
+            CreateTrial("Cross The Forest", "ctf", new Vector3(-46.75191f, 5.50911f, -26.79142f), 180, ETrialType.Box, ETrialDifficulty.Easy, new object[] { TrialPositions.ctfBoxes });
+            CreateTrial("Tallest Tree", "tallesttree", new Vector3(-26.4936f,2.137212f,-77.43867f), 300, ETrialType.Box, ETrialDifficulty.Medium, new object[] { TrialPositions.tallestTreeBoxes });
+            CreateTrial("Zone Test", "zonetest", new Vector3(-68.12813f,11.5433f,-82.66145f), 0, ETrialType.Zone, ETrialDifficulty.Extreme, new object[] { TrialPositions.ZoneTest });
 
             // City Trials
-            CreateTrial("Shopping Spree Basics", "shoppingspreebasics", new Vector3(-65.72206f, 16.42499f, -121.2781f), 180, ETrialType.Box, TrialPositions.shoppingSpreeBasicsBoxes);
-            CreateTrial("Wraparound", "wraparound", new Vector3(-30.88225f, 14.99187f, -108.6642f), 269.5f, ETrialType.Box, TrialPositions.wraparoundBoxes);
-            CreateTrial("Going Up!", "goingup", new Vector3(-52.92646f,19.07714f,-101.7573f), 75f, ETrialType.Box, TrialPositions.goingUpBoxes);
-            CreateTrial("Competitive Course", "compcourse", new Vector3(-44.25076f,11.05946f,-127.3902f), 110f, ETrialType.Box, TrialPositions.compCourseBoxes);
+            CreateTrial("Shopping Spree Basics", "shoppingspreebasics", new Vector3(-65.72206f, 16.42499f, -121.2781f), 180, ETrialType.Box, ETrialDifficulty.Easy, new object[] { TrialPositions.shoppingSpreeBasicsBoxes });
+            CreateTrial("Wraparound", "wraparound", new Vector3(-30.88225f, 14.99187f, -108.6642f), 269.5f, ETrialType.Box, ETrialDifficulty.Easy, new object[] { TrialPositions.wraparoundBoxes });
+            CreateTrial("Going Up!", "goingup", new Vector3(-52.92646f,19.07714f,-101.7573f), 75f, ETrialType.Box, ETrialDifficulty.Easy, new object[] { TrialPositions.goingUpBoxes });
+            CreateTrial("Competitive Course", "compcourse", new Vector3(-44.25076f,11.05946f,-127.3902f), 110f, ETrialType.Box, ETrialDifficulty.Easy, new object[] { TrialPositions.compCourseBoxes });
 
             // Canyons Trials
-            CreateTrial("Canyon Run", "canyonrun", new Vector3(-80.93035f, 10.34146f, -103.9011f), 180f, ETrialType.Box, TrialPositions.canyonRunBoxes);
-            CreateTrial("Swing", "swing", new Vector3(-87.95385f, 9.952705f, -117.7568f), 260f, ETrialType.Box, TrialPositions.swingBoxes);
+            CreateTrial("Canyon Run", "canyonrun", new Vector3(-80.93035f, 10.34146f, -103.9011f), 180f, ETrialType.Box, ETrialDifficulty.Easy, new object[] { TrialPositions.canyonRunBoxes });
+            CreateTrial("Swing", "swing", new Vector3(-87.95385f, 9.952705f, -117.7568f), 260f, ETrialType.Box, ETrialDifficulty.Easy, new object[] { TrialPositions.swingBoxes });
 
             // Caves Trials
-            CreateTrial("Cave Run", "caverun", new Vector3(-62.76687f, -12.5016f, -50.1683f), 0f, ETrialType.Box, TrialPositions.caveRunBoxes);
-            CreateTrial("Loopback", "loopback", new Vector3(-63.18544f,-7.311106f,-35.69535f), 0f, ETrialType.Box, TrialPositions.loopBackBoxes);
+            CreateTrial("Cave Run", "caverun", new Vector3(-62.76687f, -12.5016f, -50.1683f), 0f, ETrialType.Box, ETrialDifficulty.Medium, new object[] { TrialPositions.caveRunBoxes});
+            CreateTrial("Loopback", "loopback", new Vector3(-63.18544f,-7.311106f,-35.69535f), 0f, ETrialType.Box, ETrialDifficulty.Medium, new object[] { TrialPositions.loopBackBoxes });
 
             // Mines Trials
 
@@ -60,26 +60,26 @@ namespace GorillaTrials.Behaviours
             // Clouds Trials
 
             // Beach Trials
-            CreateTrial("Ziplining", "ziplining", new Vector3(-13.08672f,28.29308f,-19.87826f), 100f, ETrialType.Box, TrialPositions.zipliningBoxes);
+            CreateTrial("Ziplining", "ziplining", new Vector3(-13.08672f,28.29308f,-19.87826f), 100f, ETrialType.Box, ETrialDifficulty.Medium, new object[] { TrialPositions.zipliningBoxes });
             
             // Hoverpark Trials
 
             // Hoverpark2 Trials
             
             // Ghost Reactor Trials
-            CreateTrial("RUN!!", "run", new Vector3(-22.25639f,-29.7322f,-80.10743f), 90f, ETrialType.Box, TrialPositions.runBoxes);
+            CreateTrial("RUN!!", "run", new Vector3(-22.25639f, -29.7322f, -80.10743f), 90f, ETrialType.Box, ETrialDifficulty.Easy, new object[] { TrialPositions.runBoxes });
 
             // END OF OLD CODE
         }
 
-        public void CreateTrial(string displayName, string trialId, Vector3 position, float angle, ETrialType trialType = ETrialType.Box, params object[] parameters)
+        public void CreateTrial(string displayName, string trialId, Vector3 position, float angle, ETrialType trialType = ETrialType.Box, ETrialDifficulty trialDifficulty = ETrialDifficulty.Easy, object[] parameters = null)
         {
             Trial trial = null;
 
             if (trialType == ETrialType.Box && parameters is not null && parameters.ElementAtOrDefault(0) is List<Vector3> points)
-                trial = new(position, angle, displayName, trialId, trialType, null, points);
+                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, null, points);
             else if (trialType == ETrialType.Zone && parameters is not null && parameters.ElementAtOrDefault(0) is TrialZone trialZone)
-                trial = new(position, angle, displayName, trialId, trialType, trialZone, null);
+                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, trialZone, null);
 
             if (trial is not null)
             {
