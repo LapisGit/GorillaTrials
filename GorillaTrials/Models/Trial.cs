@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GorillaNetworking;
+using GorillaTagScripts.CustomMapSupport;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Models.StateMachine;
@@ -34,9 +35,10 @@ namespace GorillaTrials.Models
         public List<LeaderboardEntry> leaderboardEntries;
         public string formattedLeaderboardText = "";
         public ETrialDifficulty TrialDifficulty;
+        public float MaxTime;
 
 
-        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, TrialZone zoneData = null, List<Vector3> boxPositions = null)
+        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, float maxTime, TrialZone zoneData = null, List<Vector3> boxPositions = null)
         {
             trialUIObject = Object.Instantiate(Singleton<TrialManager>.Instance.trialUIAsset);
             trialUIObject.transform.SetParent(Singleton<TrialManager>.Instance.transform);
@@ -97,6 +99,7 @@ namespace GorillaTrials.Models
             TrialServerName = trialServerName;
             TrialType = (int)trialType;
             TrialDifficulty = trialDifficulty;
+            MaxTime = maxTime;
             this.zoneData = zoneData;
             this.boxPositions = boxPositions;
 
@@ -111,6 +114,11 @@ namespace GorillaTrials.Models
 
                 if (GorillaComputer.instance.currentGameMode._value == "MODDED_Casual" || GorillaComputer.instance.currentGameMode._value == "Casual")
                 {
+                    maxTime = Singleton<TimeManager>.Instance.maxTime = maxTime;
+                    if (maxTime == 0)
+                    {
+                        Singleton<TimeManager>.Instance.timeLimit = false;
+                    }
                     Singleton<TrialManager>.Instance.StartTrial(this);
                 }
                 else
@@ -123,7 +131,7 @@ namespace GorillaTrials.Models
             };
             refreshButton.onPressed = () =>
             {
-                Singleton<TrialManager>.Instance.StartCoroutine(this.GetLeaderboardCoroutine(TrialServerName));
+                Singleton<TrialManager>.Instance.StartCoroutine(GetLeaderboardCoroutine(TrialServerName));
             };
         }
 
