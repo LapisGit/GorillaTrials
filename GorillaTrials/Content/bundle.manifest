@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 768933749
+CRC: 2180636338
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b6a00df3e57d0a23cd0c02745dd131a3
+    Hash: c69d57c23f801b8cde77a7967aa0e460
   TypeTreeHash:
     serializedVersion: 2
     Hash: 552efa1a4dadbc27b3715a4607340e18
@@ -83,6 +83,5 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
 Assets:
-- Assets/LapisKiosk/KioskParent.prefab
 - Assets/GorillaTrials.prefab
 Dependencies: []

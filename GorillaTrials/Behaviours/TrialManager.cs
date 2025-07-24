@@ -102,7 +102,6 @@ namespace GorillaTrials.Behaviours
                 return;
             }
             
-
             currentTrial = trialData;
             currentTrial.stateMachine.SwitchState(new Trial_Start(currentTrial));
         }

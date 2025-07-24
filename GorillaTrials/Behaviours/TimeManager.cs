@@ -10,10 +10,13 @@ public class TimeManager : MonoBehaviour
     public bool timeLimit = false;
     public void Update()
     {
-        if (TrialManager.Instance.currentTrial.stopwatch.Elapsed.TotalSeconds >= maxTime && TrialManager.Instance.Started && timeLimit);
+        if (TrialManager.Instance.Started)
         {
-            TrialManager.Instance.currentTrial.stateMachine.SwitchState(new Trial_End(TrialManager.Instance.currentTrial, false));
-            Logging.Info("time limit reached, ending trial early...");
+            if (TrialManager.Instance.currentTrial.stopwatch.Elapsed.TotalSeconds >= maxTime && timeLimit);
+            {
+                TrialManager.Instance.currentTrial.stateMachine.SwitchState(new Trial_End(TrialManager.Instance.currentTrial, false));
+                Logging.Info("time limit reached, ending trial early...");
+            }   
         }
     }
 }
