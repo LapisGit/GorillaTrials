@@ -9,10 +9,6 @@
 		<None Remove="Content\bundle" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Include="Content\bundle" />
-	</ItemGroup>
-
 	<PropertyGroup>
 		<GamePath>C:\Program Files (x86)\Steam\steamapps\common\Gorilla Tag</GamePath>
 		<GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
@@ -313,5 +309,9 @@
 		<Reference Include="UnityEngine.XRModule">
 			<HintPath>$(GameAssemblyPath)\UnityEngine.XRModule.dll</HintPath>
 		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Content\bundle" />
 	</ItemGroup>
 </Project>

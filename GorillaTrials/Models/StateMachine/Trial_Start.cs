@@ -1,4 +1,6 @@
-﻿namespace GorillaTrials.Models.StateMachine
+﻿using GorillaTrials.Behaviours;
+
+namespace GorillaTrials.Models.StateMachine
 {
     public class Trial_Start : TrialState
     {

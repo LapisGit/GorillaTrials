@@ -89,7 +89,6 @@ namespace GorillaTrials.Models
                 trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
                     .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#FF474D>Extreme";
             }
-            
 
             trialObject = trialUIObject;
 
@@ -114,6 +113,8 @@ namespace GorillaTrials.Models
 
                 if (GorillaComputer.instance.currentGameMode._value == "MODDED_Casual" || GorillaComputer.instance.currentGameMode._value == "Casual")
                 {
+                    TimeManager.instance.maxTime = maxTime;
+                    
                     Singleton<TrialManager>.Instance.StartTrial(this);
                 }
                 else
