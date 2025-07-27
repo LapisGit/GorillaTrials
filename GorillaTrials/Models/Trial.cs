@@ -113,7 +113,7 @@ namespace GorillaTrials.Models
 
                 if (GorillaComputer.instance.currentGameMode._value == "MODDED_Casual" || GorillaComputer.instance.currentGameMode._value == "Casual")
                 {
-                    TimeManager.instance.maxTime = maxTime;
+                    //TimeManager.instance.maxTime = maxTime;
                     
                     Singleton<TrialManager>.Instance.StartTrial(this);
                 }

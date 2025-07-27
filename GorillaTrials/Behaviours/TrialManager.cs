@@ -25,7 +25,6 @@ namespace GorillaTrials.Behaviours
 
         public async override void Initialize()
         {
-            
             trialAssets = await AssetLoader.LoadAsset<GameObject>("GorillaTrials");
             trialUIAsset = trialAssets.transform.Find("Trial").gameObject;
             trialBoxAsset = trialAssets.transform.Find("Trial Box").gameObject;
@@ -117,6 +116,19 @@ namespace GorillaTrials.Behaviours
                 SubmitTrial(submitTime.Value);
             }
             StartCoroutine(currentTrial.GetLeaderboardCoroutine(currentTrial.TrialServerName));
+            if (Plugin.achievementManager.IsUnlocked("first_trial") == false)
+            {
+                Plugin.achievementManager.UnlockAchievement("first_trial");
+            }
+
+            if (submitTime.HasValue)
+            {
+                if (currentTrial.TrialServerName == "stumpclimb" && submitTime.Value < 11 &&
+                    Plugin.achievementManager.IsUnlocked("stump_climb_champ") == false)
+                {
+                    Plugin.achievementManager.UnlockAchievement("stump_climb_champ");
+                }   
+            }
             currentTrial = null;
         } 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Configuration;
@@ -22,9 +23,12 @@ namespace GorillaTrials
         public static ConfigEntry<string> APIKey;
 
         public static bool WrongVersion;
+        public static AchievementManager achievementManager;
 
         public void Awake()
         {
+            
+            achievementManager = new AchievementManager();
             Logger = base.Logger;
 
             Config = base.Config;
@@ -35,7 +39,11 @@ namespace GorillaTrials
                 "Your-API-Key-Here",
                 "The API key used to authenticate server requests for trials. DO NOT SEND YOUR KEY TO ANYONE!"
             );
-
+            
+            achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!", "Complete your first trial!"));
+            achievementManager.RegisterAchievement(new Achievement("stump_climb_champ", "Stump Climb Champion!", "Complete the 'Stump Climb' trial in under 11 seconds."));
+            achievementManager.LoadAchievements();
+            
             GorillaTagger.OnPlayerSpawned(() =>
             {
                 
@@ -45,7 +53,8 @@ namespace GorillaTrials
                 root.AddComponent<TrialManager>();
                 root.AddComponent<NetworkHandler>();
                 root.AddComponent<EarlyEnd>();
-                root.AddComponent<TimeManager>();
+                //root.AddComponent<TimeManager>();
+                root.AddComponent<AchievementUI>();
 #if DEBUG
                 root.AddComponent<DebugEditor>();
 #endif
