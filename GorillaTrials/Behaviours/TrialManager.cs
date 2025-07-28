@@ -21,7 +21,7 @@ namespace GorillaTrials.Behaviours
         public string refreshBoard = null;
         public Trial currentTrial;
         private readonly List<Trial> trials = [];
-        public GameObject trialAssets, trialUIAsset, trialBoxAsset;
+        public GameObject trialAssets, trialUIAsset, trialBoxAsset, achievementsUI;
 
         public async override void Initialize()
         {
@@ -116,7 +116,7 @@ namespace GorillaTrials.Behaviours
                 SubmitTrial(submitTime.Value);
             }
             StartCoroutine(currentTrial.GetLeaderboardCoroutine(currentTrial.TrialServerName));
-            if (Plugin.achievementManager.IsUnlocked("first_trial") == false)
+            if (Plugin.achievementManager.IsUnlocked("first_trial") == false && submitTime != null)
             {
                 Plugin.achievementManager.UnlockAchievement("first_trial");
             }

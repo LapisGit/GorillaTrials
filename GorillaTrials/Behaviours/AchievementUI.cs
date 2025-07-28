@@ -17,6 +17,7 @@ public class AchievementUI : MonoBehaviour
     async Task Initialize()
     {
         achievementUIRoot = await AssetLoader.LoadAsset<GameObject>("AchievementsUI");
+        TrialManager.Instance.achievementsUI = achievementUIRoot;
         achievementUIRoot = Instantiate(achievementUIRoot);
         DontDestroyOnLoad(achievementUIRoot);
         achievementUIRoot.transform.position = new Vector3(-69.3592f, 12.1929f,-83.4284f);

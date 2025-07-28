@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using BepInEx;
+using BepInEx.Configuration;
 using GorillaTrials.Tools;
 using UnityEngine;
 
@@ -15,6 +15,8 @@ namespace GorillaTrials.Behaviours
         public string Description;
         public bool Unlocked;
 
+        internal ConfigEntry<bool> ConfigEntry;
+
         public Achievement(string id, string name, string description)
         {
             ID = id;
@@ -26,21 +28,32 @@ namespace GorillaTrials.Behaviours
 
     public class AchievementManager
     {
-        private Dictionary<string, Achievement> achievements = new Dictionary<string, Achievement>();
+        private readonly Dictionary<string, Achievement> achievements = new();
+        private readonly ConfigFile config;
 
-        private readonly string saveFilePath = Path.Combine(Paths.ConfigPath, "gtrialsachievements.json");
-
-        public AchievementManager()
+        public AchievementManager(ConfigFile configFile)
         {
-            LoadAchievements();
+            config = configFile;
+            Logging.Info("AchievementManager initialized with BepInEx config.");
         }
 
         public void RegisterAchievement(Achievement achievement)
         {
             if (!achievements.ContainsKey(achievement.ID))
             {
+                // Register config entry for unlocked state
+                achievement.ConfigEntry = config.Bind(
+                    "Achievements",
+                    achievement.ID,
+                    false,
+                    $"Whether the achievement '{achievement.Name}' is unlocked."
+                );
+
+                // Load saved unlocked state
+                achievement.Unlocked = achievement.ConfigEntry.Value;
+
                 achievements.Add(achievement.ID, achievement);
-                Logging.Info($"registered: {achievement.Name}");
+                Logging.Info($"Registered achievement: {achievement.Name} (unlocked: {achievement.Unlocked})");
             }
         }
 
@@ -51,86 +64,26 @@ namespace GorillaTrials.Behaviours
                 if (!achievement.Unlocked)
                 {
                     achievement.Unlocked = true;
-                    Logging.Info($"unlocked: {achievement.Name} - {achievement.Description}");
-                    SaveAchievements();
-                    AchievementUI.instance.UpdateAchievements();
+                    achievement.ConfigEntry.Value = true; // update config
+                    config.Save();
+                    Logging.Info($"Unlocked achievement: {achievement.Name} - {achievement.Description}");
+                    AchievementUI.instance?.UpdateAchievements();
                 }
             }
             else
             {
-                Logging.Error($"tried to unlock unknown achievement: {id}");
+                Logging.Error($"Tried to unlock unknown achievement: {id}");
             }
         }
 
-            public bool IsUnlocked(string id)
-            {
-                return achievements.TryGetValue(id, out var achievement) && achievement.Unlocked;
-            }
+        public bool IsUnlocked(string id)
+        {
+            return achievements.TryGetValue(id, out var achievement) && achievement.Unlocked;
+        }
 
         public List<Achievement> GetAllAchievements()
         {
             return new List<Achievement>(achievements.Values);
-        }
-
-        public void LoadAchievements()
-        {
-            try
-            {
-                if (!File.Exists(saveFilePath))
-                {
-                    Logging.Warning("Achievements save file does not exist, creating new one.");
-                    SaveAchievements();
-                    return;
-                }
-                
-                if (File.Exists(saveFilePath))
-                {
-                    string json = File.ReadAllText(saveFilePath);
-                    var savedList = JsonUtility.FromJson<AchievementListWrapper>(json);
-
-                    foreach (var savedAchievement in savedList.achievements)
-                    {
-                        if (achievements.ContainsKey(savedAchievement.ID))
-                        {
-                            achievements[savedAchievement.ID].Unlocked = savedAchievement.Unlocked;
-                        }
-                        else
-                        {
-                            achievements.Add(savedAchievement.ID, savedAchievement);
-                        }
-                    }
-
-                    Logging.Info("loaded saved achievements yay wahoo :3 :3 :3 :3 :3 :3 :3 :3 :3 :3");
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.Error($"failed to load achievements: {e} 3:");
-            }
-        }
-
-        public void SaveAchievements()
-        { 
-            try
-            {
-                var list = new AchievementListWrapper
-                {
-                    achievements = new List<Achievement>(achievements.Values)
-                };
-                string json = JsonUtility.ToJson(list, true);
-                File.WriteAllText(saveFilePath, json);
-                Logging.Info("saved achievements");
-            }
-            catch (Exception e)
-            {
-                Logging.Error($"failed to save achievements: {e}");
-            }
-        }
-
-        [Serializable]
-        public class AchievementListWrapper
-        {
-            public List<Achievement> achievements;
         }
     }
 }

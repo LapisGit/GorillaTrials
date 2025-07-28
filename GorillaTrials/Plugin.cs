@@ -8,6 +8,7 @@ using BepInEx.Logging;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.Networking;
 using GorillaTrials.Models;
+using GorillaTrials.Tools;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -27,11 +28,13 @@ namespace GorillaTrials
 
         public void Awake()
         {
-            
-            achievementManager = new AchievementManager();
             Logger = base.Logger;
 
             Config = base.Config;
+            achievementManager = new AchievementManager(Config);
+            
+            achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!", "Complete your first trial!"));
+            achievementManager.RegisterAchievement(new Achievement("stump_climb_champ", "Stump Climb Champion!", "Complete the 'Stump Climb' trial in under 11 seconds."));
             APIKey = Config.Bind
             (
                 "Server",
@@ -40,9 +43,6 @@ namespace GorillaTrials
                 "The API key used to authenticate server requests for trials. DO NOT SEND YOUR KEY TO ANYONE!"
             );
             
-            achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!", "Complete your first trial!"));
-            achievementManager.RegisterAchievement(new Achievement("stump_climb_champ", "Stump Climb Champion!", "Complete the 'Stump Climb' trial in under 11 seconds."));
-            achievementManager.LoadAchievements();
             
             GorillaTagger.OnPlayerSpawned(() =>
             {
