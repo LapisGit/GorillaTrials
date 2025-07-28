@@ -35,10 +35,6 @@ Will: Developer
 
 developer9998: Developer
 
-BP15: Tester
-
-Entity_B: Tester
-
 H4RNS: Tester
 
 Kronicahl: Tester
