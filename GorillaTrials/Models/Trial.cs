@@ -153,7 +153,15 @@ namespace GorillaTrials.Models
                     Logging.Error("Not Connected.");
                     trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
                             .GetComponent<TextMeshProUGUI>().text =
-                        "You couldn't connect to the server, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
+                        "You couldn't connect to the server, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this error, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
+                }
+
+                if (www.responseCode == 404)
+                {
+                    Logging.Error("Trial leaderboard not found");
+                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
+                            .GetComponent<TextMeshProUGUI>().text =
+                        "This trials leaderboard could not be found, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this error, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
                 }
                 if (www.result == UnityWebRequest.Result.ConnectionError || 
                     www.result == UnityWebRequest.Result.ProtocolError)

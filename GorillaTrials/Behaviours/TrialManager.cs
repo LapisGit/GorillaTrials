@@ -77,8 +77,9 @@ namespace GorillaTrials.Behaviours
 
             if (trialType == ETrialType.Box && parameters is not null && parameters.ElementAtOrDefault(0) is List<Vector3> points)
                 trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, points);
-            else if (trialType == ETrialType.Zone && parameters is not null && parameters.ElementAtOrDefault(0) is TrialZone trialZone)
-                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, trialZone, null);
+            else if (trialType == ETrialType.Zone && parameters?.ElementAtOrDefault(0) is List<Vector3> zonePoints)
+                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, zonePoints);
+
 
             if (trial is not null)
             {
