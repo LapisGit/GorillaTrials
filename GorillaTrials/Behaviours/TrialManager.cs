@@ -83,7 +83,7 @@ namespace GorillaTrials.Behaviours
                 Logging.Info($"Created trial '{displayName}' ({trialId})");
                 trials.Add(trial);
                 StartCoroutine(trial.GetLeaderboardCoroutine(trialId));
-                //StartCoroutine(GetPlayerRank(trialId));
+                StartCoroutine(GetPlayerRank(trialId));
                 Logging.Info($"Is Custom Map Trial? {trial.isFromCustomMap}");
                 return;
             }
@@ -195,13 +195,19 @@ namespace GorillaTrials.Behaviours
                 Logging.Error($"Error: {www.responseCode} - {www.error}");
                 if (www.responseCode == 401)
                     Logging.Error("Unauthorized. Check your API key.");
+                if (www.responseCode == 404)
+                {
+                    Logging.Error("nuh uh no rank!");
+                    trialUIAsset.transform.Find("UI/Info/Rank").GetComponent<TextMeshProUGUI>().text = "Rank: N/A";
+                    yield break;
+                }
             }
             else
             {
                 string json = www.downloadHandler.text;
                 LeaderboardEntry result = JsonUtility.FromJson<LeaderboardEntry>(json);
                 Logging.Info($"Player rank is: {result.rank}");
-                trialUIAsset.transform.Find("UI/Info/Rank").GetComponent<TextMeshProUGUI>().text = "#" + result.rank;
+                trialUIAsset.transform.Find("UI/Info/Rank").GetComponent<TextMeshProUGUI>().text = "Rank: #" + result.rank;
             }
             
         }

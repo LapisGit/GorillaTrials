@@ -10,11 +10,10 @@ public class EarlyEnd : MonoBehaviour
     private readonly float requiredHoldDuration = 3f;
     public void Update()
     {
-        
         bool leftHeld = ControllerInputPoller.instance.leftControllerSecondaryButton;
         bool rightHeld = ControllerInputPoller.instance.rightControllerSecondaryButton;
 
-        if (leftHeld && rightHeld)
+        if (rightHeld || leftHeld)
         {
             bothButtonsHeldTime += Time.deltaTime;
             if (bothButtonsHeldTime >= requiredHoldDuration)
