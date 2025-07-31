@@ -36,9 +36,10 @@ namespace GorillaTrials.Models
         public string formattedLeaderboardText = "";
         public ETrialDifficulty TrialDifficulty;
         public float MaxTime;
+        public bool isFromCustomMap = false;
 
 
-        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, float maxTime, TrialZone zoneData = null, List<Vector3> boxPositions = null)
+        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, float maxTime, TrialZone zoneData = null, bool customMapTrial = false, List<Vector3> boxPositions = null)
         {
             trialUIObject = Object.Instantiate(Singleton<TrialManager>.Instance.trialUIAsset);
             trialUIObject.transform.SetParent(Singleton<TrialManager>.Instance.transform);
@@ -101,6 +102,7 @@ namespace GorillaTrials.Models
             MaxTime = maxTime;
             this.zoneData = zoneData;
             this.boxPositions = boxPositions;
+            isFromCustomMap = customMapTrial;
 
             trialButton.onPressed = () =>
             {

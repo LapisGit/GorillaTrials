@@ -1,0 +1,139 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GorillaTrials.Models;
+using GorillaTrials.Models.StateMachine;
+using GorillaTrials.Tools;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace GorillaTrials.Behaviours
+{
+    internal class CustomMapManager : MonoBehaviour
+    {
+        public static CustomMapManager instance;
+        
+
+        public void Awake()
+        {
+            instance = this;
+        }
+
+        public void LoadTrialsFromScene()
+        {
+
+            DestroyAllTrialsFromCustomMap();
+
+            var scene = SceneManager.GetSceneByName(CustomMapLoader.initialSceneName);
+            var rootObjects = scene.GetRootGameObjects();
+
+            foreach (var root in rootObjects)
+            {
+                TraverseHierarchy(root.transform);
+            }
+
+            Logging.Info("scene trial loading complete! :3");
+        }
+
+        void TraverseHierarchy(Transform parent)
+        {
+            ProcessObject(parent.gameObject);
+
+            foreach (Transform child in parent)
+            {
+                TraverseHierarchy(child);
+            }
+        }
+
+        void ProcessObject(GameObject obj)
+        {
+            if (!obj.name.StartsWith("Trial_"))
+                return;
+
+            Logging.Info("found one lolllll");
+
+            string[] parts = obj.name.Split('_');
+            if (parts.Length < 5)
+            {
+                Logging.Warning($"Trial object '{obj.name}' does not match naming convention.");
+                return;
+            }
+
+            string displayName = parts[1];
+            string difficultyStr = parts[2];
+            string typeStr = parts[3];
+            string trialId = parts[4];
+
+            if (!Enum.TryParse(typeStr, true, out ETrialType trialType))
+            {
+                Logging.Warning($"Invalid trial type '{typeStr}' on '{obj.name}'.");
+                return;
+            }
+
+            if (!Enum.TryParse(difficultyStr, true, out ETrialDifficulty trialDifficulty))
+            {
+                Logging.Warning($"Invalid trial difficulty '{difficultyStr}' on '{obj.name}'. Defaulting to Easy.");
+                trialDifficulty = ETrialDifficulty.Easy;
+            }
+
+            float angle = obj.transform.eulerAngles.y;
+            Vector3 position = obj.transform.position;
+            object[] parameters = null;
+            float maxTime = 0;
+
+            if (trialType == ETrialType.Box)
+            {
+                List<Vector3> boxPositions = new();
+                foreach (Transform child in obj.transform)
+                {
+                    boxPositions.Add(child.position);
+                }
+
+                parameters = new object[] { boxPositions };
+                Logging.Info($"Loaded Box trial '{displayName}' with {boxPositions.Count} boxes.");
+            }
+            else if (trialType == ETrialType.Zone)
+            {
+                Transform start = obj.transform.Find("Start");
+                Transform end = obj.transform.Find("End");
+
+                if (start == null || end == null)
+                {
+                    Logging.Warning($"Zone trial '{displayName}' missing 'Start' or 'End' child.");
+                    return;
+                }
+
+                List<Vector3> zonePoints = new() { start.position, end.position };
+                parameters = new object[] { zonePoints };
+                Logging.Info($"Loaded Zone trial '{displayName}' from {start.position} to {end.position}.");
+            }
+            
+            TrialManager.Instance.CreateTrial(displayName, trialId, position, angle, trialType, trialDifficulty, maxTime, true, parameters);
+        }
+        
+        public void DestroyAllTrialsFromCustomMap()
+        {
+            var customTrials = TrialManager.Instance.Trials
+                .Where(t => t.isFromCustomMap)
+                .ToList();
+
+            foreach (var trial in customTrials)
+            {
+                if (trial.trialUIObject != null)
+                {
+                    Destroy(trial.trialUIObject);
+                }
+
+                TrialManager.Instance.Trials.Remove(trial);
+            }
+
+            Logging.Info($"destroyed {customTrials.Count} custom map trial(s).");
+            if (TrialManager.Instance.Started)
+            {
+                TrialManager.Instance.currentTrial.stateMachine.SwitchState(new Trial_End(TrialManager.Instance.currentTrial, false));
+            }
+        }
+
+        
+    }
+}

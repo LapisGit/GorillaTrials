@@ -55,6 +55,7 @@ namespace GorillaTrials
                 root.AddComponent<EarlyEnd>();
                 //root.AddComponent<TimeManager>();
                 root.AddComponent<AchievementUI>();
+                root.AddComponent<CustomMapManager>();
 #if DEBUG
                 root.AddComponent<DebugEditor>();
 #endif
