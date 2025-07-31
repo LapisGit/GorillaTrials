@@ -14,7 +14,6 @@ namespace GorillaTrials.Models
         public static List<Vector3> caveRunBoxes;
         public static List<Vector3> goingUpBoxes;
         public static List<Vector3> compCourseBoxes;
-        public static List<Vector3> runBoxes;
         public static List<Vector3> loopBackBoxes;
         public static List<Vector3> tallestTreeBoxes;
         public static List<Vector3> zipliningBoxes;
@@ -179,22 +178,6 @@ namespace GorillaTrials.Models
             compCourseBoxes.Add(new Vector3(-56.81472f,18.30876f,-146.8588f));
             compCourseBoxes.Add(new Vector3(-60.0997f,19.67417f,-151.5796f));
             compCourseBoxes.Add(new Vector3(-64.0005f,20.7448f,-153.9263f));
-            
-            runBoxes = new List<Vector3>();
-            runBoxes.Add(new Vector3(-19.26546f,-29.94593f,-80.03615f));
-            runBoxes.Add(new Vector3(-16.45297f,-29.96387f,-79.7501f));
-            runBoxes.Add(new Vector3(-13.99422f,-30.00624f,-80.96046f));
-            runBoxes.Add(new Vector3(-10.71639f,-29.97418f,-82.32221f));
-            runBoxes.Add(new Vector3(-5.799641f,-29.98318f,-83.90822f));
-            runBoxes.Add(new Vector3(-3.43502f,-30.03826f,-87.20483f));
-            runBoxes.Add(new Vector3(-4.412796f,-30.03776f,-92.79861f));
-            runBoxes.Add(new Vector3(-3.886368f,-29.99503f,-97.37181f));
-            runBoxes.Add(new Vector3(-2.211555f,-29.94278f,-100.5344f));
-            runBoxes.Add(new Vector3(2.041908f,-29.93016f,-102.9216f));
-            runBoxes.Add(new Vector3(4.660416f,-29.96324f,-104.2513f));
-            runBoxes.Add(new Vector3(4.211273f,-30.00537f,-107.784f));
-            runBoxes.Add(new Vector3(2.453552f,-30.13645f,-111.738f));
-            runBoxes.Add(new Vector3(-0.07878876f,-30.23842f,-114.0818f));
             
             loopBackBoxes = new List<Vector3>();
             loopBackBoxes.Add(new Vector3(-65.38795f,-7.596756f,-29.73819f));

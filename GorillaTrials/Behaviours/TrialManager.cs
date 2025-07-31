@@ -64,9 +64,6 @@ namespace GorillaTrials.Behaviours
             // Hoverpark Trials
 
             // Hoverpark2 Trials
-            
-            // Ghost Reactor Trials
-            CreateTrial("RUN!!", "run", new Vector3(-22.25639f, -29.7322f, -80.10743f), 90f, ETrialType.Box, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.runBoxes });
 
             // END OF OLD CODE
         }
@@ -117,19 +114,7 @@ namespace GorillaTrials.Behaviours
                 SubmitTrial(submitTime.Value);
             }
             StartCoroutine(currentTrial.GetLeaderboardCoroutine(currentTrial.TrialServerName));
-            if (Plugin.achievementManager.IsUnlocked("first_trial") == false && submitTime != null)
-            {
-                Plugin.achievementManager.UnlockAchievement("first_trial");
-            }
-
-            if (submitTime.HasValue)
-            {
-                if (currentTrial.TrialServerName == "stumpclimb" && submitTime.Value < 11 &&
-                    Plugin.achievementManager.IsUnlocked("stump_climb_champ") == false)
-                {
-                    Plugin.achievementManager.UnlockAchievement("stump_climb_champ");
-                }   
-            }
+            AchievementChecker.instance.UpdateAchievements(submitTime, currentTrial);
             currentTrial = null;
         } 
 
