@@ -29,7 +29,7 @@ Restart your game, and you should be authenticated.
 Please contact Lapis on discord if any issues arrise.
 
 ## Custom Map Creation
-If you are a custom map creator and wish to implement Trials into your custom map, please take a look at the [Wiki](https://github.com/LapisGit/GorillaTrials/wiki)
+If you are a custom map creator and wish to implement Trials into your custom map, please take a look at the [Wiki.](https://github.com/LapisGit/GorillaTrials/wiki)
 
 ## Credits
 Lapis: Developer
