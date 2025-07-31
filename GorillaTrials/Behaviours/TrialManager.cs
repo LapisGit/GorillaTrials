@@ -35,7 +35,7 @@ namespace GorillaTrials.Behaviours
             // Forest Trials
             CreateTrial("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, ETrialType.Box, ETrialDifficulty.Easy, 20, false, new object[] { TrialPositions.stumpClimbBoxes });
             CreateTrial("Cross The Forest", "ctf", new Vector3(-46.75191f, 5.50911f, -26.79142f), 180, ETrialType.Box, ETrialDifficulty.Easy, 25, false, new object[] { TrialPositions.ctfBoxes });
-            CreateTrial("Tallest Tree", "tallesttree", new Vector3(-26.4936f,2.137212f,-77.43867f), 300, ETrialType.Box, ETrialDifficulty.Medium, 45, false, new object[] { TrialPositions.tallestTreeBoxes });
+            CreateTrial("Tallest Tree", "tallesttree", new Vector3(-26.4936f,2.137212f,-77.43867f), 300, ETrialType.Zone, ETrialDifficulty.Medium, 45, false, new object[] { TrialPositions.tallestTreeBoxes });
             CreateTrial("Zone Test", "zonetest", new Vector3(-68.12813f,11.5433f,-82.66145f), 0, ETrialType.Zone, ETrialDifficulty.Extreme, 0, false, new object[] { TrialPositions.ZoneTest });
 
             // City Trials

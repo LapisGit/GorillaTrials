@@ -196,31 +196,7 @@ namespace GorillaTrials.Models
             loopBackBoxes.Add(new Vector3(-66.87044f,2.685546f,-84.1671f));
             
             tallestTreeBoxes = new List<Vector3>();
-            tallestTreeBoxes.Add(new Vector3(-25.58732f,2.67129f,-72.5556f));
-            tallestTreeBoxes.Add(new Vector3(-22.86387f,4.913779f,-72.92065f));
-            tallestTreeBoxes.Add(new Vector3(-22.10656f,6.56805f,-68.42055f));
-            tallestTreeBoxes.Add(new Vector3(-22.41829f,8.035854f,-65.11611f));
-            tallestTreeBoxes.Add(new Vector3(-27.81845f,5.071994f,-62.83406f));
-            tallestTreeBoxes.Add(new Vector3(-27.81062f,7.706868f,-62.43214f));
-            tallestTreeBoxes.Add(new Vector3(-30.63455f,9.439949f,-62.32906f));
-            tallestTreeBoxes.Add(new Vector3(-37.18272f,12.28869f,-60.14269f));
-            tallestTreeBoxes.Add(new Vector3(-40.84543f,14.5786f,-60.21743f));
-            tallestTreeBoxes.Add(new Vector3(-43.72237f,14.57861f,-63.27828f));
-            tallestTreeBoxes.Add(new Vector3(-49.04667f,13.83378f,-63.1678f));
-            tallestTreeBoxes.Add(new Vector3(-49.95546f,12.68871f,-57.64261f));
-            tallestTreeBoxes.Add(new Vector3(-51.39735f,13.83378f,-52.36434f));
-            tallestTreeBoxes.Add(new Vector3(-58.0529f,13.75826f,-48.62063f));
-            tallestTreeBoxes.Add(new Vector3(-59.31351f,15.85259f,-50.94551f));
-            tallestTreeBoxes.Add(new Vector3(-61.46102f,18.08597f,-50.97398f));
-            tallestTreeBoxes.Add(new Vector3(-67.48252f,17.51233f,-51.52329f));
-            tallestTreeBoxes.Add(new Vector3(-70.95536f,17.98f,-49.0023f));
-            tallestTreeBoxes.Add(new Vector3(-75.95602f,20.03881f,-48.51898f));
-            tallestTreeBoxes.Add(new Vector3(-75.5173f,22.56195f,-45.90806f));
-            tallestTreeBoxes.Add(new Vector3(-75.74582f,24.20921f,-48.80383f));
-            tallestTreeBoxes.Add(new Vector3(-73.67922f,25.84142f,-49.56076f));
-            tallestTreeBoxes.Add(new Vector3(-73.66713f,29.01478f,-47.766f));
-            tallestTreeBoxes.Add(new Vector3(-73.63406f,32.23495f,-47.56679f));
-            tallestTreeBoxes.Add(new Vector3(-73.66061f,35.23291f,-47.42342f));
+            tallestTreeBoxes.Add(new Vector3(-26.4936f,2.137212f,-77.43867f));
             tallestTreeBoxes.Add(new Vector3(-73.79775f,37.83677f,-47.14853f));
 
             zipliningBoxes = new List<Vector3>();
