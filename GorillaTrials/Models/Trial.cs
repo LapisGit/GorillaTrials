@@ -89,7 +89,7 @@ namespace GorillaTrials.Models
             {
                 trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
                     .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#FF474D>Extreme";
-            }
+            } 
 
             trialObject = trialUIObject;
 
@@ -135,7 +135,14 @@ namespace GorillaTrials.Models
 
         public IEnumerator GetLeaderboardCoroutine(string trialID)
         {
-            string url = $"https://trials.freebranchcoins.xyz/leaderboard/{trialID}?limit=10";
+            if (isFromCustomMap)
+            {
+                trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
+                        .GetComponent<TextMeshProUGUI>().text =
+                    "This trial was created by a custom map and this trial is\nnot approved by the GorillaTrials team.\n\nYou may still play the trial, but nothing will be sent\nto any servers.";
+                yield break;
+            }
+            string url = $"https://trials.lapis.codes/leaderboard/{trialID}?limit=10";
             using (UnityWebRequest www = UnityWebRequest.Get(url))
             {
                 string apiKey = Plugin.APIKey.Value;

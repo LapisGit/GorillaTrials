@@ -73,9 +73,9 @@ namespace GorillaTrials.Behaviours
             Trial trial = null;
 
             if (trialType == ETrialType.Box && parameters is not null && parameters.ElementAtOrDefault(0) is List<Vector3> points)
-                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, false, points);
+                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, points);
             else if (trialType == ETrialType.Zone && parameters?.ElementAtOrDefault(0) is List<Vector3> zonePoints)
-                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, false, zonePoints);
+                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, zonePoints);
 
 
             if (trial is not null)
@@ -84,6 +84,7 @@ namespace GorillaTrials.Behaviours
                 trials.Add(trial);
                 StartCoroutine(trial.GetLeaderboardCoroutine(trialId));
                 //StartCoroutine(GetPlayerRank(trialId));
+                Logging.Info($"Is Custom Map Trial? {trial.isFromCustomMap}");
                 return;
             }
             
@@ -108,13 +109,18 @@ namespace GorillaTrials.Behaviours
             if (!Started)
                 return;
 
-            if (submitTime.HasValue)
+            if (submitTime.HasValue && currentTrial.isFromCustomMap == false)
             {
                 Logging.Info($"Submiting time {submitTime.Value}");
                 SubmitTrial(submitTime.Value);
             }
+
+            if (currentTrial.isFromCustomMap)
+            {
+                Logging.Info("Trial was created by a Custom Map, not submitting a time.");
+            }
             StartCoroutine(currentTrial.GetLeaderboardCoroutine(currentTrial.TrialServerName));
-            AchievementChecker.instance.UpdateAchievements(submitTime, currentTrial);
+
             currentTrial = null;
         } 
 
@@ -143,7 +149,7 @@ namespace GorillaTrials.Behaviours
 
             StartCoroutine(PostRequest
                 (
-                    string.Concat("https://trials.freebranchcoins.xyz/leaderboard/", currentTrial.TrialServerName),
+                    string.Concat("https://trials.lapis.codes/leaderboard/", currentTrial.TrialServerName),
                     jsonBody)
             );
             currentTrial.SetLastTime(submitTime);
@@ -174,7 +180,7 @@ namespace GorillaTrials.Behaviours
 
         private IEnumerator GetPlayerRank(string trial = null)
         {
-            string url = "https://trials.freebranchcoins.xyz/rank/" + trial + "/" +
+            string url = "https://trials.lapis.codes/rank/" + trial + "/" +
                          PlayFabAuthenticator.instance.GetPlayFabPlayerId();
             Logging.Info(url);
             string apiKey = Plugin.APIKey.Value;
