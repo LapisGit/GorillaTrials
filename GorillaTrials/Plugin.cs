@@ -22,6 +22,7 @@ namespace GorillaTrials
 
         public static new ConfigFile Config;
         public static ConfigEntry<string> APIKey;
+        public static ConfigEntry<bool> PBNotify;
 
         public static bool WrongVersion;
         public static AchievementManager achievementManager;
@@ -41,6 +42,13 @@ namespace GorillaTrials
                 "APIKey",
                 "Your-API-Key-Here",
                 "The API key used to authenticate server requests for trials. DO NOT SEND YOUR KEY TO ANYONE!"
+            );
+            PBNotify = Config.Bind
+            (
+                "Gameplay",
+                "PB Notify",
+                true,
+                "If true, the HUD will notify you if you get a Personal Best on a trial."
             );
             
             

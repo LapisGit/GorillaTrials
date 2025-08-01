@@ -16,9 +16,11 @@ namespace GorillaTrials.Behaviours
         public Rect windowRect = new Rect(20, 20, 350, 500);
 
         public List<Vector3> boxPositions;
+        public Quaternion rotation;
         public static string trialName = "DebugTrial";
         public ETrialType trialType = ETrialType.Box;
         public static string ExecutablePath { get; }
+        public float yRotation;
 
         void Awake()
         {
@@ -65,10 +67,17 @@ namespace GorillaTrials.Behaviours
                 GUILayout.Box("Box Positions");
                 GUILayout.Space(10);
                 GUILayout.BeginHorizontal();
+                
                 if (GUILayout.Button("add box position"))
                 {
+                    if (boxPositions.Count == 0)
+                    {
+                        yRotation = GTPlayer.Instance.bodyCollider.transform.eulerAngles.y;
+                    }
+
                     boxPositions.Add(GTPlayer.Instance.bodyCollider.transform.position);
                 }
+
 
                 if (GUILayout.Button("remove last box position"))
                 {
@@ -81,22 +90,25 @@ namespace GorillaTrials.Behaviours
             GUILayout.Space(40);
             if (GUILayout.Button("Save trial data"))
             {
-                SaveVector3ListToFile(boxPositions, ExecutablePath + trialName + ".txt");
+                SaveVector3ListToFile(boxPositions, rotation, ExecutablePath + trialName + ".txt");
             }
 
             GUILayout.EndVertical();
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
 
-        public static void SaveVector3ListToFile(List<Vector3> vectors, string filePath)
+        public void SaveVector3ListToFile(List<Vector3> vectors, Quaternion rotation, string filePath)
         {
             using (StreamWriter writer = new(filePath))
             {
+                writer.WriteLine($"{trialName} Y Rotation: {yRotation}f");
+                writer.WriteLine($"{trialName} = new List<Vector3>();");
                 foreach (Vector3 vec in vectors)
                 {
                     string line = trialName + $".Add(new Vector3({vec.x}f,{vec.y}f,{vec.z}f));";
                     writer.WriteLine(line);
                 }
+                
             }
 
             Debug.Log($"Saved {vectors.Count} vectors to {filePath}");

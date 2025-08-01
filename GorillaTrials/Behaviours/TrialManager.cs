@@ -22,6 +22,7 @@ namespace GorillaTrials.Behaviours
         public Trial currentTrial;
         private readonly List<Trial> trials = [];
         public GameObject trialAssets, trialUIAsset, trialBoxAsset, achievementsUI;
+        public string trialResultBackup;
 
         public async override void Initialize()
         {
@@ -36,13 +37,15 @@ namespace GorillaTrials.Behaviours
             CreateTrial("Stump Climb", "stumpclimb", new Vector3(-65.6918f, 2.5123f, -72.0744f), 180, ETrialType.Box, ETrialDifficulty.Easy, 20, false, new object[] { TrialPositions.stumpClimbBoxes });
             CreateTrial("Cross The Forest", "ctf", new Vector3(-46.75191f, 5.50911f, -26.79142f), 180, ETrialType.Box, ETrialDifficulty.Easy, 25, false, new object[] { TrialPositions.ctfBoxes });
             CreateTrial("Tallest Tree", "tallesttree", new Vector3(-26.4936f,2.137212f,-77.43867f), 300, ETrialType.Zone, ETrialDifficulty.Medium, 45, false, new object[] { TrialPositions.tallestTreeBoxes });
-            CreateTrial("Zone Test", "zonetest", new Vector3(-68.12813f,11.5433f,-82.66145f), 0, ETrialType.Zone, ETrialDifficulty.Extreme, 0, false, new object[] { TrialPositions.ZoneTest });
+            CreateTrial("Tree Scale", "treescale", new Vector3(-55.89836f,0.4074497f,-74.61014f), 73.83477f, ETrialType.Zone, ETrialDifficulty.Medium, 0, false, new object[] { TrialPositions.TreeScale });
+            CreateTrial("Long Jump", "longjump", new Vector3(-69.63531f,21.07899f,-62.07482f), 162.8339f, ETrialType.Box, ETrialDifficulty.Medium, 0, false, new object[] { TrialPositions.LongJump });
 
-            // City Trials
+            // City Trials 
             CreateTrial("Shopping Spree Basics", "shoppingspreebasics", new Vector3(-65.72206f, 16.42499f, -121.2781f), 180, ETrialType.Box, ETrialDifficulty.Easy, 10, false, new object[] { TrialPositions.shoppingSpreeBasicsBoxes });
             CreateTrial("Wraparound", "wraparound", new Vector3(-30.88225f, 14.99187f, -108.6642f), 269.5f, ETrialType.Box, ETrialDifficulty.Easy, 6, false, new object[] { TrialPositions.wraparoundBoxes });
             CreateTrial("Going Up!", "goingup", new Vector3(-52.92646f,19.07714f,-101.7573f), 75f, ETrialType.Box, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.goingUpBoxes });
-            CreateTrial("Competitive Course", "compcourse", new Vector3(-44.25076f,11.05946f,-127.3902f), 110f, ETrialType.Box, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.compCourseBoxes });
+            CreateTrial("Competitive Course", "compcourse", new Vector3(-44.25076f,11.05946f,-127.3902f), 110f, ETrialType.Zone, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.compCourseBoxes });
+            CreateTrial("It's TV Time!", "tvtime", new Vector3(-66.84679f,20.13389f,-133.6934f), 29.3185f, ETrialType.Box, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.TVTime });
 
             // Canyons Trials
             CreateTrial("Canyon Run", "canyonrun", new Vector3(-80.93035f, 10.34146f, -103.9011f), 180f, ETrialType.Box, ETrialDifficulty.Easy, 40, false, new object[] { TrialPositions.canyonRunBoxes });
@@ -57,14 +60,21 @@ namespace GorillaTrials.Behaviours
             // MonkeBlocks Trials
 
             // Clouds Trials
-
+            CreateTrial("Cross The Sky Bridge", "ctsb", new Vector3(-94.06928f,220.7724f,-77.95302f), 180f, ETrialType.Box, ETrialDifficulty.Easy, 25, false, new object[] { TrialPositions.CrossTheSkyBridge });
+            CreateTrial("Around You Go", "aroundyougo", new Vector3(-64.38399f,233.9328f,-89.04852f), 110f, ETrialType.Box, ETrialDifficulty.Easy, 25, false, new object[] { TrialPositions.AroundYouGo });
+            CreateTrial("Swinging Around", "swingingaround", new Vector3(-97.83932f,220.5139f,-76.19705f), 245f, ETrialType.Zone, ETrialDifficulty.Insane, 25, false, new object[] { TrialPositions.SwingingAround });
+            
             // Beach Trials
             CreateTrial("Ziplining", "ziplining", new Vector3(-13.08672f,28.29308f,-19.87826f), 100f, ETrialType.Box, ETrialDifficulty.Medium, 15, false, new object[] { TrialPositions.zipliningBoxes });
             
             // Hoverpark Trials
 
             // Hoverpark2 Trials
-
+            
+            // Metro Trials
+            CreateTrial("Master Swimmer", "masterswimmer", new Vector3(-27.56499f,0.3799381f,-138.2608f), 28.56395f, ETrialType.Box, ETrialDifficulty.Hard, 15, false, new object[] { TrialPositions.MasterSwimmer });
+            CreateTrial("Rooftop Jumping", "rooftopjumping", new Vector3(-2.468079f,7.529253f,-175.662f), 119.8114f, ETrialType.Box, ETrialDifficulty.Insane, 15, false, new object[] { TrialPositions.RooftopJumping });
+            
             // END OF OLD CODE
         }
 
@@ -141,6 +151,10 @@ namespace GorillaTrials.Behaviours
                 PlayerPrefs.SetFloat(pbKey, (float)submitTime);
                 PlayerPrefs.Save();
                 currentTrial.SetPersonalBest(submitTime);
+                TimeSpan timeSpan = TimeSpan.FromSeconds(submitTime);
+                HUDManager.instance.SetHUDText($"New PB! {string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"))}");
+                StartCoroutine(WaitDelay(3f));
+                HUDManager.instance.ClearHUD();
             }
             string playerName = NetworkSystem.Instance.GetMyNickName();
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
@@ -151,6 +165,8 @@ namespace GorillaTrials.Behaviours
                 Time = submitTime,
                 PlayerId = playerId
             });
+
+            trialResultBackup = jsonBody;
 
             StartCoroutine(PostRequest
                 (
@@ -176,6 +192,17 @@ namespace GorillaTrials.Behaviours
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Logging.Fatal($"Trial post error {request.responseCode}: {request.error}");
+                
+                if (request.responseCode == 0)
+                {
+                    StartCoroutine(WaitDelay(5f));
+                    StartCoroutine(PostRequest
+                        (
+                            string.Concat("https://trials.lapis.codes/leaderboard/", currentTrial.TrialServerName),
+                            trialResultBackup)
+                    );
+                }
+                
                 Logging.Error(request.downloadHandler.text);
                 yield break;
             }
@@ -216,5 +243,10 @@ namespace GorillaTrials.Behaviours
             }
             
         }
+        private IEnumerator WaitDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+        }
     }
+    
 }

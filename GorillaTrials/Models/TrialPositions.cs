@@ -18,6 +18,14 @@ namespace GorillaTrials.Models
         public static List<Vector3> tallestTreeBoxes;
         public static List<Vector3> zipliningBoxes;
         public static List<Vector3> ZoneTest;
+        public static List<Vector3> CrossTheSkyBridge;
+        public static List<Vector3> AroundYouGo;
+        public static List<Vector3> SwingingAround;
+        public static List<Vector3> TreeScale;
+        public static List<Vector3> LongJump;
+        public static List<Vector3> TVTime;
+        public static List<Vector3> MasterSwimmer;
+        public static List<Vector3> RooftopJumping;
         public static void Initialize()
         {
             stumpClimbBoxes = new List<Vector3>();
@@ -163,21 +171,9 @@ namespace GorillaTrials.Models
             goingUpBoxes.Add(new Vector3(-44.65137f,33.59367f,-99.04697f));
             
             compCourseBoxes = new List<Vector3>();
-            compCourseBoxes.Add(new Vector3(-43.26867f,12.60843f,-129.0072f));
-            compCourseBoxes.Add(new Vector3(-43.17897f,15.36311f,-128.9549f));
-            compCourseBoxes.Add(new Vector3(-43.17547f,17.56041f,-128.9441f));
-            compCourseBoxes.Add(new Vector3(-46.39255f,17.3349f,-128.1241f));
-            compCourseBoxes.Add(new Vector3(-49.34312f,18.33984f,-127.6642f));
-            compCourseBoxes.Add(new Vector3(-51.00391f,18.11922f,-129.0786f));
-            compCourseBoxes.Add(new Vector3(-51.87889f,19.50944f,-130.6781f));
-            compCourseBoxes.Add(new Vector3(-52.47704f,19.4985f,-134.0922f));
-            compCourseBoxes.Add(new Vector3(-46.37144f,19.54881f,-135.789f));
-            compCourseBoxes.Add(new Vector3(-47.6607f,17.65666f,-139.2775f));
-            compCourseBoxes.Add(new Vector3(-50.57654f,18.38503f,-140.879f));
-            compCourseBoxes.Add(new Vector3(-50.9261f,19.00476f,-144.7607f));
-            compCourseBoxes.Add(new Vector3(-56.81472f,18.30876f,-146.8588f));
-            compCourseBoxes.Add(new Vector3(-60.0997f,19.67417f,-151.5796f));
-            compCourseBoxes.Add(new Vector3(-64.0005f,20.7448f,-153.9263f));
+            compCourseBoxes.Add(new Vector3(-44.25076f,11.05946f,-127.3902f));
+            compCourseBoxes.Add(new Vector3(-64.02863f,20.74403f,-153.886f));
+            
             
             loopBackBoxes = new List<Vector3>();
             loopBackBoxes.Add(new Vector3(-65.38795f,-7.596756f,-29.73819f));
@@ -218,6 +214,111 @@ namespace GorillaTrials.Models
             ZoneTest = new List<Vector3>();
             ZoneTest.Add(new Vector3(-68.12432f,11.54318f,-82.65667f)); // start area
             ZoneTest.Add(new Vector3(-63.60493f,12.03568f,-82.9546f)); // end area
+            
+            CrossTheSkyBridge = new List<Vector3>();
+            CrossTheSkyBridge.Add(new Vector3(-93.10912f,220.9479f,-83.76237f));
+            CrossTheSkyBridge.Add(new Vector3(-92.17915f,221.5944f,-92.71704f));
+            CrossTheSkyBridge.Add(new Vector3(-90.92542f,223.2123f,-100.132f));
+            CrossTheSkyBridge.Add(new Vector3(-89.53391f,225.7992f,-106.985f));
+            CrossTheSkyBridge.Add(new Vector3(-88.41133f,228.3276f,-111.7535f));
+            CrossTheSkyBridge.Add(new Vector3(-85.4057f,227.854f,-118.6197f));
+            
+            AroundYouGo = new List<Vector3>();
+            AroundYouGo.Add(new Vector3(-62.86865f,233.9327f,-89.43458f));
+            AroundYouGo.Add(new Vector3(-60.05732f,233.9327f,-92.64401f));
+            AroundYouGo.Add(new Vector3(-58.79352f,234.1147f,-98.8558f));
+            AroundYouGo.Add(new Vector3(-61.72832f,234.258f,-105.8009f));
+            AroundYouGo.Add(new Vector3(-67.38467f,234.1045f,-108.1338f));
+            AroundYouGo.Add(new Vector3(-73.96806f,234.1506f,-108.2179f));
+            AroundYouGo.Add(new Vector3(-78.5791f,234.2049f,-104.5561f));
+            AroundYouGo.Add(new Vector3(-80.52716f,234.2168f,-97.59509f));
+            AroundYouGo.Add(new Vector3(-78.1483f,234.1979f,-91.82929f));
+            AroundYouGo.Add(new Vector3(-74.01501f,234.2354f,-87.63053f));
+            AroundYouGo.Add(new Vector3(-68.85933f,234.2221f,-86.71787f));
+            AroundYouGo.Add(new Vector3(-65.33698f,234.2417f,-88.22178f));
+
+            SwingingAround = new List<Vector3>();
+            SwingingAround.Add(new Vector3(-97.78297f,220.514f,-76.11961f));
+            SwingingAround.Add(new Vector3(-156.9866f,235.2441f,-128.0804f));
+            
+            TreeScale = new List<Vector3>();
+            TreeScale.Add(new Vector3(-55.89836f,0.4074497f,-74.61014f));
+            TreeScale.Add(new Vector3(-54.41679f,27.60246f,-74.31112f));
+            
+            LongJump = new List<Vector3>();
+            LongJump.Add(new Vector3(-69.63531f,21.07899f,-62.07482f));
+            LongJump.Add(new Vector3(-67.87423f,20.19229f,-66.44709f));
+            LongJump.Add(new Vector3(-65.67463f,19.86893f,-71.02999f));
+            LongJump.Add(new Vector3(-63.52385f,17.60606f,-75.19064f));
+            
+            TVTime = new List<Vector3>();
+            TVTime.Add(new Vector3(-66.84679f,20.13389f,-133.6934f));
+            TVTime.Add(new Vector3(-67.12263f,20.11139f,-128.219f));
+            TVTime.Add(new Vector3(-66.68828f,20.13385f,-120.6058f));
+            TVTime.Add(new Vector3(-58.70208f,20.13973f,-116.2155f));
+            TVTime.Add(new Vector3(-55.72143f,20.13381f,-122.1712f));
+            TVTime.Add(new Vector3(-55.72143f,20.13386f,-122.1712f));
+            TVTime.Add(new Vector3(-59.69569f,20.1114f,-130.6328f));
+            TVTime.Add(new Vector3(-66.0762f,20.13388f,-133.5327f));
+            
+            MasterSwimmer = new List<Vector3>();
+            MasterSwimmer.Add(new Vector3(-25.12699f,-0.21807f,-134.1185f));
+            MasterSwimmer.Add(new Vector3(-19.3993f,-0.1241169f,-124.6768f));
+            MasterSwimmer.Add(new Vector3(-14.01084f,-0.3219805f,-114.8297f));
+            MasterSwimmer.Add(new Vector3(3.888542f,-0.2806692f,-114.1586f));
+            MasterSwimmer.Add(new Vector3(30.49015f,-0.2757111f,-129.4742f));
+            MasterSwimmer.Add(new Vector3(57.8407f,-0.3268099f,-145.5453f));
+            MasterSwimmer.Add(new Vector3(72.76224f,-0.3321419f,-154.3133f));
+            MasterSwimmer.Add(new Vector3(74.59315f,-0.3019247f,-169.2068f));
+            MasterSwimmer.Add(new Vector3(65.3046f,-0.3123074f,-185.853f));
+            MasterSwimmer.Add(new Vector3(55.28308f,-0.3212824f,-199.7516f));
+            MasterSwimmer.Add(new Vector3(44.34124f,-0.2813082f,-223.1242f));
+            MasterSwimmer.Add(new Vector3(30.30433f,-0.3349619f,-245.6765f));
+            MasterSwimmer.Add(new Vector3(25.27084f,-0.3342628f,-256.0258f));
+            MasterSwimmer.Add(new Vector3(8.290108f,-0.2354193f,-264.5631f));
+            MasterSwimmer.Add(new Vector3(-8.163193f,-0.3337393f,-255.966f));
+            MasterSwimmer.Add(new Vector3(-24.31641f,-0.3470421f,-244.4489f));
+            MasterSwimmer.Add(new Vector3(-52.51143f,-0.3780041f,-229.7346f));
+            MasterSwimmer.Add(new Vector3(-68.2834f,-0.3346806f,-219.1589f));
+            MasterSwimmer.Add(new Vector3(-66.60416f,-0.3088808f,-203.8757f));
+            MasterSwimmer.Add(new Vector3(-59.75596f,-0.3256264f,-189.633f));
+            MasterSwimmer.Add(new Vector3(-51.28267f,-0.3363094f,-175.4755f));
+            MasterSwimmer.Add(new Vector3(-44.10122f,-0.3347788f,-164.014f));
+            MasterSwimmer.Add(new Vector3(-35.6423f,-0.325078f,-154.3977f));
+            MasterSwimmer.Add(new Vector3(-33.26785f,-0.3214979f,-149.1418f));
+            
+            RooftopJumping = new List<Vector3>();
+            RooftopJumping.Add(new Vector3(2.145706f,9.587942f,-178.4518f));
+            RooftopJumping.Add(new Vector3(4.44561f,9.514267f,-185.7134f));
+            RooftopJumping.Add(new Vector3(13.75177f,4.560268f,-184.5715f));
+            RooftopJumping.Add(new Vector3(20.17063f,8.386449f,-179.3633f));
+            RooftopJumping.Add(new Vector3(22.24275f,12.2972f,-181.547f));
+            RooftopJumping.Add(new Vector3(19.79881f,14.79121f,-186.1948f));
+            RooftopJumping.Add(new Vector3(19.22803f,9.625972f,-196.8506f));
+            RooftopJumping.Add(new Vector3(18.57269f,13.76821f,-199.5336f));
+            RooftopJumping.Add(new Vector3(13.12447f,12.35118f,-208.4847f));
+            RooftopJumping.Add(new Vector3(9.029724f,10.47604f,-203.6502f));
+            RooftopJumping.Add(new Vector3(4.696251f,10.48705f,-209.0228f));
+            RooftopJumping.Add(new Vector3(-4.17514f,7.24373f,-206.8978f));
+            RooftopJumping.Add(new Vector3(-10.3379f,14.11378f,-209.9336f));
+            RooftopJumping.Add(new Vector3(-19.755f,10.0149f,-206.1761f));
+            RooftopJumping.Add(new Vector3(-20.46226f,7.74027f,-197.7071f));
+            RooftopJumping.Add(new Vector3(-20.46226f,7.74027f,-197.7071f));
+            RooftopJumping.Add(new Vector3(-12.60056f,6.706849f,-192.113f));
+            RooftopJumping.Add(new Vector3(-13.42496f,9.392071f,-183.9492f));
+            RooftopJumping.Add(new Vector3(-9.065746f,10.04424f,-186.1699f));
+            RooftopJumping.Add(new Vector3(-7.450981f,8.134487f,-183.0245f));
+            RooftopJumping.Add(new Vector3(-7.450981f,8.134488f,-183.0245f));
+            RooftopJumping.Add(new Vector3(-2.427094f,9.135483f,-185.7565f));
+            RooftopJumping.Add(new Vector3(-3.225143f,10.96832f,-187.1967f));
+            RooftopJumping.Add(new Vector3(-2.253403f,11.3479f,-188.5973f));
+            RooftopJumping.Add(new Vector3(-0.6578751f,13.51142f,-187.3645f));
+            RooftopJumping.Add(new Vector3(0.2070999f,15.03663f,-185.9164f));
+            RooftopJumping.Add(new Vector3(0.2406845f,18.29927f,-185.7933f));
+            RooftopJumping.Add(new Vector3(-1.325897f,18.3322f,-188.6344f));
+            RooftopJumping.Add(new Vector3(-3.555435f,19.85577f,-188.9499f));
+            RooftopJumping.Add(new Vector3(-1.952057f,23.84375f,-187.2582f));
+            RooftopJumping.Add(new Vector3(-1.531784f,29.45609f,-186.7177f));
         }
     }
 }
