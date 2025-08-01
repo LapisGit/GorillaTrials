@@ -120,6 +120,11 @@ namespace GorillaTrials.Behaviours
                 Logging.Info("Trial was created by a Custom Map, not submitting a time.");
             }
             StartCoroutine(currentTrial.GetLeaderboardCoroutine(currentTrial.TrialServerName));
+            
+            if (submitTime.HasValue)
+            {
+                AchievementChecker.instance.UpdateAchievements(submitTime.Value, currentTrial);   
+            }
 
             currentTrial = null;
         } 

@@ -22,6 +22,8 @@ namespace GorillaTrials.Models.StateMachine
             Trial.stopwatch.Stop();
 
             Trial.trialObject.SetActive(true);
+            
+            HUDManager.instance.ClearHUD();
 
             Singleton<TrialManager>.Instance.EndTrial(submitTime ? Math.Round(Trial.stopwatch.Elapsed.TotalSeconds, 3) : null);
         }

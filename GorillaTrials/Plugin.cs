@@ -57,6 +57,8 @@ namespace GorillaTrials
                 root.AddComponent<AchievementUI>();
                 root.AddComponent<CustomMapManager>();
                 root.AddComponent<AchievementChecker>();
+                root.AddComponent<HUDManager>();
+                HUDManager.instance.Init();
 #if DEBUG
                 root.AddComponent<DebugEditor>();
 #endif
