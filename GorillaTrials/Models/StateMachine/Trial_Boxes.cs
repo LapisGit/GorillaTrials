@@ -40,10 +40,19 @@ namespace GorillaTrials.Models.StateMachine
                 {
                     Collider handCollider = handColliderTransform.GetComponent<Collider>();
                     if (handCollider != null)
-                    {
                         handCollider.isTrigger = true;
+                    
+                    if (!handColliderTransform.TryGetComponent(out Rigidbody rb))
+                    {
+                        rb = handColliderTransform.gameObject.AddComponent<Rigidbody>();
+                        rb.isKinematic = true;
                     }
+                    
+                    handColliderTransform.gameObject.layer = LayerMask.NameToLayer("GorillaInteractable");
+                    
+                    handColliderTransform.gameObject.GetOrAddComponent<TrialBoxHandCollider>(); 
                 }
+
 
                 TrialBoxCollider trialBox = newBox.GetOrAddComponent<TrialBoxCollider>();
                 boxes.Add(trialBox);

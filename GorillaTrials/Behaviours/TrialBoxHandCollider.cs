@@ -6,9 +6,8 @@ namespace GorillaTrials.Behaviours
     public class TrialBoxHandCollider : MonoBehaviour
     {
         private TrialBoxCollider parentBox;
-
-        protected readonly float debounceTime = 0.1f;
-        protected static float lastHandTriggerTime;
+        private const float debounceTime = 0.1f;
+        private static float lastTriggerTime;
 
         void Awake()
         {
@@ -17,18 +16,34 @@ namespace GorillaTrials.Behaviours
 
         void OnTriggerEnter(Collider collider)
         {
-            if (collider.TryGetComponent(out HandIndicator handIndicator))
+            if (!enabled) return;
+            
+            if (parentBox == null)
+                parentBox = GetComponentInParent<TrialBoxCollider>();
+
+            if (Time.realtimeSinceStartup > lastTriggerTime &&
+                collider.TryGetComponent(out HandIndicator handIndicator))
             {
-                if (enabled && Time.realtimeSinceStartup > lastHandTriggerTime)
+                lastTriggerTime = Time.realtimeSinceStartup + debounceTime;
+
+                //GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(67, handIndicator.isLeftHand, 0.05f);
+                //GorillaTagger.Instance.StartVibration(
+                 //   handIndicator.isLeftHand,
+                 //   GorillaTagger.Instance.tapHapticStrength / 2f,
+                 //   GorillaTagger.Instance.tapHapticDuration
+               // );
+               // used for debugging ^
+
+                if (parentBox != null)
                 {
-                    lastHandTriggerTime = Time.realtimeSinceStartup + debounceTime;
-                    
-                    if (parentBox != null)
-                    {
-                        parentBox.OnBoxTriggered();
-                    }
+                    parentBox.OnBoxTriggered();
+                }
+                else
+                {
+                    Debug.LogWarning("HandCollider triggered, but parentBox is NULL! >:3");
                 }
             }
         }
+
     }
 }
