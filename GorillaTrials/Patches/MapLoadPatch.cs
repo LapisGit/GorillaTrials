@@ -10,7 +10,7 @@ namespace GorillaTrials.Patches
 
         static void Postfix()
         {
-            CustomMapManager.instance.LoadTrialsFromScene();
+            CustomMapManager.instance.CheckIfApprovedMap(CustomMapLoader.LoadedMapModId);
         }
     }
 }

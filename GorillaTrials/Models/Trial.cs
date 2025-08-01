@@ -37,6 +37,7 @@ namespace GorillaTrials.Models
         public ETrialDifficulty TrialDifficulty;
         public float MaxTime;
         public bool isFromCustomMap = false;
+        public bool onApprovedMap = false;
 
 
         public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, float maxTime, TrialZone zoneData = null, bool customMapTrial = false, List<Vector3> boxPositions = null)
@@ -103,6 +104,7 @@ namespace GorillaTrials.Models
             this.zoneData = zoneData;
             this.boxPositions = boxPositions;
             isFromCustomMap = customMapTrial;
+            CustomMapManager.instance.approvedMap = onApprovedMap;
 
             trialButton.onPressed = () =>
             {
@@ -137,10 +139,13 @@ namespace GorillaTrials.Models
         {
             if (isFromCustomMap)
             {
-                trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
-                        .GetComponent<TextMeshProUGUI>().text =
-                    "This trial was created by a custom map and this trial is\nnot approved by the GorillaTrials team.\n\nYou may still play the trial, but nothing will be sent\nto any servers.";
-                yield break;
+                if (!onApprovedMap)
+                {
+                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
+                            .GetComponent<TextMeshProUGUI>().text =
+                        "This trial was created by a custom map and this trial is\nnot approved by the GorillaTrials team.\n\nYou may still play the trial, but nothing will be sent\nto any servers.";
+                    yield break;
+                }
             }
             string url = $"https://trials.lapis.codes/leaderboard/{trialID}?limit=10";
             using (UnityWebRequest www = UnityWebRequest.Get(url))

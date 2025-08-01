@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using GorillaTrials.Models;
 using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,7 +15,7 @@ namespace GorillaTrials.Behaviours
     internal class CustomMapManager : MonoBehaviour
     {
         public static CustomMapManager instance;
-        
+        public bool approvedMap = false;
 
         public void Awake()
         {
@@ -113,6 +116,9 @@ namespace GorillaTrials.Behaviours
         
         public void DestroyAllTrialsFromCustomMap()
         {
+            
+            approvedMap = false;
+            
             var customTrials = TrialManager.Instance.Trials
                 .Where(t => t.isFromCustomMap)
                 .ToList();
@@ -134,6 +140,45 @@ namespace GorillaTrials.Behaviours
             }
         }
 
+        private const string approvedMapsUrl = "https://raw.githubusercontent.com/LapisGit/GorillaSynapse/refs/heads/main/secretjsonshhh.json";
+
+        
+        public class ApprovedMapsWrapper
+        {
+            public List<long> approvedMaps { get; set; }
+        }
+        public async Task CheckIfApprovedMap(long mapID)
+        {
+            try
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    string json = await httpClient.GetStringAsync(approvedMapsUrl);
+                    
+                    ApprovedMapsWrapper wrapper = JsonConvert.DeserializeObject<ApprovedMapsWrapper>(json);
+
+                    if (wrapper?.approvedMaps != null)
+                    {
+                        foreach (long id in wrapper.approvedMaps)
+                        {
+                            if (id == mapID)
+                            {
+                                Debug.Log("Map is approved!!!!!!!!!!! :3");
+                                LoadTrialsFromScene();
+                                approvedMap = true;
+                            }
+                        }
+                    }
+                    
+                    LoadTrialsFromScene();
+                    Debug.Log("Map is NOT approved >:3");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.LogError($"Failed to fetch approved maps JSON: {ex.Message}");
+            }
+        }
         
     }
 }
