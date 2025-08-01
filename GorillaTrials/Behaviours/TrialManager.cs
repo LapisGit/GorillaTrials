@@ -60,6 +60,10 @@ namespace GorillaTrials.Behaviours
             // Mines Trials
 
             // MonkeBlocks Trials
+            CreateTrial("Climb To The Roof", "climbtotheroof", new Vector3(-119.9284f,16.47213f,-218.9089f), 210.1685f, ETrialType.Zone, ETrialDifficulty.Medium, 15, false, new object[] { TrialPositions.ClimbToTheRoof });
+            
+            // Atrium Trials
+            CreateTrial("Around The Atrium", "aroundtheatrium", new Vector3(-140.2721f,16.47622f,-190.3421f), 121.1634f, ETrialType.Box, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.AroundTheAtrium });
 
             // Clouds Trials
             CreateTrial("Cross The Sky Bridge", "ctsb", new Vector3(-94.06928f,220.7724f,-77.95302f), 180f, ETrialType.Box, ETrialDifficulty.Easy, 25, false, new object[] { TrialPositions.CrossTheSkyBridge });
@@ -70,14 +74,23 @@ namespace GorillaTrials.Behaviours
             CreateTrial("Ziplining", "ziplining", new Vector3(-13.08672f,28.29308f,-19.87826f), 100f, ETrialType.Box, ETrialDifficulty.Medium, 15, false, new object[] { TrialPositions.zipliningBoxes });
             
             // Hoverpark Trials
+            CreateTrial("Hoverpark Sprint", "hoverparksprint", new Vector3(-90.11035f,-17.27762f,42.16213f), 5.082142f, ETrialType.Zone, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.HoverparkSprint });
+            CreateTrial("Zigzag", "zigzag", new Vector3(-94.32401f,-27.92028f,64.27622f), 346.0804f, ETrialType.Box, ETrialDifficulty.Medium, 15, false, new object[] { TrialPositions.Zigzag });
 
             // Hoverpark2 Trials
+            CreateTrial("Easy Street", "easystreet", new Vector3(-48.27587f,-33.6416f,246.9118f), 185.1982f, ETrialType.Box, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.EasyStreet });
+            CreateTrial("Corkscrew", "corkscrew", new Vector3(-4.083221f,-33.84322f,251.7559f), 182.0719f, ETrialType.Box, ETrialDifficulty.Hard, 15, false, new object[] { TrialPositions.CorkScrew });
+            CreateTrial("Overpass 8", "overpass8", new Vector3(-127.3136f,-33.61564f,238.2645f), 182.9399f, ETrialType.Box, ETrialDifficulty.Medium, 15, false, new object[] { TrialPositions.Overpass8 });
+            CreateTrial("Hoverpark 2 Sprint Basic", "hp2sprintbasic", new Vector3(-81.24334f,-28.09051f,191.4615f), 4.934725f, ETrialType.Zone, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.Hoverpark2SprintBasic });
+            CreateTrial("Hoverpark 2 Sprint Advanced", "hp2sprintadvanced", new Vector3(-70.96362f,-28.09054f,191.6136f), 95.5587f, ETrialType.Box, ETrialDifficulty.Medium, 15, false, new object[] { TrialPositions.Hoverpark2SprintAdvanced });
             
             // Metro Trials
             CreateTrial("Master Swimmer", "masterswimmer", new Vector3(-27.56499f,0.3799381f,-138.2608f), 28.56395f, ETrialType.Box, ETrialDifficulty.Hard, 15, false, new object[] { TrialPositions.MasterSwimmer });
             CreateTrial("Rooftop Jumping", "rooftopjumping", new Vector3(-2.468079f,7.529253f,-175.662f), 119.8114f, ETrialType.Box, ETrialDifficulty.Insane, 15, false, new object[] { TrialPositions.RooftopJumping });
             
-            // END OF OLD CODE
+            // Mountains Trials
+            CreateTrial("To The Fan", "tothefan", new Vector3(-14.59269f,17.58918f,-110.4449f), 68.41476f, ETrialType.Zone, ETrialDifficulty.Easy, 15, false, new object[] { TrialPositions.ToTheFan });
+            
         }
 
         public void CreateTrial(string displayName, string trialId, Vector3 position, float angle, ETrialType trialType = ETrialType.Box, ETrialDifficulty trialDifficulty = ETrialDifficulty.Easy, float maxTime = 0, bool customMapTrial = false, object[] parameters = null)
