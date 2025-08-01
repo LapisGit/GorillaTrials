@@ -164,14 +164,16 @@ namespace GorillaTrials.Behaviours
                             if (id == mapID)
                             {
                                 Debug.Log("Map is approved!!!!!!!!!!! :3");
-                                LoadTrialsFromScene();
                                 approvedMap = true;
+                                LoadTrialsFromScene();
+                                return;
                             }
                         }
                     }
                     
                     LoadTrialsFromScene();
                     Debug.Log("Map is NOT approved >:3");
+                    Logging.Info($"mod id is {mapID}");
                 }
             }
             catch (HttpRequestException ex)

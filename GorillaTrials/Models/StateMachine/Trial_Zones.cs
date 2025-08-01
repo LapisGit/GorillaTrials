@@ -28,6 +28,16 @@ namespace GorillaTrials.Models.StateMachine
                 newZone.SetActive(true);
                 newZone.SetLayer(UnityLayer.GorillaBoundary);
                 newZone.GetComponent<Collider>().isTrigger = true;
+                
+                Transform handColliderTransform = newZone.transform.Find("HandCollider");
+                if (handColliderTransform != null)
+                {
+                    Collider handCollider = handColliderTransform.GetComponent<Collider>();
+                    if (handCollider != null)
+                    {
+                        handCollider.isTrigger = true;
+                    }
+                }
 
                 TrialBoxCollider zoneCollider = newZone.GetOrAddComponent<TrialBoxCollider>();
                 zones.Add(zoneCollider);
