@@ -7,6 +7,7 @@ using GorillaNetworking;
 using GorillaTrials.Models;
 using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
+using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -23,6 +24,7 @@ namespace GorillaTrials.Behaviours
         private readonly List<Trial> trials = [];
         public GameObject trialAssets, trialUIAsset, trialBoxAsset, achievementsUI;
         public string trialResultBackup;
+        private bool playerIdReady => !string.IsNullOrEmpty(PlayFabAuthenticator.instance.GetPlayFabPlayerId());
 
         public async override void Initialize()
         {
@@ -92,11 +94,11 @@ namespace GorillaTrials.Behaviours
             {
                 Logging.Info($"Created trial '{displayName}' ({trialId})");
                 trials.Add(trial);
-                StartCoroutine(trial.GetLeaderboardCoroutine(trialId));
-                StartCoroutine(GetPlayerRank(trialId));
+                StartCoroutine(trial.GetLeaderboardCoroutine(trialId)); ;
                 Logging.Info($"Is Custom Map Trial? {trial.isFromCustomMap}");
                 return;
             }
+
             
             Logging.Fatal($"TRIAL FOR {trialId} IS NULL!");
             Logging.Error($"Type: {trialType}");
@@ -210,43 +212,13 @@ namespace GorillaTrials.Behaviours
             Logging.Info("Trial results uploaded");
         }
 
-        private IEnumerator GetPlayerRank(string trial = null)
-        {
-            string url = "https://trials.lapis.codes/rank/" + trial + "/" +
-                         PlayFabAuthenticator.instance.GetPlayFabPlayerId();
-            Logging.Info(url);
-            string apiKey = Plugin.APIKey.Value;
-            UnityWebRequest www = UnityWebRequest.Get(url);
-            www.SetRequestHeader("Authorization", apiKey);
-
-            yield return www.SendWebRequest();
-
-            if (www.result == UnityWebRequest.Result.ConnectionError ||
-                www.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Logging.Error($"Error: {www.responseCode} - {www.error}");
-                if (www.responseCode == 401)
-                    Logging.Error("Unauthorized. Check your API key.");
-                if (www.responseCode == 404)
-                {
-                    Logging.Error("nuh uh no rank!");
-                    trialUIAsset.transform.Find("UI/Info/Rank").GetComponent<TextMeshProUGUI>().text = "Rank: N/A";
-                    yield break;
-                }
-            }
-            else
-            {
-                string json = www.downloadHandler.text;
-                LeaderboardEntry result = JsonUtility.FromJson<LeaderboardEntry>(json);
-                Logging.Info($"Player rank is: {result.rank}");
-                trialUIAsset.transform.Find("UI/Info/Rank").GetComponent<TextMeshProUGUI>().text = "Rank: #" + result.rank;
-            }
-            
-        }
         private IEnumerator WaitDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
         }
+        
+
+
     }
     
 }

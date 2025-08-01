@@ -177,6 +177,7 @@ namespace GorillaTrials.Models
                             .GetComponent<TextMeshProUGUI>().text =
                         "This trials leaderboard could not be found, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this error, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
                 }
+                Singleton<TrialManager>.Instance.StartCoroutine(GetPlayerRank());
                 if (www.result == UnityWebRequest.Result.ConnectionError || 
                     www.result == UnityWebRequest.Result.ProtocolError)
                 {
@@ -226,6 +227,70 @@ namespace GorillaTrials.Models
         {
             yield return new WaitForSeconds(delay);
         }
+        
+        public IEnumerator GetPlayerRank()
+        {
+            string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+            while (string.IsNullOrEmpty(playerId))
+            {
+                Logging.Warning("PlayerId not available. Retrying in 3 seconds...");
+                yield return new WaitForSeconds(3f);
+                playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+            }
+
+            string url = $"https://trials.lapis.codes/rank/{TrialServerName}/{playerId}";
+            Logging.Info($"Fetching rank for trial {TrialServerName} from {url}");
+
+            UnityWebRequest www = UnityWebRequest.Get(url);
+            www.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Error($"Error fetching rank: {www.responseCode} - {www.error}");
+
+                if (www.responseCode == 404)
+                {
+                    SetRankText("Rank: N/A");
+                }
+                yield break;
+            }
+
+            string json = www.downloadHandler.text;
+            Logging.Info($"Rank API Response: {json}");
+
+            try
+            {
+                RankedLeaderboardEntry result = JsonConvert.DeserializeObject<RankedLeaderboardEntry>(json);
+
+                if (result == null)
+                {
+                    Logging.Error("Parsed rank result is null.");
+                    yield break;
+                }
+
+                Logging.Info($"Parsed Rank = {result.Rank}, Player = {result.PlayerName}");
+                SetRankText($"Rank: #{result.Rank}");
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Failed to parse rank JSON: " + ex.Message);
+            }
+        }
+
+        private void SetRankText(string text)
+        {
+            Transform rankObj = trialUIObject.transform.Find("UI/Info/Rank");
+            if (rankObj == null)
+            {
+                Logging.Error($"Rank object not found in trial {TrialServerName}");
+                return;
+            }
+
+            rankObj.GetComponent<TextMeshProUGUI>().text = text;
+        }
+
 
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using GorillaNetworking;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.Networking;
 using GorillaTrials.Models;
@@ -77,6 +78,7 @@ namespace GorillaTrials
 #endif
                 });
             });
+            
             
             Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
         }
