@@ -2,7 +2,7 @@
 {
     internal class Constants
     {
-        public const string GUID = "Lapis.GorillaTrials"; // don't change, i guess
+        public const string GUID = "Lapis.GorillaTrials";
 
         public const string Name = "GorillaTrials";
 

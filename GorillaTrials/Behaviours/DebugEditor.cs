@@ -13,14 +13,14 @@ namespace GorillaTrials.Behaviours
 {
     public class DebugEditor : MonoBehaviour
     {
-        public Rect windowRect = new Rect(20, 20, 350, 500);
+        public Rect windowRect = new Rect(20, 20, 350, 580);
 
         public List<Vector3> boxPositions;
-        public Quaternion rotation;
         public static string trialName = "DebugTrial";
         public ETrialType trialType = ETrialType.Box;
-        public static string ExecutablePath { get; }
-        public float yRotation;
+
+        private Vector3 trialStandPosition = Vector3.zero;
+        private float trialStandRotation = 0f;
 
         void Awake()
         {
@@ -30,9 +30,10 @@ namespace GorillaTrials.Behaviours
         public void Update()
         {
             foreach (Vector3 boxPos in boxPositions)
-            {
                 DebugUtil.DrawBox(boxPos, Quaternion.identity, Vector3.one, Color.magenta, false);
-            }
+            
+            if (trialStandPosition != Vector3.zero)
+                DebugUtil.DrawBox(trialStandPosition, Quaternion.Euler(0, trialStandRotation, 0), Vector3.one, Color.green, false);
         }
 
         public void OnGUI()
@@ -43,77 +44,77 @@ namespace GorillaTrials.Behaviours
         void windowFunc(int windowID)
         {
             GUILayout.BeginVertical();
-            
-            if (GUILayout.Button("get playfab ticket"))
-            {
-                Logging.Info(PlayFabAuthenticator.instance._sessionTicket);
-            }
-            
+
             GUILayout.Label("Trial Name");
             trialName = GUILayout.TextField(trialName);
-            GUILayout.Space(20);
-            GUILayout.Label("Trial Type : " + trialType);
 
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Box"))
-                trialType = ETrialType.Box;
-            if (GUILayout.Button("Zone"))
-                trialType = ETrialType.Zone;
-            GUILayout.EndHorizontal();
-            GUILayout.Space(40);
+            GUILayout.Space(20);
+            
+            if (GUILayout.Button("Set Trial Stand Position + Rotation"))
+            {
+                trialStandPosition = GTPlayer.Instance.bodyCollider.transform.position;
+                trialStandRotation = GTPlayer.Instance.bodyCollider.transform.eulerAngles.y;
+            }
+
+            GUILayout.Space(20);
 
             if (trialType == ETrialType.Box)
             {
                 GUILayout.Box("Box Positions");
-                GUILayout.Space(10);
                 GUILayout.BeginHorizontal();
-                
-                if (GUILayout.Button("add box position"))
-                {
-                    if (boxPositions.Count == 0)
-                    {
-                        yRotation = GTPlayer.Instance.bodyCollider.transform.eulerAngles.y;
-                    }
 
+                if (GUILayout.Button("Add box position"))
                     boxPositions.Add(GTPlayer.Instance.bodyCollider.transform.position);
-                }
 
-
-                if (GUILayout.Button("remove last box position"))
-                {
-                    boxPositions.Remove(boxPositions.Last());
-                }
+                if (GUILayout.Button("Remove last box position") && boxPositions.Count > 0)
+                    boxPositions.RemoveAt(boxPositions.Count - 1);
 
                 GUILayout.EndHorizontal();
             }
 
-            GUILayout.Space(40);
-            if (GUILayout.Button("Save trial data"))
-            {
-                SaveVector3ListToFile(boxPositions, rotation, ExecutablePath + trialName + ".txt");
-            }
+            GUILayout.Space(20);
+
+            if (GUILayout.Button("Save trial JSON"))
+                SaveTrialToJsonFile();
 
             GUILayout.EndVertical();
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
 
-        public void SaveVector3ListToFile(List<Vector3> vectors, Quaternion rotation, string filePath)
+        void SaveTrialToJsonFile()
         {
-            using (StreamWriter writer = new(filePath))
+            var trialData = new TrialJson
             {
-                writer.WriteLine($"{trialName} Y Rotation: {yRotation}f");
-                writer.WriteLine($"{trialName} = new List<Vector3>();");
-                foreach (Vector3 vec in vectors)
-                {
-                    string line = trialName + $".Add(new Vector3({vec.x}f,{vec.y}f,{vec.z}f));";
-                    writer.WriteLine(line);
-                }
-                
-            }
+                displayName = trialName,
+                trialId = trialName.ToLower().Replace(" ", ""),
+                position = trialStandPosition == Vector3.zero ? GTPlayer.Instance.bodyCollider.transform.position : trialStandPosition,
+                angle = trialStandRotation,
+                trialType = trialType.ToString(),
+                trialDifficulty = "Easy",
+                maxTime = 60,
+                customMapTrial = true,
+                points = boxPositions
+            };
 
-            Debug.Log($"Saved {vectors.Count} vectors to {filePath}");
+            string json = JsonUtility.ToJson(trialData, true);
+            string filePath = Path.Combine(Application.persistentDataPath, $"{trialName}.json");
+
+            File.WriteAllText(filePath, json);
+        }
+
+        [System.Serializable]
+        public class TrialJson
+        {
+            public string displayName;
+            public string trialId;
+            public Vector3 position;
+            public float angle;
+            public string trialType;
+            public string trialDifficulty;
+            public float maxTime;
+            public bool customMapTrial;
+            public List<Vector3> points;
         }
     }
 }
 #endif
-

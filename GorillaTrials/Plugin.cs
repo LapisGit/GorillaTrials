@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Configuration;
@@ -11,6 +13,7 @@ using GorillaTrials.Behaviours.Networking;
 using GorillaTrials.Models;
 using GorillaTrials.Tools;
 using HarmonyLib;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -27,6 +30,7 @@ namespace GorillaTrials
 
         public static bool WrongVersion;
         public static AchievementManager achievementManager;
+        private static readonly HttpClient httpClient = new HttpClient();
 
         public void Awake()
         {
@@ -86,6 +90,7 @@ namespace GorillaTrials
                     WrongVersion = version == EVersionCompareResult.Outdated;
 #endif
                 });
+                StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
             });
             
             
@@ -120,6 +125,43 @@ namespace GorillaTrials
             yield return webRequest.SendWebRequest();
             completionSource.SetResult(webRequest);
         }
+        private IEnumerator PostRequest(string url)
+        {
+            string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+            while (string.IsNullOrEmpty(playerId))
+            {
+                Logging.Warning("PlayerId not available for account creation. Retrying in 3 seconds...");
+                yield return new WaitForSeconds(3f);
+                playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+            }
+
+            AccountRequest reqData = new AccountRequest { playerid = playerId };
+            string json = JsonUtility.ToJson(reqData);
+            Debug.Log("JSON to send: " + json);
+
+
+            UnityWebRequest request = new(url, "POST");
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Fatal($"create account error {request.responseCode}: {request.error}"); 
+                
+                Logging.Error(request.downloadHandler.text);
+                yield break;
+            }
+        }
+        [Serializable]
+        public class AccountRequest
+        {
+            public string playerid;
+        }
+
     }
 }
 
