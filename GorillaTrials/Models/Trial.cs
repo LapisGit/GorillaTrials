@@ -147,7 +147,7 @@ namespace GorillaTrials.Models
                     yield break;
                 }
             }
-            string url = $"https://trials.lapis.codes/leaderboard/{trialID}?limit=10";
+            string url = $"{Constants.ServerURL}/leaderboard/{trialID}?limit=10";
             using (UnityWebRequest www = UnityWebRequest.Get(url))
             {
                 string apiKey = Plugin.APIKey.Value;
@@ -238,7 +238,7 @@ namespace GorillaTrials.Models
                 playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
             }
 
-            string url = $"https://trials.lapis.codes/rank/{TrialServerName}/{playerId}";
+            string url = $"{Constants.ServerURL}/rank/{TrialServerName}/{playerId}";
             Logging.Info($"Fetching rank for trial {TrialServerName} from {url}");
 
             UnityWebRequest www = UnityWebRequest.Get(url);

@@ -190,7 +190,7 @@ namespace GorillaTrials.Behaviours
 
             StartCoroutine(PostRequest
                 (
-                    string.Concat("https://trials.lapis.codes/leaderboard/", currentTrial.TrialServerName),
+                    string.Concat($"{Constants.ServerURL}/leaderboard/", currentTrial.TrialServerName),
                     jsonBody)
             );
             currentTrial.SetLastTime(submitTime);
@@ -220,7 +220,7 @@ namespace GorillaTrials.Behaviours
                     StartCoroutine(WaitDelay(5f));
                     StartCoroutine(PostRequest
                         (
-                            string.Concat("https://trials.lapis.codes/leaderboard/", currentTrial.TrialServerName),
+                            string.Concat($"{Constants.ServerURL}/leaderboard/", currentTrial.TrialServerName),
                             trialResultBackup)
                     );
                 }

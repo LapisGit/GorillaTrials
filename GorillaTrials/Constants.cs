@@ -11,5 +11,7 @@
         public const float NetworkSetInterval = 0.25f;
 
         public const string CustomProperty = "GTrials";
+
+        public const string ServerURL = "https://trials.lapis.codes";
     }
 }

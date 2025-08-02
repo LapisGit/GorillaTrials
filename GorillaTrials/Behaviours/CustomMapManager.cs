@@ -141,7 +141,7 @@ namespace GorillaTrials.Behaviours
             }
         }
 
-        private const string approvedMapsUrl = "https://raw.githubusercontent.com/LapisGit/GorillaSynapse/refs/heads/main/secretjsonshhh.json";
+        private const string approvedMapsUrl = $"{Constants.ServerURL}/approvedmaps.json";
 
         
         public class ApprovedMapsWrapper
