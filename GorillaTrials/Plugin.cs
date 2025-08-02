@@ -41,6 +41,7 @@ namespace GorillaTrials
             achievementManager.RegisterAchievement(new Achievement("5trials", "5 Trials", "Complete 5 Trials"));
             achievementManager.RegisterAchievement(new Achievement("10trials", "10 Trials", "Complete 10 Trials"));
             achievementManager.RegisterAchievement(new Achievement("20trials", "20 Trials", "Complete 20 Trials"));
+            achievementManager.RegisterAchievement(new Achievement("30trials", "30 Trials", "Complete 30 Trials"));
             APIKey = Config.Bind
             (
                 "Server",

@@ -38,22 +38,28 @@ public class AchievementChecker : MonoBehaviour
             }
         }
 
-        if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) == 5)
+        if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) >= 5 && Plugin.achievementManager.IsUnlocked("5trials") == false)
         {
             Plugin.achievementManager.UnlockAchievement("5trials");
             HUDManager.instance.SetHUDText("Unlocked Achievement: 5 Trials!");
             StartCoroutine(ClearHUDDelayed(2.5f));
         }
-        if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) == 10)
+        if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) >= 10 && Plugin.achievementManager.IsUnlocked("10trials") == false)
         {
             Plugin.achievementManager.UnlockAchievement("10trials");
             HUDManager.instance.SetHUDText("Unlocked Achievement: 10 Trials!");
             StartCoroutine(ClearHUDDelayed(2.5f));
         }
-        if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) == 20)
+        if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) >= 20 && Plugin.achievementManager.IsUnlocked("20trials") == false)
         {
             Plugin.achievementManager.UnlockAchievement("20trials");
             HUDManager.instance.SetHUDText("Unlocked Achievement: 20 Trials!");
+            StartCoroutine(ClearHUDDelayed(2.5f));
+        }
+        if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) >= 30 && Plugin.achievementManager.IsUnlocked("30trials") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("30trials");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: 30 Trials!");
             StartCoroutine(ClearHUDDelayed(2.5f));
         }
     }
@@ -62,5 +68,6 @@ public class AchievementChecker : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         HUDManager.instance.ClearHUD();
+        AchievementUI.instance.TestLOL();
     }
 }
