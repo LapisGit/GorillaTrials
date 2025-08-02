@@ -134,7 +134,7 @@ namespace GorillaTrials.Behaviours
             if (!Started)
                 return;
 
-            if (submitTime.HasValue && currentTrial.isFromCustomMap == false)
+            if (submitTime.HasValue && currentTrial.isFromCustomMap == false || submitTime.HasValue && currentTrial.onApprovedMap)
             {
                 Logging.Info($"Submiting time {submitTime.Value}");
                 SubmitTrial(submitTime.Value);
@@ -174,7 +174,9 @@ namespace GorillaTrials.Behaviours
                     HUDManager.instance.ClearHUD();                      
                 }
             }
-            string playerName = NetworkSystem.Instance.GetMyNickName();
+
+            string playerName = NetworkSystem.Instance.GetMyNickName().ToUpper();
+            playerName = playerName.Substring(0, Math.Min(playerName.Length, 10));
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
 
             string jsonBody = JsonUtility.ToJson(new TrialResult
@@ -192,6 +194,8 @@ namespace GorillaTrials.Behaviours
                     jsonBody)
             );
             currentTrial.SetLastTime(submitTime);
+
+            Logging.Info(GetTrialsWithPBCount(trials));
         }
 
         private IEnumerator PostRequest(string url, string json)
