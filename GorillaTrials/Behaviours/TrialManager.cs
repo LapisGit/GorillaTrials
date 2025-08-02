@@ -166,10 +166,13 @@ namespace GorillaTrials.Behaviours
                 PlayerPrefs.SetFloat(pbKey, (float)submitTime);
                 PlayerPrefs.Save();
                 currentTrial.SetPersonalBest(submitTime);
-                TimeSpan timeSpan = TimeSpan.FromSeconds(submitTime);
-                HUDManager.instance.SetHUDText($"New PB! {string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"))}");
-                StartCoroutine(WaitDelay(3f));
-                HUDManager.instance.ClearHUD();
+                if (Plugin.PBNotify.Value)
+                {
+                    TimeSpan timeSpan = TimeSpan.FromSeconds(submitTime);
+                    HUDManager.instance.SetHUDText($"New PB! {string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"))}");
+                    StartCoroutine(WaitDelay(3f));
+                    HUDManager.instance.ClearHUD();                      
+                }
             }
             string playerName = NetworkSystem.Instance.GetMyNickName();
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
@@ -230,6 +233,20 @@ namespace GorillaTrials.Behaviours
             yield return new WaitForSeconds(delay);
         }
         
+        public static int GetTrialsWithPBCount(List<Trial> allTrials)
+        {
+            int count = 0;
+
+            foreach (var trial in allTrials)
+            {
+                float pb = PlayerPrefs.GetFloat(string.Concat("PB_", trial.TrialServerName), 0);
+                
+                if (pb > 0)
+                    count++;
+            }
+
+            return count;
+        }
 
 
     }

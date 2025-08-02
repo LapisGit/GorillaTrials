@@ -40,5 +40,21 @@ public class AchievementUI : MonoBehaviour
         {
             achievementUI.transform.Find("Achievements/Page1/StumpClimbMaster/CompletedText").gameObject.SetActive(true);
         }
+        if (Plugin.achievementManager.IsUnlocked("adv_hp2"))
+        {
+            achievementUI.transform.Find("Achievements/Page1/HP2SM/CompletedText").gameObject.SetActive(true);
+        }
+        if (Plugin.achievementManager.IsUnlocked("5Trials"))
+        {
+            achievementUI.transform.Find("Achievements/Page1/5Trials/CompletedText").gameObject.SetActive(true);
+        }
+        if (Plugin.achievementManager.IsUnlocked("10Trials"))
+        {
+            achievementUI.transform.Find("Achievements/Page1/10Trials/CompletedText").gameObject.SetActive(true);
+        }
+        if (Plugin.achievementManager.IsUnlocked("20Trials"))
+        {
+            achievementUI.transform.Find("Achievements/Page1/20Trials/CompletedText").gameObject.SetActive(true);
+        }
     }
 }

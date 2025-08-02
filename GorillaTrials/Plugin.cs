@@ -37,6 +37,10 @@ namespace GorillaTrials
             
             achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!", "Complete your first trial!"));
             achievementManager.RegisterAchievement(new Achievement("stump_climb_champ", "Stump Climb Champion!", "Complete the 'Stump Climb' trial in under 11 seconds."));
+            achievementManager.RegisterAchievement(new Achievement("adv_hp2", "Hoverpark 2 Sprint Master", "Complete the 'Hoverpark 2 Sprint Advanced' trial."));
+            achievementManager.RegisterAchievement(new Achievement("5trials", "5 Trials", "Complete 5 Trials"));
+            achievementManager.RegisterAchievement(new Achievement("10trials", "10 Trials", "Complete 10 Trials"));
+            achievementManager.RegisterAchievement(new Achievement("20trials", "20 Trials", "Complete 20 Trials"));
             APIKey = Config.Bind
             (
                 "Server",
