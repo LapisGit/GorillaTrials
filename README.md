@@ -12,6 +12,9 @@ Please contact Lapis if the game does not automatically create an account and se
 ## Custom Map Creation
 If you are a custom map creator and wish to implement Trials into your custom map, please take a look at the [Wiki.](https://github.com/LapisGit/GorillaTrials/wiki)
 
+## PR's
+Pull requests are VERY welcome to help clean up some buggy code, or add new features, you may also make pull requests to trials.json with new trials and you'll be added to the credits below!
+
 ## Credits
 Lapis: Developer
 
