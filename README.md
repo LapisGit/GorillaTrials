@@ -38,6 +38,8 @@ Will: Developer
 
 developer9998: Developer
 
+Graze: Trial Contributer, Server Hoster
+
 H4RNS: Tester
 
 Kronicahl: Tester
