@@ -42,6 +42,10 @@ namespace GorillaTrials
             achievementManager.RegisterAchievement(new Achievement("10trials", "10 Trials", "Complete 10 Trials"));
             achievementManager.RegisterAchievement(new Achievement("20trials", "20 Trials", "Complete 20 Trials"));
             achievementManager.RegisterAchievement(new Achievement("30trials", "30 Trials", "Complete 30 Trials"));
+            achievementManager.RegisterAchievement(new Achievement("vinemaster", "Vine Master", "Complete the 'Swinging Around' trial in under 10 seconds."));
+            achievementManager.RegisterAchievement(new Achievement("masterswimmer", "Master Swimmer", "Complete the 'Master Swimmer' trial."));
+            achievementManager.RegisterAchievement(new Achievement("slowpoke", "Slowpoke", "Take over 2 minutes to complete a trial."));
+            achievementManager.RegisterAchievement(new Achievement("ultraslowpoke", "Ultra Slowpoke", "Take over 2 minutes to complete a trial."));
             APIKey = Config.Bind
             (
                 "Server",

@@ -11,7 +11,6 @@ namespace GorillaTrials.Patches
     {
         static void Postfix()
         { 
-            Logging.Info("MapUnloadPatch Postfix");
             CustomMapManager.instance.DestroyAllTrialsFromCustomMap();
         }
     }

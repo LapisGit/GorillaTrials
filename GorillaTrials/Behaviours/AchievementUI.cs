@@ -32,8 +32,10 @@ public class AchievementUI : MonoBehaviour
 
         achievementUI.transform.Find("Buttons/PrevPage").gameObject.layer = (int)UnityLayer.GorillaInteractable;
         achievementUI.transform.Find("Buttons/NextPage").gameObject.layer = (int)UnityLayer.GorillaInteractable;
+        achievementUI.transform.Find("Buttons/Refresh").gameObject.layer = (int)UnityLayer.GorillaInteractable;
         TrialButton nextpage = achievementUI.transform.Find("Buttons/NextPage").AddComponent<TrialButton>();
         TrialButton prevpage = achievementUI.transform.Find("Buttons/PrevPage").AddComponent<TrialButton>();
+        TrialButton refresh = achievementUI.transform.Find("Buttons/Refresh").AddComponent<TrialButton>();
         achievementUI.transform.Find("Info/Page").gameObject.GetComponent<TextMeshProUGUI>().text = $"Page {currentPage}/{maxPage}";
         
  
@@ -62,13 +64,14 @@ public class AchievementUI : MonoBehaviour
             achievementUI.transform.Find("Info/Page").gameObject.GetComponent<TextMeshProUGUI>().text = $"Page {currentPage}/{maxPage}";
             UpdateAchievements();
         };
+        
+        refresh.onPressed = () =>
+        {
+            UpdateAchievements();
+        };
     }
 
-
-    public void TestLOL()
-    {
-        UpdateAchievements();
-    }
+    
     public void UpdateAchievements()
     {
         if (Plugin.achievementManager.IsUnlocked("first_trial"))
@@ -94,6 +97,26 @@ public class AchievementUI : MonoBehaviour
         if (Plugin.achievementManager.IsUnlocked("20trials"))
         {
             achievementUI.transform.Find("Achievements/Page1/20Trials/CompletedText").gameObject.SetActive(true);
+        }
+        if (Plugin.achievementManager.IsUnlocked("30trials"))
+        {
+            achievementUI.transform.Find("Achievements/Page1/30Trials/CompletedText").gameObject.SetActive(true);
+        }
+        if (Plugin.achievementManager.IsUnlocked("vinemaster"))
+        {
+            achievementUI.transform.Find("Achievements/Page1/VineMaster/CompletedText").gameObject.SetActive(true);
+        }
+        if (Plugin.achievementManager.IsUnlocked("masterswimmer"))
+        {
+            achievementUI.transform.Find("Achievements/Page1/MasterSwimmer/CompletedText").gameObject.SetActive(true);
+        }
+        if (Plugin.achievementManager.IsUnlocked("slowpoke"))
+        {
+            achievementUI.transform.Find("Achievements/Page1/Slowpoke/CompletedText").gameObject.SetActive(true);
+        }
+        if (Plugin.achievementManager.IsUnlocked("ultraslowpoke"))
+        {
+            achievementUI.transform.Find("Achievements/Page1/UltraSlowpoke/CompletedText").gameObject.SetActive(true);
         }
     }
 }

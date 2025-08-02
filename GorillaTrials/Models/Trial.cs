@@ -104,7 +104,7 @@ namespace GorillaTrials.Models
             this.zoneData = zoneData;
             this.boxPositions = boxPositions;
             isFromCustomMap = customMapTrial;
-            CustomMapManager.instance.approvedMap = onApprovedMap;
+            onApprovedMap = CustomMapManager.instance.approvedMap;
 
             trialButton.onPressed = () =>
             {

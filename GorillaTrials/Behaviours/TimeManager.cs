@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace GorillaTrials.Behaviours;
 
+// make this actually work without breaking for some reason lol
+// probably not needed on release
 public class TimeManager : MonoBehaviour
 {
     public static TimeManager instance;

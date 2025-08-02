@@ -119,6 +119,7 @@ namespace GorillaTrials.Behaviours
             
             approvedMap = false;
             
+            
             var customTrials = TrialManager.Instance.Trials
                 .Where(t => t.isFromCustomMap)
                 .ToList();
