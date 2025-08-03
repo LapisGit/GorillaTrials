@@ -33,7 +33,7 @@ namespace GorillaTrials.Behaviours
 
             TrialPositions.Initialize();
 
-            string url = "https://raw.githubusercontent.com/LapisGit/GorillaSynapse/refs/heads/main/trials.json";
+            string url = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/trials.json";
             using UnityWebRequest request = UnityWebRequest.Get(url);
             await request.SendWebRequest();
 
