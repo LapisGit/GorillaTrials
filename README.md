@@ -1,7 +1,7 @@
 # GorillaTrials
 Gorilla Tag mod that adds parkour trials with a global leaderboard. Inspired off of Orion Drift's parkour trials and GorillaKZ.
 
-![Demo](https://raw.githubusercontent.com/LapisGit/GorillaTrials/main/assets/demo.gif)
+![Compressed GIF](assets/compressed.gif)
 
 ## Installation
 Go to the [latest release](https://github.com/LapisGit/GorillaTrials/releases/latest), and put the .dll inside of your plugins folder.
