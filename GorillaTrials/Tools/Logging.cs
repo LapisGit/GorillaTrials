@@ -4,7 +4,7 @@ namespace GorillaTrials.Tools
 {
     internal class Logging
     {
-        public static readonly bool DebugLogExclusive = true;
+        public static readonly bool DebugLogExclusive = false;
 
         public static void Info(object message) => LogMessage(LogLevel.Info, message);
 

@@ -155,12 +155,45 @@ namespace GorillaTrials
                 Logging.Error(request.downloadHandler.text);
                 yield break;
             }
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string responseText = request.downloadHandler.text;
+                Logging.Info("Server Response: " + responseText);
+
+                try
+                {
+                    AccountResponse response = JsonUtility.FromJson<AccountResponse>(responseText);
+                    if (!string.IsNullOrEmpty(response.api_key))
+                    {
+                        APIKey.Value = response.api_key;
+                        Config.Save();
+                        Logging.Info("API Key set successfully.");
+                    }
+                    else
+                    {
+                        Logging.Error("API key not found in server response.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logging.Error("Failed to parse server response: " + ex.Message);
+                }
+            }
+     
         }
         [Serializable]
         public class AccountRequest
         {
             public string playerid;
         }
+        [Serializable]
+        public class AccountResponse
+        {
+            public string message;
+            public string api_key;
+        }
+
 
     }
 }
