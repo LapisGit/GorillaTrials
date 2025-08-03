@@ -100,23 +100,23 @@ public class AchievementUI : MonoBehaviour
         }
         if (Plugin.achievementManager.IsUnlocked("30trials"))
         {
-            achievementUI.transform.Find("Achievements/Page1/30Trials/CompletedText").gameObject.SetActive(true);
+            achievementUI.transform.Find("Achievements/Page2/30Trials/CompletedText").gameObject.SetActive(true);
         }
         if (Plugin.achievementManager.IsUnlocked("vinemaster"))
         {
-            achievementUI.transform.Find("Achievements/Page1/VineMaster/CompletedText").gameObject.SetActive(true);
+            achievementUI.transform.Find("Achievements/Page2/VineMaster/CompletedText").gameObject.SetActive(true);
         }
         if (Plugin.achievementManager.IsUnlocked("masterswimmer"))
         {
-            achievementUI.transform.Find("Achievements/Page1/MasterSwimmer/CompletedText").gameObject.SetActive(true);
+            achievementUI.transform.Find("Achievements/Page2/MasterSwimmer/CompletedText").gameObject.SetActive(true);
         }
         if (Plugin.achievementManager.IsUnlocked("slowpoke"))
         {
-            achievementUI.transform.Find("Achievements/Page1/Slowpoke/CompletedText").gameObject.SetActive(true);
+            achievementUI.transform.Find("Achievements/Page2/Slowpoke/CompletedText").gameObject.SetActive(true);
         }
         if (Plugin.achievementManager.IsUnlocked("ultraslowpoke"))
         {
-            achievementUI.transform.Find("Achievements/Page1/UltraSlowpoke/CompletedText").gameObject.SetActive(true);
+            achievementUI.transform.Find("Achievements/Page2/UltraSlowpoke/CompletedText").gameObject.SetActive(true);
         }
     }
 }
