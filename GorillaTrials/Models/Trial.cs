@@ -50,9 +50,13 @@ namespace GorillaTrials.Models
             trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
             trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = (int)UnityLayer.GorillaInteractable;
             trialUIObject.transform.Find("UI/Buttons/RefreshBoard").gameObject.layer = (int)UnityLayer.GorillaInteractable;
+            trialUIObject.transform.Find("UI/Buttons/WRReplay").gameObject.layer = (int)UnityLayer.GorillaInteractable;
+            trialUIObject.transform.Find("UI/Buttons/PBReplay").gameObject.layer = (int)UnityLayer.GorillaInteractable;
 
             TrialButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<TrialButton>();
             TrialButton refreshButton = trialUIObject.transform.Find("UI/Buttons/RefreshBoard").AddComponent<TrialButton>();
+            TrialButton WRReplay = trialUIObject.transform.Find("UI/Buttons/WRReplay").AddComponent<TrialButton>();
+            TrialButton PBReplay = trialUIObject.transform.Find("UI/Buttons/PBReplay").AddComponent<TrialButton>();
 
             SetPersonalBest(PlayerPrefs.GetFloat(string.Concat("PB_", trialServerName), 0));
 
@@ -133,6 +137,28 @@ namespace GorillaTrials.Models
             {
                 Singleton<TrialManager>.Instance.StartCoroutine(GetLeaderboardCoroutine(TrialServerName));
             };
+            PBReplay.onPressed = () =>
+            {
+                ReplayManager.Instance.StartReplay($"{trialServerName}_{PlayerPrefs.GetFloat(string.Concat("PB_", trialServerName), 0)}");
+            };
+            WRReplay.onPressed = async () =>
+            {
+                if (leaderboardEntries == null || leaderboardEntries.Count == 0)
+                {
+                    Logging.Error("No leaderboard data available.");
+                    return;
+                }
+
+                var topEntry = leaderboardEntries[0];
+                if (string.IsNullOrEmpty(topEntry.PlayerId))
+                {
+                    Logging.Error("Top leaderboard entry has no playerId.");
+                    return;
+                }
+
+                await ReplayManager.Instance.DownloadReplayWR(trialServerName, topEntry.PlayerId);
+            };
+
         }
 
         public IEnumerator GetLeaderboardCoroutine(string trialID)

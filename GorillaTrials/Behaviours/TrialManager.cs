@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTrials.Models;
 using GorillaTrials.Models.StateMachine;
@@ -22,7 +23,7 @@ namespace GorillaTrials.Behaviours
         public string refreshBoard = null;
         public Trial currentTrial;
         private readonly List<Trial> trials = [];
-        public GameObject trialAssets, trialUIAsset, trialBoxAsset, achievementsUI;
+        public GameObject trialAssets, trialUIAsset, trialBoxAsset, achievementsUI, leftHand, rightHand, Head;
         public string trialResultBackup;
         private bool playerIdReady => !string.IsNullOrEmpty(PlayFabAuthenticator.instance.GetPlayFabPlayerId());
 
@@ -30,6 +31,9 @@ namespace GorillaTrials.Behaviours
             trialAssets = await AssetLoader.LoadAsset<GameObject>("GorillaTrials");
             trialUIAsset = trialAssets.transform.Find("Trial").gameObject;
             trialBoxAsset = trialAssets.transform.Find("Trial Box").gameObject;
+            leftHand = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller");
+            rightHand = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller");
+            Head = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/Main Camera");
 
             TrialPositions.Initialize();
 
@@ -102,6 +106,8 @@ namespace GorillaTrials.Behaviours
             
             currentTrial = trialData;
             currentTrial.stateMachine.SwitchState(new Trial_Start(currentTrial));
+            ReplayManager.Instance.SetTrackedObjects(Head, leftHand, rightHand);    
+            ReplayManager.Instance.StartRecording();
         }
 
         public void EndTrial(double? submitTime)
@@ -137,10 +143,13 @@ namespace GorillaTrials.Behaviours
             if (submitTime < PlayerPrefs.GetFloat(pbKey, 0) || PlayerPrefs.GetFloat(pbKey, 0) == 0)
             {
                 Logging.Info($"New personal best for {currentTrial.TrialServerName}: {submitTime} seconds");
-
+                ReplayManager.Instance.UploadReplayWR(currentTrial.TrialServerName,
+                    PlayFabAuthenticator.instance.GetPlayFabPlayerId(), submitTime);
                 PlayerPrefs.SetFloat(pbKey, (float)submitTime);
                 PlayerPrefs.Save();
                 currentTrial.SetPersonalBest(submitTime);
+                ReplayManager.Instance.StopRecording();
+                ReplayManager.Instance.SaveRecording($"{currentTrial.TrialServerName}_{submitTime}");
                 if (Plugin.PBNotify.Value)
                 {
                     TimeSpan timeSpan = TimeSpan.FromSeconds(submitTime);

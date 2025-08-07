@@ -81,6 +81,7 @@ namespace GorillaTrials
                 root.AddComponent<AchievementChecker>();
                 root.AddComponent<HUDManager>();
                 HUDManager.instance.Init();
+                root.AddComponent<ReplayManager>();
 #if DEBUG
                 root.AddComponent<DebugEditor>();
 #endif
