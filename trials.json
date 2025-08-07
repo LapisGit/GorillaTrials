@@ -2295,7 +2295,7 @@
     "trialType": "Zone",
     "trialDifficulty": "Easy",
     "maxTime": 60.0,
-    "customMapTrial": true,
+    "customMapTrial": false,
     "points": [
         {
             "x": -67.67720031738281,
