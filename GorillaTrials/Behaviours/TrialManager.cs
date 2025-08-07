@@ -28,6 +28,7 @@ namespace GorillaTrials.Behaviours
         private bool playerIdReady => !string.IsNullOrEmpty(PlayFabAuthenticator.instance.GetPlayFabPlayerId());
 
         private bool isPB = false;
+        public string lastTrialPlayed;
 
         public async override void Initialize() {
             trialAssets = await AssetLoader.LoadAsset<GameObject>("GorillaTrials");
@@ -133,6 +134,7 @@ namespace GorillaTrials.Behaviours
             {
                 AchievementChecker.instance.UpdateAchievements(submitTime.Value, currentTrial);   
             }
+            lastTrialPlayed = currentTrial.TrialServerName;
 
             currentTrial = null;
         } 
@@ -219,7 +221,7 @@ namespace GorillaTrials.Behaviours
             if (isPB)
             {
                 TrialResult result = JsonConvert.DeserializeObject<TrialResult>(json);
-                ReplayManager.Instance.UploadReplayWR(currentTrial.TrialServerName, result.PlayerId, result.Time);
+                ReplayManager.Instance.UploadReplayWR(lastTrialPlayed, result.PlayerId, result.Time);
                 isPB = false;   
             }
         }
