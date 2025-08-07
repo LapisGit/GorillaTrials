@@ -80,6 +80,7 @@ namespace GorillaTrials
                 root.AddComponent<CustomMapManager>();
                 root.AddComponent<AchievementChecker>();
                 root.AddComponent<HUDManager>();
+                root.AddComponent<FirstTimeUIManager>();
                 HUDManager.instance.Init();
                 root.AddComponent<ReplayManager>();
 #if DEBUG

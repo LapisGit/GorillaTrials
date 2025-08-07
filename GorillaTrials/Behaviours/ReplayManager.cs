@@ -20,10 +20,10 @@ namespace GorillaTrials.Behaviours
 
         private List<GameObject> trackedObjects = new();
         private List<FrameData> recordedFrames = new();
-        private bool isRecording = false;
+        public bool isRecording = false;
         private float startTime;
 
-        private bool isReplaying = false;
+        public bool isReplaying = false;
         private float replayTime;
         private List<FrameData> replayFrames;
         private int currentFrameIndex = 0;
@@ -248,7 +248,7 @@ namespace GorillaTrials.Behaviours
         }
 
 
-        private void StopReplay()
+        public void StopReplay()
         {
             isReplaying = false;
 

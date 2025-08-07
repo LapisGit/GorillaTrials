@@ -118,6 +118,10 @@ namespace GorillaTrials.Models
                         "Please update your mod. It is out of date.";
                     return;
                 }
+                if (ReplayManager.Instance.isReplaying)
+                {
+                    ReplayManager.Instance.StopReplay();
+                }
 
                 if (GorillaComputer.instance.currentGameMode._value == "MODDED_Casual" || GorillaComputer.instance.currentGameMode._value == "Casual")
                 {
