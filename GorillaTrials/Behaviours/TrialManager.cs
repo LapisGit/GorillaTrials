@@ -27,6 +27,8 @@ namespace GorillaTrials.Behaviours
         public string trialResultBackup;
         private bool playerIdReady => !string.IsNullOrEmpty(PlayFabAuthenticator.instance.GetPlayFabPlayerId());
 
+        private bool isPB = false;
+
         public async override void Initialize() {
             trialAssets = await AssetLoader.LoadAsset<GameObject>("GorillaTrials");
             trialUIAsset = trialAssets.transform.Find("Trial").gameObject;
@@ -142,9 +144,8 @@ namespace GorillaTrials.Behaviours
             Logging.Info(PlayerPrefs.GetFloat(pbKey,0));
             if (submitTime < PlayerPrefs.GetFloat(pbKey, 0) || PlayerPrefs.GetFloat(pbKey, 0) == 0)
             {
+                isPB = true;
                 Logging.Info($"New personal best for {currentTrial.TrialServerName}: {submitTime} seconds");
-                ReplayManager.Instance.UploadReplayWR(currentTrial.TrialServerName,
-                    PlayFabAuthenticator.instance.GetPlayFabPlayerId(), submitTime);
                 PlayerPrefs.SetFloat(pbKey, (float)submitTime);
                 PlayerPrefs.Save();
                 currentTrial.SetPersonalBest(submitTime);
@@ -214,6 +215,13 @@ namespace GorillaTrials.Behaviours
             }
             refreshBoard = "";
             Logging.Info("Trial results uploaded");
+
+            if (isPB)
+            {
+                TrialResult result = JsonConvert.DeserializeObject<TrialResult>(json);
+                ReplayManager.Instance.UploadReplayWR(currentTrial.TrialServerName, result.PlayerId, result.Time);
+                isPB = false;   
+            }
         }
 
         private IEnumerator WaitDelay(float delay)

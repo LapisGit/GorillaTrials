@@ -27,6 +27,13 @@ namespace GorillaTrials.Behaviours
         private float replayTime;
         private List<FrameData> replayFrames;
         private int currentFrameIndex = 0;
+        
+        private float lastRecordTime = 0f;
+        private const float RECORD_INTERVAL = 1f / 30f; // ~0.0333s
+        private float lastPlaybackTime = 0f;
+        private const float PLAYBACK_INTERVAL = 1f / 30f;
+
+
 
         public GameObject replayObjects, replayleftHand, replayrightHand, replayHead;
 
@@ -73,9 +80,11 @@ namespace GorillaTrials.Behaviours
         {
             recordedFrames.Clear();
             startTime = Time.time;
+            lastRecordTime = 0f;
             isRecording = true;
             isReplaying = false;
         }
+
 
         public void StopRecording()
         {
@@ -165,6 +174,7 @@ namespace GorillaTrials.Behaviours
                 currentFrameIndex = 0;
                 isReplaying = true;
                 isRecording = false;
+                lastPlaybackTime = Time.time;
 
                 Logging.Info($"Started replay from {fileName}");
             }
@@ -179,9 +189,15 @@ namespace GorillaTrials.Behaviours
             if (trackedObjects.Count != 3)
                 return;
 
+            float currentTime = Time.time;
+            if (currentTime - lastRecordTime < RECORD_INTERVAL)
+                return;
+
+            lastRecordTime = currentTime;
+
             FrameData frame = new FrameData
             {
-                time = Time.time - startTime,
+                time = currentTime - startTime,
                 positions = new List<Vector3>(),
                 rotations = new List<Quaternion>()
             };
@@ -195,6 +211,7 @@ namespace GorillaTrials.Behaviours
             recordedFrames.Add(frame);
         }
 
+
         private void PlayFrame()
         {
             if (trackedObjects.Count != 3 || replayFrames == null || currentFrameIndex >= replayFrames.Count)
@@ -203,7 +220,11 @@ namespace GorillaTrials.Behaviours
                 return;
             }
 
-            replayTime += Time.deltaTime;
+            if (Time.time - lastPlaybackTime < PLAYBACK_INTERVAL)
+                return;
+
+            lastPlaybackTime = Time.time;
+            replayTime += PLAYBACK_INTERVAL;
 
             while (currentFrameIndex < replayFrames.Count - 1 &&
                    replayFrames[currentFrameIndex + 1].time <= replayTime)
@@ -225,6 +246,7 @@ namespace GorillaTrials.Behaviours
                 StopReplay();
             }
         }
+
 
         private void StopReplay()
         {
@@ -305,6 +327,8 @@ namespace GorillaTrials.Behaviours
                 currentFrameIndex = 0;
                 isReplaying = true;
                 isRecording = false;
+                lastPlaybackTime = Time.time;
+
 
                 Logging.Info($"started replay for {track}_{playerId}");
 
