@@ -164,7 +164,7 @@ namespace GorillaTrials.Behaviours
             }
 
             string playerName = NetworkSystem.Instance.GetMyNickName().ToUpper();
-            playerName = playerName.Substring(0, Math.Min(playerName.Length, 10));
+            playerName = playerName.Substring(0, Math.Min(playerName.Length, 12));
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
 
             string jsonBody = JsonUtility.ToJson(new TrialResult

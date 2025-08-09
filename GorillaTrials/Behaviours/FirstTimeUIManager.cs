@@ -29,6 +29,7 @@ public class FirstTimeUIManager : MonoBehaviour
 
     async Task Initialize()
     {
+        
         UIRoot = await AssetLoader.LoadAsset<GameObject>("FirstTimeUI");
         UIRoot = Instantiate(UIRoot);
         DontDestroyOnLoad(UIRoot);
@@ -43,6 +44,9 @@ public class FirstTimeUIManager : MonoBehaviour
         TrialButton nextpage = UI.transform.Find("Buttons/NextPage").AddComponent<TrialButton>();
         TrialButton prevpage = UI.transform.Find("Buttons/PrevPage").AddComponent<TrialButton>();
         TrialButton done = UI.transform.Find("Buttons/Done").AddComponent<TrialButton>();
+        UI.transform.Find("Buttons/Done").gameObject.GetComponent<BoxCollider>().isTrigger = true;
+        UI.transform.Find("Buttons/NextPage").gameObject.GetComponent<BoxCollider>().isTrigger = true;
+        UI.transform.Find("Buttons/PrevPage").gameObject.GetComponent<BoxCollider>().isTrigger = true;
 
 
         nextpage.onPressed = () =>

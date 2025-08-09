@@ -14,6 +14,7 @@ using GorillaTrials.Models;
 using GorillaTrials.Tools;
 using HarmonyLib;
 using Newtonsoft.Json.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -31,6 +32,9 @@ namespace GorillaTrials
         public static bool WrongVersion;
         public static AchievementManager achievementManager;
         private static readonly HttpClient httpClient = new HttpClient();
+
+        public string accountCreationResponseCode;
+        public string accountCreationResponse;
 
         public void Awake()
         {
@@ -92,9 +96,8 @@ namespace GorillaTrials
                     WrongVersion = version == EVersionCompareResult.Outdated;
 #endif
                 });
-                StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
             });
-            
+            StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
             
             Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
         }
@@ -127,7 +130,7 @@ namespace GorillaTrials
             yield return webRequest.SendWebRequest();
             completionSource.SetResult(webRequest);
         }
-        private IEnumerator PostRequest(string url)
+        public IEnumerator PostRequest(string url)
         {
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
             while (string.IsNullOrEmpty(playerId))
@@ -148,16 +151,27 @@ namespace GorillaTrials
             request.SetRequestHeader("Content-Type", "application/json");
 
             yield return request.SendWebRequest();
+            
+            
 
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Logging.Fatal($"create account error {request.responseCode}"); 
                 Logging.Error(request.error);
-                
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = request.error;
                 Logging.Error(request.downloadHandler.text);
                 yield break;
             }
 
+            if (APIKey.Value != "Your-API-Key-Here" && !string.IsNullOrEmpty(APIKey.Value))
+            {
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(true);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").GetComponent<TextMeshProUGUI>().text = "You already seem to already have an account!";
+                yield break;
+            }
+            
             if (request.result == UnityWebRequest.Result.Success)
             {
                 string responseText = request.downloadHandler.text;
@@ -169,15 +183,21 @@ namespace GorillaTrials
                     {
                         APIKey.Value = response.api_key;
                         Config.Save();
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(true);
                     }
                     else
                     {
                         Logging.Error("API key not found in server response.");
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "API key not found in server response.";
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logging.Error("Failed to parse server response: " + ex.Message);
+                    Logging.Fatal("Failed to parse server response");
+                    Logging.Error(ex);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "Failed to parse server response, check logs for more details.";
                 }
             }
      

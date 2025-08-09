@@ -41,7 +41,7 @@ namespace GorillaTrials.Models
 
         public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, float maxTime, TrialZone zoneData = null, bool customMapTrial = false, List<Vector3> boxPositions = null)
         {
-            trialUIObject = Object.Instantiate(Singleton<TrialManager>.Instance.trialUIAsset);
+            trialUIObject = Instantiate(Singleton<TrialManager>.Instance.trialUIAsset);
             trialUIObject.transform.SetParent(Singleton<TrialManager>.Instance.transform);
             trialUIObject.name = trialServerName;
             trialUIObject.transform.position = trialPosition;
@@ -286,7 +286,6 @@ namespace GorillaTrials.Models
             }
 
             string json = www.downloadHandler.text;
-            Logging.Info($"Rank API Response: {json}");
 
             try
             {
@@ -297,8 +296,7 @@ namespace GorillaTrials.Models
                     Logging.Error("Parsed rank result is null.");
                     yield break;
                 }
-
-                Logging.Info($"Parsed Rank = {result.Rank}, Player = {result.PlayerName}");
+                
                 SetRankText($"Rank: #{result.Rank}");
             }
             catch (Exception ex)
