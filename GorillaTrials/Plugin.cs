@@ -132,7 +132,6 @@ namespace GorillaTrials
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
             while (string.IsNullOrEmpty(playerId))
             {
-                Logging.Warning("PlayerId not available for account creation. Retrying in 3 seconds...");
                 yield return new WaitForSeconds(3f);
                 playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
             }
@@ -152,7 +151,8 @@ namespace GorillaTrials
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Logging.Fatal($"create account error {request.responseCode}: {request.error}"); 
+                Logging.Fatal($"create account error {request.responseCode}"); 
+                Logging.Error(request.error);
                 
                 Logging.Error(request.downloadHandler.text);
                 yield break;
@@ -161,7 +161,6 @@ namespace GorillaTrials
             if (request.result == UnityWebRequest.Result.Success)
             {
                 string responseText = request.downloadHandler.text;
-                Logging.Info("Server Response: " + responseText);
 
                 try
                 {
@@ -170,7 +169,6 @@ namespace GorillaTrials
                     {
                         APIKey.Value = response.api_key;
                         Config.Save();
-                        Logging.Info("API Key set successfully.");
                     }
                     else
                     {
@@ -195,8 +193,6 @@ namespace GorillaTrials
             public string message;
             public string api_key;
         }
-
-
     }
 }
 

@@ -34,9 +34,9 @@ namespace GorillaTrials.Behaviours
             trialAssets = await AssetLoader.LoadAsset<GameObject>("GorillaTrials");
             trialUIAsset = trialAssets.transform.Find("Trial").gameObject;
             trialBoxAsset = trialAssets.transform.Find("Trial Box").gameObject;
-            leftHand = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller");
-            rightHand = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller");
-            Head = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/Main Camera");
+            leftHand = GTPlayer._instance.leftHandFollower.gameObject;
+            rightHand = GTPlayer._instance.rightHandFollower.gameObject;
+            Head = GTPlayer._instance.headCollider.gameObject;
 
             TrialPositions.Initialize();
 
@@ -87,10 +87,11 @@ namespace GorillaTrials.Behaviours
 
             if (trial is not null)
             {
-                Logging.Info($"Created trial '{displayName}' ({trialId})");
+#if DEBUG
+                Logging.Info($"Created trial '{displayName}' ({trialId})");          
+#endif
                 trials.Add(trial);
                 StartCoroutine(trial.GetLeaderboardCoroutine(trialId)); ;
-                Logging.Info($"Is Custom Map Trial? {trial.isFromCustomMap}");
                 return;
             }
 
@@ -124,10 +125,11 @@ namespace GorillaTrials.Behaviours
                 SubmitTrial(submitTime.Value);
             }
 
-            if (currentTrial.isFromCustomMap)
+            if (currentTrial.isFromCustomMap && !currentTrial.onApprovedMap)
             {
-                Logging.Info("Trial was created by a Custom Map, not submitting a time.");
+                Logging.Info("Trial was created by a Custom Map and was not approved, not submitting a time.");
             }
+            
             StartCoroutine(currentTrial.GetLeaderboardCoroutine(currentTrial.TrialServerName));
             
             if (submitTime.HasValue)
@@ -157,8 +159,7 @@ namespace GorillaTrials.Behaviours
                 {
                     TimeSpan timeSpan = TimeSpan.FromSeconds(submitTime);
                     HUDManager.instance.SetHUDText($"New PB! {string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"))}");
-                    StartCoroutine(WaitDelay(3f));
-                    HUDManager.instance.ClearHUD();                      
+                    StartCoroutine(ClearHUDDelayed(3f));
                 }
             }
 
@@ -226,6 +227,12 @@ namespace GorillaTrials.Behaviours
             }
         }
 
+        private IEnumerator ClearHUDDelayed(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            HUDManager.instance.ClearHUD();
+        }
+        
         private IEnumerator WaitDelay(float delay)
         {
             yield return new WaitForSeconds(delay);

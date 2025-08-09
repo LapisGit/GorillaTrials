@@ -31,7 +31,6 @@ namespace GorillaTrials.Behaviours
         private float lastRecordTime = 0f;
         private const float RECORD_INTERVAL = 1f / 30f; // ~0.0333s
         private float lastPlaybackTime = 0f;
-        private const float PLAYBACK_INTERVAL = 1f / 30f;
 
 
 
@@ -214,22 +213,26 @@ namespace GorillaTrials.Behaviours
 
         private void PlayFrame()
         {
+            // replay being slower than the actual time should be fixed now
+            
             if (trackedObjects.Count != 3 || replayFrames == null || currentFrameIndex >= replayFrames.Count)
             {
                 StopReplay();
                 return;
             }
-
-            if (Time.time - lastPlaybackTime < PLAYBACK_INTERVAL)
-                return;
-
-            lastPlaybackTime = Time.time;
-            replayTime += PLAYBACK_INTERVAL;
-
+            
+            float currentReplayTime = Time.time - lastPlaybackTime;
+            
             while (currentFrameIndex < replayFrames.Count - 1 &&
-                   replayFrames[currentFrameIndex + 1].time <= replayTime)
+                   replayFrames[currentFrameIndex].time <= currentReplayTime)
             {
                 currentFrameIndex++;
+            }
+
+            if (currentFrameIndex >= replayFrames.Count)
+            {
+                StopReplay();
+                return;
             }
 
             FrameData frame = replayFrames[currentFrameIndex];
@@ -238,12 +241,6 @@ namespace GorillaTrials.Behaviours
             {
                 trackedObjects[i].transform.position = frame.positions[i];
                 trackedObjects[i].transform.rotation = frame.rotations[i];
-            }
-
-            if (currentFrameIndex >= replayFrames.Count - 1 &&
-                replayTime > frame.time + 0.05f)
-            {
-                StopReplay();
             }
         }
 

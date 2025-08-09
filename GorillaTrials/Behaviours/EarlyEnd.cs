@@ -35,6 +35,5 @@ public class EarlyEnd : MonoBehaviour
             return;
         }
         TrialManager.Instance.currentTrial.stateMachine.SwitchState(new Trial_End(TrialManager.Instance.currentTrial, false));
-        Logging.Info("Ending trial early...");
     }
 }

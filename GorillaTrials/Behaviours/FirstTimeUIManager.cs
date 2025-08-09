@@ -23,7 +23,7 @@ public class FirstTimeUIManager : MonoBehaviour
         instance = this;
         if (PlayerPrefs.GetString("firsttimedone") != "yes :3")
         { 
-          // Initialize();
+           Initialize();
         }
     }
 

@@ -34,7 +34,6 @@ namespace GorillaTrials.Behaviours
         public AchievementManager(ConfigFile configFile)
         {
             config = configFile;
-            Logging.Info("AchievementManager initialized with BepInEx config.");
         }
 
         public void RegisterAchievement(Achievement achievement)
@@ -53,7 +52,9 @@ namespace GorillaTrials.Behaviours
                 achievement.Unlocked = achievement.ConfigEntry.Value;
 
                 achievements.Add(achievement.ID, achievement);
+# if DEBUG
                 Logging.Info($"Registered achievement: {achievement.Name} (unlocked: {achievement.Unlocked})");
+#endif
             }
         }
 

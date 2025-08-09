@@ -2,7 +2,7 @@
 
 namespace GorillaTrials.Models;
 
-[System.Serializable]
+[Serializable]
 public class LeaderboardEntry
 {
     public string playerName;

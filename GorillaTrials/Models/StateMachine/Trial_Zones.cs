@@ -56,8 +56,6 @@ namespace GorillaTrials.Models.StateMachine
                 audioSource.dopplerLevel = 0;
                 audioSource.clip = VRRig.LocalRig.clipToPlay[5];
             }
-
-            Logging.Info("Start and End zones created.");
         }
 
         public override void Exit()
@@ -72,8 +70,6 @@ namespace GorillaTrials.Models.StateMachine
                 }
             }
             zones.Clear();
-
-            Logging.Info("destroyed zones :3");
         }
 
         public override void BoxTriggered(TrialBoxCollider triggeredZone)
@@ -96,7 +92,6 @@ namespace GorillaTrials.Models.StateMachine
 
             if (index == 1)
             {
-                Logging.Info($"End zone triggered: {triggeredZone.gameObject.name}. Trial complete!");
                 Trial.stateMachine.SwitchState(new Trial_End(Trial, true));
                 return;
             }

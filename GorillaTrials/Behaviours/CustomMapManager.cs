@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using GorillaTrials.Models;
 using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
 namespace GorillaTrials.Behaviours
@@ -52,8 +53,7 @@ namespace GorillaTrials.Behaviours
         {
             if (!obj.name.StartsWith("Trial_"))
                 return;
-
-            Logging.Info("found one lolllll");
+            
 
             string[] parts = obj.name.Split('_');
             if (parts.Length < 5)
@@ -93,7 +93,6 @@ namespace GorillaTrials.Behaviours
                 }
 
                 parameters = new object[] { boxPositions };
-                Logging.Info($"Loaded Box trial '{displayName}' with {boxPositions.Count} boxes.");
             }
             else if (trialType == ETrialType.Zone)
             {
@@ -108,7 +107,6 @@ namespace GorillaTrials.Behaviours
 
                 List<Vector3> zonePoints = new() { start.position, end.position };
                 parameters = new object[] { zonePoints };
-                Logging.Info($"Loaded Zone trial '{displayName}' from {start.position} to {end.position}.");
             }
             
             TrialManager.Instance.CreateTrial(displayName, trialId, position, angle, trialType, trialDifficulty, maxTime, true, parameters);
@@ -133,8 +131,7 @@ namespace GorillaTrials.Behaviours
 
                 TrialManager.Instance.Trials.Remove(trial);
             }
-
-            Logging.Info($"destroyed {customTrials.Count} custom map trial(s).");
+            
             if (TrialManager.Instance.Started)
             {
                 TrialManager.Instance.currentTrial.stateMachine.SwitchState(new Trial_End(TrialManager.Instance.currentTrial, false));
@@ -152,34 +149,49 @@ namespace GorillaTrials.Behaviours
         {
             try
             {
-                using (var httpClient = new HttpClient())
+                using (UnityWebRequest request = UnityWebRequest.Get(approvedMapsUrl))
                 {
-                    string json = await httpClient.GetStringAsync(approvedMapsUrl);
-                    
-                    ApprovedMapsWrapper wrapper = JsonConvert.DeserializeObject<ApprovedMapsWrapper>(json);
+                    await request.SendWebRequest();
 
-                    if (wrapper?.approvedMaps != null)
+                    if (request.result == UnityWebRequest.Result.Success)
                     {
-                        foreach (long id in wrapper.approvedMaps)
+                        string json = request.downloadHandler.text;
+                        
+                        ApprovedMapsWrapper wrapper = JsonConvert.DeserializeObject<ApprovedMapsWrapper>(json);
+
+                        if (wrapper?.approvedMaps != null)
                         {
-                            if (id == mapID)
+                            foreach (long id in wrapper.approvedMaps)
                             {
-                                Debug.Log("Map is approved!!!!!!!!!!! :3");
-                                approvedMap = true;
-                                LoadTrialsFromScene();
-                                return;
+                                if (id == mapID)
+                                {
+                                    approvedMap = true;
+                                    LoadTrialsFromScene();
+                                    return;
+                                }
                             }
                         }
+                        
+                        LoadTrialsFromScene();
+                        Logging.Info("Map is NOT approved >:3");
                     }
-                    
-                    LoadTrialsFromScene();
-                    Debug.Log("Map is NOT approved >:3");
-                    Logging.Info($"mod id is {mapID}");
+                    else
+                    {
+                        Logging.Fatal($"Failed to fetch approved maps JSON");
+                        Logging.Error(request.error);
+                        // even if we cant fetch approved maps, load trials but act like they are not approved
+                        approvedMap = false;
+                        LoadTrialsFromScene();
+                    }
                 }
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                Debug.LogError($"Failed to fetch approved maps JSON: {ex.Message}");
+                Logging.Fatal("An error occurred while checking approved maps");
+                Logging.Error(ex);
+                // even if we cant fetch approved maps, load trials but act like they are not approved
+                approvedMap = false;
+                LoadTrialsFromScene();
             }
         }
         

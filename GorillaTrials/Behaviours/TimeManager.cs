@@ -27,7 +27,7 @@ public class TimeManager : MonoBehaviour
             {
                 return;
             }
-            if (TrialManager.Instance.currentTrial.stopwatch.Elapsed.TotalSeconds > maxTime);
+            if (TrialManager.Instance.currentTrial.stopwatch.Elapsed.TotalSeconds > maxTime)
             {
                 TrialManager.Instance.currentTrial.stateMachine.SwitchState(new Trial_End(TrialManager.Instance.currentTrial, false));
                 Logging.Info("time limit reached, ending trial early...");

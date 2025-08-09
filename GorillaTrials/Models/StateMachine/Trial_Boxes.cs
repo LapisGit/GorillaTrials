@@ -123,13 +123,13 @@ namespace GorillaTrials.Models.StateMachine
                 boxesCollected = index + 1;
                 box.gameObject.SetActive(false);
 
+#if DEBUG
                 Logging.Info($"Triggered relevant box {box.gameObject.name} (proceeded to {boxesCollected})");
-
-                Logging.Info($"{boxesCollected}/{boxesToCollect}");
+                Logging.Info($"{boxesCollected}/{boxesToCollect}");          
+#endif
 
                 if (boxesCollected >= boxesToCollect)
                 {
-                    Logging.Info("Boxes collected!");
                     Trial.stateMachine.SwitchState(new Trial_End(Trial, true));
                     return;
                 }

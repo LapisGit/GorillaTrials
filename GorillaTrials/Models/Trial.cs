@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using GorillaNetworking;
-using GorillaTagScripts.CustomMapSupport;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Models.StateMachine;
@@ -118,6 +117,7 @@ namespace GorillaTrials.Models
                         "Please update your mod. It is out of date.";
                     return;
                 }
+                
                 if (ReplayManager.Instance.isReplaying)
                 {
                     ReplayManager.Instance.StopReplay();
@@ -263,13 +263,11 @@ namespace GorillaTrials.Models
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
             while (string.IsNullOrEmpty(playerId))
             {
-                Logging.Warning("PlayerId not available. Retrying in 3 seconds...");
                 yield return new WaitForSeconds(3f);
                 playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
             }
 
             string url = $"{Constants.ServerURL}/rank/{TrialServerName}/{playerId}";
-            Logging.Info($"Fetching rank for trial {TrialServerName} from {url}");
 
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.SetRequestHeader("Authorization", Plugin.APIKey.Value);

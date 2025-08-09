@@ -1,4 +1,5 @@
 using System;
+using GorillaLocomotion;
 using GorillaTrials.Models;
 using GorillaTrials.Tools;
 using UnityEngine;
@@ -25,10 +26,10 @@ namespace GorillaTrials.Behaviours
             hud = Instantiate(hud);
             DontDestroyOnLoad(hud);
 
-            GameObject cameraObj = GameObject.Find("Main Camera");
+            GameObject cameraObj = GTPlayer._instance.mainCamera.gameObject;
             if (cameraObj == null)
             {
-                Debug.LogWarning("Main Camera not found!");
+                Logging.Error("camera not found! not initializing HUD!");
                 return;
             }
 
@@ -46,7 +47,7 @@ namespace GorillaTrials.Behaviours
             Transform text = hud.transform.Find("Text");
             if (text == null)
             {
-                Debug.LogWarning("Text object not found in HUD prefab!");
+                Logging.Error("idk why this would happen but the text component is null! not initializing HUD!");
                 return;
             }
 
