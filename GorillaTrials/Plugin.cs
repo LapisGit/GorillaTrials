@@ -96,8 +96,9 @@ namespace GorillaTrials
                     WrongVersion = version == EVersionCompareResult.Outdated;
 #endif
                 });
+                StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));  
             });
-            StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
+            
             
             Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
         }
@@ -152,25 +153,26 @@ namespace GorillaTrials
 
             yield return request.SendWebRequest();
             
-            
+            if (APIKey.Value != "Your-API-Key-Here")
+            {
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(false);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(true);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").GetComponent<TextMeshProUGUI>().text = "You already seem to have an account!";
+                yield break;
+            }
 
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Logging.Fatal($"create account error {request.responseCode}"); 
                 Logging.Error(request.error);
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.SetActive(true);
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject
                     .GetComponent<TextMeshProUGUI>().text = request.error;
                 Logging.Error(request.downloadHandler.text);
                 yield break;
             }
-
-            if (APIKey.Value != "Your-API-Key-Here" && !string.IsNullOrEmpty(APIKey.Value))
-            {
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(true);
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").GetComponent<TextMeshProUGUI>().text = "You already seem to already have an account!";
-                yield break;
-            }
+            
             
             if (request.result == UnityWebRequest.Result.Success)
             {
@@ -189,6 +191,8 @@ namespace GorillaTrials
                     {
                         Logging.Error("API key not found in server response.");
                         FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.SetActive(true);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(false);
                         FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "API key not found in server response.";
                     }
                 }
@@ -197,6 +201,8 @@ namespace GorillaTrials
                     Logging.Fatal("Failed to parse server response");
                     Logging.Error(ex);
                     FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.SetActive(true);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(false);
                     FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "Failed to parse server response, check logs for more details.";
                 }
             }
