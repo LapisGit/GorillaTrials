@@ -6,7 +6,7 @@
 
         public const string Name = "GorillaTrials";
 
-        public const string Version = "1.1.1";
+        public const string Version = "1.2.0";
 
         public const float NetworkSetInterval = 0.25f;
 
