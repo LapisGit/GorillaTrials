@@ -1,7 +1,6 @@
-using System;
 using GorillaLocomotion;
-using GorillaTrials.Models;
 using GorillaTrials.Tools;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,13 +36,13 @@ namespace GorillaTrials.Behaviours
             var canvas = hud.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
             canvas.worldCamera = cam;
-            
+
             hud.transform.SetParent(cameraObj.transform);
-            
+
             hud.GetComponent<RectTransform>().localPosition = new Vector3(0f, -0.5f, 1f);
             hud.GetComponent<RectTransform>().localRotation = Quaternion.Euler(20f, 0f, 0f);
             hud.GetComponent<RectTransform>().localScale = Vector3.one * 0.0025f;
-            
+
             Transform text = hud.transform.Find("Text");
             if (text == null)
             {

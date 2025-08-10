@@ -3,13 +3,12 @@ using HarmonyLib;
 
 namespace GorillaTrials.Patches
 {
-    [HarmonyPatch(typeof(CustomMapLoader))]
-    [HarmonyPatch("OnLoadComplete")]
+    [HarmonyPatch(typeof(CustomMapLoader), nameof(CustomMapLoader.OnLoadComplete))]
     internal class MapLoadPatch
     {
-        static void Postfix()
+        private static async void Postfix()
         {
-            CustomMapManager.instance.CheckIfApprovedMap(CustomMapLoader.LoadedMapModId);
+            await CustomMapManager.instance.CheckIfApprovedMap(CustomMapLoader.LoadedMapModId);
         }
     }
 }

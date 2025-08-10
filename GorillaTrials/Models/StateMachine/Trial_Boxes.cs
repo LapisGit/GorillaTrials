@@ -1,22 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using GorillaExtensions;
+﻿using GorillaExtensions;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Tools;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace GorillaTrials.Models.StateMachine
 {
-    public class Trial_Boxes : TrialState
+    public class Trial_Boxes(Trial trial) : TrialState(trial)
     {
         protected int boxesCollected, boxesToCollect;
 
         protected readonly List<TrialBoxCollider> boxes = [];
-
-        public Trial_Boxes(Trial trial) : base(trial)
-        {
-            ;
-        }
 
         public override void Enter()
         {
@@ -34,31 +29,29 @@ namespace GorillaTrials.Models.StateMachine
                 newBox.SetActive(true);
                 newBox.SetLayer(UnityLayer.GorillaBoundary);
                 newBox.GetComponent<Collider>().isTrigger = true;
-                
+
                 Transform handColliderTransform = newBox.transform.Find("HandCollider");
                 if (handColliderTransform != null)
                 {
                     Collider handCollider = handColliderTransform.GetComponent<Collider>();
-                    if (handCollider != null)
-                        handCollider.isTrigger = true;
-                    
-                    if (!handColliderTransform.TryGetComponent(out Rigidbody rb))
+                    if (handCollider != null) handCollider.isTrigger = true;
+
+                    if (!handColliderTransform.GetComponent<Rigidbody>())
                     {
-                        rb = handColliderTransform.gameObject.AddComponent<Rigidbody>();
+                        Rigidbody rb = handColliderTransform.gameObject.AddComponent<Rigidbody>();
                         rb.isKinematic = true;
                     }
-                    
-                    handColliderTransform.gameObject.layer = LayerMask.NameToLayer("GorillaInteractable");
-                    
-                    handColliderTransform.gameObject.GetOrAddComponent<TrialBoxHandCollider>(); 
-                }
 
+                    handColliderTransform.gameObject.layer = LayerMask.NameToLayer("GorillaInteractable");
+
+                    handColliderTransform.gameObject.GetOrAddComponent<TrialBoxHandCollider>();
+                }
 
                 TrialBoxCollider trialBox = newBox.GetOrAddComponent<TrialBoxCollider>();
                 boxes.Add(trialBox);
 
                 newBox.transform.position = Trial.boxPositions[i];
-                newBox.name = $"Trial Box #{i + 1} ({Trial.TrialServerName})";
+                newBox.name = $"{Trial.TrialServerName}: Trial Box #{i + 1}";
 
                 newBox.transform.localScale = Vector3.one * GetBoxScaleFactor(i);
 
@@ -88,7 +81,7 @@ namespace GorillaTrials.Models.StateMachine
             if (index < boxesCollected)
                 return Mathf.Epsilon; // closest number to 0
 
-            int apparentBoxCount = 3;
+            int apparentBoxCount = 4;
             float fullSize = 0.5f;
 
             for (int i = 0; i < apparentBoxCount; i++)
@@ -125,7 +118,7 @@ namespace GorillaTrials.Models.StateMachine
 
 #if DEBUG
                 Logging.Info($"Triggered relevant box {box.gameObject.name} (proceeded to {boxesCollected})");
-                Logging.Info($"{boxesCollected}/{boxesToCollect}");          
+                Logging.Message($"{boxesCollected}/{boxesToCollect}");
 #endif
                 if (boxesCollected >= boxesToCollect)
                 {
@@ -136,8 +129,7 @@ namespace GorillaTrials.Models.StateMachine
                 for (int i = 0; i < boxes.Count; i++)
                 {
                     boxes[i].transform.localScale = Vector3.one * GetBoxScaleFactor(i);
-                    if (i == boxesCollected && boxes[i].TryGetComponent(out AudioSource audioSource))
-                        audioSource.Play();
+                    if (i == boxesCollected && boxes[i].TryGetComponent(out AudioSource audioSource)) audioSource.Play();
                 }
 
                 return;

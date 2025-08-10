@@ -1,12 +1,9 @@
 ﻿#if DEBUG
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using CjLib;
 using GorillaLocomotion;
-using GorillaNetworking;
 using GorillaTrials.Models;
-using GorillaTrials.Tools;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace GorillaTrials.Behaviours
@@ -31,7 +28,7 @@ namespace GorillaTrials.Behaviours
         {
             foreach (Vector3 boxPos in boxPositions)
                 DebugUtil.DrawBox(boxPos, Quaternion.identity, Vector3.one, Color.magenta, false);
-            
+
             if (trialStandPosition != Vector3.zero)
                 DebugUtil.DrawBox(trialStandPosition, Quaternion.Euler(0, trialStandRotation, 0), Vector3.one, Color.green, false);
         }
@@ -49,7 +46,7 @@ namespace GorillaTrials.Behaviours
             trialName = GUILayout.TextField(trialName);
 
             GUILayout.Space(20);
-            
+
             if (GUILayout.Button("Set Trial Stand Position + Rotation"))
             {
                 trialStandPosition = GTPlayer.Instance.bodyCollider.transform.position;

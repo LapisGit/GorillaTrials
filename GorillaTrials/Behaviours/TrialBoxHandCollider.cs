@@ -17,7 +17,7 @@ namespace GorillaTrials.Behaviours
         void OnTriggerEnter(Collider collider)
         {
             if (!enabled) return;
-            
+
             if (parentBox == null)
                 parentBox = GetComponentInParent<TrialBoxCollider>();
 
@@ -28,11 +28,11 @@ namespace GorillaTrials.Behaviours
 
                 //GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(67, handIndicator.isLeftHand, 0.05f);
                 //GorillaTagger.Instance.StartVibration(
-                 //   handIndicator.isLeftHand,
-                 //   GorillaTagger.Instance.tapHapticStrength / 2f,
-                 //   GorillaTagger.Instance.tapHapticDuration
-               // );
-               // used for debugging ^
+                //   handIndicator.isLeftHand,
+                //   GorillaTagger.Instance.tapHapticStrength / 2f,
+                //   GorillaTagger.Instance.tapHapticDuration
+                // );
+                // used for debugging ^
 
                 if (parentBox != null)
                 {

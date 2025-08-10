@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using GorillaTrials.Behaviours.UI;
+﻿using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Tools;
-using PlayFab.CloudScriptModels;
-using TMPro;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GorillaTrials.Behaviours;
@@ -22,14 +19,14 @@ public class FirstTimeUIManager : MonoBehaviour
     {
         instance = this;
         if (PlayerPrefs.GetString("firsttimedone") != "yes :3")
-        { 
-           Initialize();
+        {
+            Initialize();
         }
     }
 
     async Task Initialize()
     {
-        
+
         UIRoot = await AssetLoader.LoadAsset<GameObject>("FirstTimeUI");
         UIRoot = Instantiate(UIRoot);
         DontDestroyOnLoad(UIRoot);

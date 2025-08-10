@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GorillaLocomotion;
+﻿using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTrials.Models;
 using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
 using Newtonsoft.Json;
-using TMPro;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -25,12 +24,12 @@ namespace GorillaTrials.Behaviours
         private readonly List<Trial> trials = [];
         public GameObject trialAssets, trialUIAsset, trialBoxAsset, achievementsUI, leftHand, rightHand, Head;
         public string trialResultBackup;
-        private bool playerIdReady => !string.IsNullOrEmpty(PlayFabAuthenticator.instance.GetPlayFabPlayerId());
 
         private bool isPB = false;
         public string lastTrialPlayed;
 
-        public async override void Initialize() {
+        public async override void Initialize()
+        {
             trialAssets = await AssetLoader.LoadAsset<GameObject>("GorillaTrials");
             trialUIAsset = trialAssets.transform.Find("Trial").gameObject;
             trialBoxAsset = trialAssets.transform.Find("Trial Box").gameObject;
@@ -38,29 +37,30 @@ namespace GorillaTrials.Behaviours
             rightHand = GTPlayer._instance.rightHandFollower.gameObject;
             Head = GTPlayer._instance.headCollider.gameObject;
 
-            TrialPositions.Initialize();
-
             string url = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/trials.json";
             using UnityWebRequest request = UnityWebRequest.Get(url);
             await request.SendWebRequest();
 
-            if (request.result != UnityWebRequest.Result.Success) {
+            if (request.result != UnityWebRequest.Result.Success)
+            {
                 Logging.Fatal($"Failed to load trials JSON: {request.error}");
                 return;
             }
-            
+
             List<TrialDataModel> trialsData = JsonConvert.DeserializeObject<List<TrialDataModel>>(request.downloadHandler.text);
 
-            foreach (var data in trialsData) {
+            foreach (var data in trialsData)
+            {
                 List<Vector3> points = data.points?.ConvertAll(p => p.ToVector3());
-                
+
                 if (!Enum.TryParse<ETrialType>(data.trialType, true, out var trialType))
                     trialType = ETrialType.Box;
 
                 if (!Enum.TryParse<ETrialDifficulty>(data.trialDifficulty, true, out var trialDifficulty))
                     trialDifficulty = ETrialDifficulty.Easy;
-                
-                CreateTrial(
+
+                CreateTrial
+                (
                     data.displayName,
                     data.trialId,
                     data.position.ToVector3(),
@@ -69,7 +69,7 @@ namespace GorillaTrials.Behaviours
                     trialDifficulty,
                     data.maxTime,
                     data.customMapTrial,
-                    new object[] { points }
+                    [points]
                 );
             }
         }
@@ -88,14 +88,14 @@ namespace GorillaTrials.Behaviours
             if (trial is not null)
             {
 #if DEBUG
-                Logging.Info($"Created trial '{displayName}' ({trialId})");          
+                Logging.Info($"Created trial '{displayName}' ({trialId})");
 #endif
                 trials.Add(trial);
                 StartCoroutine(trial.GetLeaderboardCoroutine(trialId)); ;
                 return;
             }
 
-            
+
             Logging.Fatal($"TRIAL FOR {trialId} IS NULL!");
             Logging.Error($"Type: {trialType}");
             Logging.Error($"Parameter Count: {(parameters is null ? "null" : parameters.Length)}");
@@ -107,10 +107,10 @@ namespace GorillaTrials.Behaviours
             {
                 return;
             }
-            
+
             currentTrial = trialData;
             currentTrial.stateMachine.SwitchState(new Trial_Start(currentTrial));
-            ReplayManager.Instance.SetTrackedObjects(Head, leftHand, rightHand);    
+            ReplayManager.Instance.SetTrackedObjects(Head, leftHand, rightHand);
             ReplayManager.Instance.StartRecording();
         }
 
@@ -129,23 +129,23 @@ namespace GorillaTrials.Behaviours
             {
                 Logging.Info("Trial was created by a Custom Map and was not approved, not submitting a time.");
             }
-            
+
             StartCoroutine(currentTrial.GetLeaderboardCoroutine(currentTrial.TrialServerName));
-            
+
             if (submitTime.HasValue)
             {
-                AchievementChecker.instance.UpdateAchievements(submitTime.Value, currentTrial);   
+                AchievementChecker.instance.UpdateAchievements(submitTime.Value, currentTrial);
             }
             lastTrialPlayed = currentTrial.TrialServerName;
 
             currentTrial = null;
-        } 
+        }
 
         public void SubmitTrial(double submitTime)
         {
             string pbKey = string.Concat("PB_", currentTrial.TrialServerName);
             refreshBoard = currentTrial.TrialServerName;
-            Logging.Info(PlayerPrefs.GetFloat(pbKey,0));
+            Logging.Info(PlayerPrefs.GetFloat(pbKey, 0));
             if (submitTime < PlayerPrefs.GetFloat(pbKey, 0) || PlayerPrefs.GetFloat(pbKey, 0) == 0)
             {
                 isPB = true;
@@ -202,7 +202,7 @@ namespace GorillaTrials.Behaviours
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Logging.Fatal($"Trial post error {request.responseCode}: {request.error}");
-                
+
                 if (request.responseCode == 0)
                 {
                     StartCoroutine(WaitDelay(5f));
@@ -212,7 +212,7 @@ namespace GorillaTrials.Behaviours
                             trialResultBackup)
                     );
                 }
-                
+
                 Logging.Error(request.downloadHandler.text);
                 yield break;
             }
@@ -223,7 +223,7 @@ namespace GorillaTrials.Behaviours
             {
                 TrialResult result = JsonConvert.DeserializeObject<TrialResult>(json);
                 ReplayManager.Instance.UploadReplayWR(lastTrialPlayed, result.PlayerId, result.Time);
-                isPB = false;   
+                isPB = false;
             }
         }
 
@@ -232,12 +232,12 @@ namespace GorillaTrials.Behaviours
             yield return new WaitForSeconds(delay);
             HUDManager.instance.ClearHUD();
         }
-        
+
         private IEnumerator WaitDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
         }
-        
+
         public static int GetTrialsWithPBCount(List<Trial> allTrials)
         {
             int count = 0;
@@ -245,7 +245,7 @@ namespace GorillaTrials.Behaviours
             foreach (var trial in allTrials)
             {
                 float pb = PlayerPrefs.GetFloat(string.Concat("PB_", trial.TrialServerName), 0);
-                
+
                 if (pb > 0)
                     count++;
             }
@@ -255,5 +255,5 @@ namespace GorillaTrials.Behaviours
 
 
     }
-    
+
 }

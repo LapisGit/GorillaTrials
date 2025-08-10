@@ -5,7 +5,8 @@ using UnityEngine;
 namespace GorillaTrials.Models;
 
 [Serializable]
-public class TrialDataModel {
+public class TrialDataModel
+{
     public string displayName;
     public string trialId;
     public Position position;
@@ -18,7 +19,8 @@ public class TrialDataModel {
 }
 
 [Serializable]
-public class Position {
+public class Position
+{
     public float x;
     public float y;
     public float z;

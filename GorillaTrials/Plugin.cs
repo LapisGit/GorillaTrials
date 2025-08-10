@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using GorillaNetworking;
@@ -13,7 +7,11 @@ using GorillaTrials.Behaviours.Networking;
 using GorillaTrials.Models;
 using GorillaTrials.Tools;
 using HarmonyLib;
-using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -42,7 +40,7 @@ namespace GorillaTrials
 
             Config = base.Config;
             achievementManager = new AchievementManager(Config);
-            
+
             achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!", "Complete your first trial!"));
             achievementManager.RegisterAchievement(new Achievement("stump_climb_champ", "Stump Climb Champion!", "Complete the 'Stump Climb' trial in under 11 seconds."));
             achievementManager.RegisterAchievement(new Achievement("adv_hp2", "Hoverpark 2 Sprint Master", "Complete the 'Hoverpark 2 Sprint Advanced' trial."));
@@ -68,12 +66,12 @@ namespace GorillaTrials
                 true,
                 "If true, the HUD will notify you if you get a Personal Best on a trial."
             );
-            
-            
+
+
             GorillaTagger.OnPlayerSpawned(() =>
             {
-                
-                
+
+
                 GameObject root = new(Constants.Name);
                 DontDestroyOnLoad(root);
                 root.AddComponent<TrialManager>();
@@ -96,10 +94,10 @@ namespace GorillaTrials
                     WrongVersion = version == EVersionCompareResult.Outdated;
 #endif
                 });
-                StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));  
+                StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
             });
-            
-            
+
+
             Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
         }
 
@@ -152,7 +150,7 @@ namespace GorillaTrials
             request.SetRequestHeader("Content-Type", "application/json");
 
             yield return request.SendWebRequest();
-            
+
             if (APIKey.Value != "Your-API-Key-Here")
             {
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(false);
@@ -163,7 +161,7 @@ namespace GorillaTrials
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Logging.Fatal($"create account error {request.responseCode}"); 
+                Logging.Fatal($"create account error {request.responseCode}");
                 Logging.Error(request.error);
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.SetActive(true);
@@ -172,8 +170,8 @@ namespace GorillaTrials
                 Logging.Error(request.downloadHandler.text);
                 yield break;
             }
-            
-            
+
+
             if (request.result == UnityWebRequest.Result.Success)
             {
                 string responseText = request.downloadHandler.text;
@@ -206,7 +204,7 @@ namespace GorillaTrials
                     FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "Failed to parse server response, check logs for more details.";
                 }
             }
-     
+
         }
         [Serializable]
         public class AccountRequest

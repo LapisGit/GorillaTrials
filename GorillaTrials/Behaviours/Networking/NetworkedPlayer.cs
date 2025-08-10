@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using GorillaTrials.Tools;
+﻿using GorillaTrials.Tools;
 using Photon.Realtime;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace GorillaTrials.Behaviours.Networking

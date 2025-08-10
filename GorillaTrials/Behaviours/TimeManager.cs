@@ -1,4 +1,3 @@
-using System;
 using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
 using UnityEngine;
@@ -21,7 +20,7 @@ public class TimeManager : MonoBehaviour
     {
         if (TrialManager.Instance.Started)
         {
-            Logging.Info(TrialManager.Instance.currentTrial.stopwatch.Elapsed.TotalSeconds); 
+            Logging.Info(TrialManager.Instance.currentTrial.stopwatch.Elapsed.TotalSeconds);
             Logging.Info(maxTime);
             if (maxTime == 0)
             {
@@ -31,7 +30,7 @@ public class TimeManager : MonoBehaviour
             {
                 TrialManager.Instance.currentTrial.stateMachine.SwitchState(new Trial_End(TrialManager.Instance.currentTrial, false));
                 Logging.Info("time limit reached, ending trial early...");
-            }   
+            }
         }
     }
 }

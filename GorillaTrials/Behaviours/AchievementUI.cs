@@ -1,6 +1,6 @@
+using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Tools;
 using System.Threading.Tasks;
-using GorillaTrials.Behaviours.UI;
 using TMPro;
 using UnityEngine;
 
@@ -25,7 +25,7 @@ public class AchievementUI : MonoBehaviour
         TrialManager.Instance.achievementsUI = achievementUIRoot;
         achievementUIRoot = Instantiate(achievementUIRoot);
         DontDestroyOnLoad(achievementUIRoot);
-        achievementUIRoot.transform.position = new Vector3(-69.3592f, 12.1929f,-83.4284f);
+        achievementUIRoot.transform.position = new Vector3(-69.3592f, 12.1929f, -83.4284f);
         achievementUIRoot.transform.rotation = Quaternion.Euler(358.9055f, 242.0654f, 0f);
 
         achievementUI = achievementUIRoot.transform.Find("UI").gameObject;
@@ -37,8 +37,8 @@ public class AchievementUI : MonoBehaviour
         TrialButton prevpage = achievementUI.transform.Find("Buttons/PrevPage").AddComponent<TrialButton>();
         TrialButton refresh = achievementUI.transform.Find("Buttons/Refresh").AddComponent<TrialButton>();
         achievementUI.transform.Find("Info/Page").gameObject.GetComponent<TextMeshProUGUI>().text = $"Page {currentPage}/{maxPage}";
-        
- 
+
+
         nextpage.onPressed = () =>
         {
             achievementUI.transform.Find($"Achievements/Page{currentPage}").gameObject.SetActive(false);
@@ -64,14 +64,14 @@ public class AchievementUI : MonoBehaviour
             achievementUI.transform.Find("Info/Page").gameObject.GetComponent<TextMeshProUGUI>().text = $"Page {currentPage}/{maxPage}";
             UpdateAchievements();
         };
-        
+
         refresh.onPressed = () =>
         {
             UpdateAchievements();
         };
     }
 
-    
+
     public void UpdateAchievements()
     {
         if (Plugin.achievementManager.IsUnlocked("first_trial"))

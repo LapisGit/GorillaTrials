@@ -28,11 +28,7 @@ namespace GorillaTrials.Models.StateMachine
 
         public void Update()
         {
-            if (currentState is not null)
-            {
-                currentState.Update();
-                ;
-            }
+            currentState?.Update();
         }
     }
 }

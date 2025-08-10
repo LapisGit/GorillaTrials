@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GorillaTrials.Models;
+﻿using GorillaTrials.Models;
 using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -53,7 +52,7 @@ namespace GorillaTrials.Behaviours
         {
             if (!obj.name.StartsWith("Trial_"))
                 return;
-            
+
 
             string[] parts = obj.name.Split('_');
             if (parts.Length < 5)
@@ -108,16 +107,16 @@ namespace GorillaTrials.Behaviours
                 List<Vector3> zonePoints = new() { start.position, end.position };
                 parameters = new object[] { zonePoints };
             }
-            
+
             TrialManager.Instance.CreateTrial(displayName, trialId, position, angle, trialType, trialDifficulty, maxTime, true, parameters);
         }
-        
+
         public void DestroyAllTrialsFromCustomMap()
         {
-            
+
             approvedMap = false;
-            
-            
+
+
             var customTrials = TrialManager.Instance.Trials
                 .Where(t => t.isFromCustomMap)
                 .ToList();
@@ -131,7 +130,7 @@ namespace GorillaTrials.Behaviours
 
                 TrialManager.Instance.Trials.Remove(trial);
             }
-            
+
             if (TrialManager.Instance.Started)
             {
                 TrialManager.Instance.currentTrial.stateMachine.SwitchState(new Trial_End(TrialManager.Instance.currentTrial, false));
@@ -140,7 +139,7 @@ namespace GorillaTrials.Behaviours
 
         private const string approvedMapsUrl = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/approvedmaps.json";
 
-        
+
         public class ApprovedMapsWrapper
         {
             public List<long> approvedMaps { get; set; }
@@ -156,7 +155,7 @@ namespace GorillaTrials.Behaviours
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         string json = request.downloadHandler.text;
-                        
+
                         ApprovedMapsWrapper wrapper = JsonConvert.DeserializeObject<ApprovedMapsWrapper>(json);
 
                         if (wrapper?.approvedMaps != null)
@@ -171,7 +170,7 @@ namespace GorillaTrials.Behaviours
                                 }
                             }
                         }
-                        
+
                         LoadTrialsFromScene();
                         Logging.Info("Map is NOT approved >:3");
                     }
@@ -194,6 +193,6 @@ namespace GorillaTrials.Behaviours
                 LoadTrialsFromScene();
             }
         }
-        
+
     }
 }

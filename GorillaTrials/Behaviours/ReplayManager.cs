@@ -1,16 +1,12 @@
+using GorillaTrials.Tools;
+using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Text;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
-using GorillaNetworking;
-using GorillaTrials.Models;
-using GorillaTrials.Tools;
 using UnityEngine;
-using Newtonsoft.Json;
 
 namespace GorillaTrials.Behaviours
 {
@@ -27,7 +23,7 @@ namespace GorillaTrials.Behaviours
         private float replayTime;
         private List<FrameData> replayFrames;
         private int currentFrameIndex = 0;
-        
+
         private float lastRecordTime = 0f;
         private const float RECORD_INTERVAL = 1f / 30f; // ~0.0333s
         private float lastPlaybackTime = 0f;
@@ -214,28 +210,28 @@ namespace GorillaTrials.Behaviours
         private void PlayFrame()
         {
             // replay being slower than the actual time should be fixed now
-            
+
             if (trackedObjects.Count != 3 || replayFrames == null || replayFrames.Count == 0)
             {
                 StopReplay();
                 return;
             }
-            
+
             float currentReplayTime = Time.time - lastPlaybackTime;
-            
+
             while (currentFrameIndex < replayFrames.Count - 1 &&
                    replayFrames[currentFrameIndex].time <= currentReplayTime)
             {
                 currentFrameIndex++;
             }
-            
-            if (currentFrameIndex >= replayFrames.Count - 1 && 
+
+            if (currentFrameIndex >= replayFrames.Count - 1 &&
                 replayFrames[currentFrameIndex].time <= currentReplayTime)
             {
                 StopReplay();
                 return;
             }
-            
+
             if (currentFrameIndex < replayFrames.Count)
             {
                 FrameData frame = replayFrames[currentFrameIndex];

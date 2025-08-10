@@ -2,18 +2,13 @@
 
 namespace GorillaTrials.Models.StateMachine
 {
-    public class TrialState
+    public class TrialState(Trial trial)
     {
         public Trial Trial => trial;
 
-        protected Trial trial;
+        protected Trial trial = trial;
 
         protected bool initialized;
-
-        public TrialState(Trial trial)
-        {
-            this.trial = trial; ;
-        }
 
         public virtual void Initialize()
         {

@@ -1,17 +1,19 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using GorillaNetworking;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
 using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using Object = UnityEngine.Object;
+using Utilla.Utils;
+using Utilla.Models;
+using GorillaGameModes;
 
 namespace GorillaTrials.Models
 {
@@ -38,7 +40,6 @@ namespace GorillaTrials.Models
         public bool isFromCustomMap = false;
         public bool onApprovedMap = false;
 
-
         public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, float maxTime, TrialZone zoneData = null, bool customMapTrial = false, List<Vector3> boxPositions = null)
         {
             trialUIObject = Instantiate(Singleton<TrialManager>.Instance.trialUIAsset);
@@ -59,41 +60,22 @@ namespace GorillaTrials.Models
 
             SetPersonalBest(PlayerPrefs.GetFloat(string.Concat("PB_", trialServerName), 0));
 
-            if (trialType == ETrialType.Box)
+            trialUIObject.transform.Find("UI/Info/TrialType").gameObject.GetComponent<TextMeshProUGUI>().text = trialType switch
             {
-                trialUIObject.transform.Find("UI/Info/TrialType").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = "Box Trial";
-            }
-            else
+                ETrialType.Box => "Box Trial",
+                ETrialType.Zone => "Zone Trial",
+                _ => "secret third type"
+            };
+
+            trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject.GetComponent<TextMeshProUGUI>().text = "Difficulty: " + trialDifficulty switch
             {
-                trialUIObject.transform.Find("UI/Info/TrialType").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = "Zone Trial";
-            }
-            if (trialDifficulty == ETrialDifficulty.Easy)
-            {
-                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#90EE90>Easy";
-            }
-            if (trialDifficulty == ETrialDifficulty.Medium)
-            {
-                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#FDFA72>Medium";
-            }
-            if (trialDifficulty == ETrialDifficulty.Hard)
-            {
-                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#FF6700>Hard";
-            }
-            if (trialDifficulty == ETrialDifficulty.Insane)
-            {
-                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#EE61BD>Insane";
-            }
-            if (trialDifficulty == ETrialDifficulty.Extreme)
-            {
-                trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = "Difficulty: <color=#FF474D>Extreme";
-            } 
+                ETrialDifficulty.Easy => "<color=#90EE90>Easy",
+                ETrialDifficulty.Medium => "<color=#FDFA72>Medium",
+                ETrialDifficulty.Hard => "<color=#FF6700>Hard",
+                ETrialDifficulty.Insane => "<color=#EE61BD>Insane",
+                ETrialDifficulty.Extreme => "<color=#FF474D>Extreme",
+                _ => "<color=red>Evil"
+            };
 
             trialObject = trialUIObject;
 
@@ -117,16 +99,16 @@ namespace GorillaTrials.Models
                         "Please update your mod. It is out of date.";
                     return;
                 }
-                
+
                 if (ReplayManager.Instance.isReplaying)
                 {
                     ReplayManager.Instance.StopReplay();
                 }
 
-                if (GorillaComputer.instance.currentGameMode._value == "MODDED_Casual" || GorillaComputer.instance.currentGameMode._value == "Casual")
+                if (GameModeUtils.CurrentGamemode is Gamemode gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGamemode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual)
                 {
                     //TimeManager.instance.maxTime = maxTime;
-                    
+
                     Singleton<TrialManager>.Instance.StartTrial(this);
                 }
                 else
@@ -135,7 +117,7 @@ namespace GorillaTrials.Models
                         "Please enter a casual lobby to begin a trial.";
                     Logging.Error($"Gamemode is {GorillaComputer.instance.currentGameMode._value}, and that is not a casual lobby. Not beginning trial.");
                 }
-                
+
             };
             refreshButton.onPressed = () =>
             {
@@ -177,70 +159,71 @@ namespace GorillaTrials.Models
                     yield break;
                 }
             }
+
             string url = $"{Constants.ServerURL}/leaderboard/{trialID}?limit=10";
-            using (UnityWebRequest www = UnityWebRequest.Get(url))
+
+            using UnityWebRequest www = UnityWebRequest.Get(url);
+            string apiKey = Plugin.APIKey.Value;
+            www.SetRequestHeader("Authorization", apiKey);
+
+            yield return www.SendWebRequest();
+
+            if (www.responseCode == 401)
             {
-                string apiKey = Plugin.APIKey.Value;
-                www.SetRequestHeader("Authorization", apiKey);
-                
-                yield return www.SendWebRequest();
-                
-                if (www.responseCode == 401)
-                {
-                    Logging.Error("Not Authorized.");
-                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
-                            .GetComponent<TextMeshProUGUI>().text =
-                        "If you're seeing this, you're most likely not authenticated.\nPlease make sure your API key generated by the mod is in\nthe BepInEx config.\n(Located at BepInEx/config/Lapis.GorillaTrials.cfg)";
-                }
-                if (www.responseCode == 400)
-                {
-                    Logging.Error("Not Connected.");
-                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
-                            .GetComponent<TextMeshProUGUI>().text =
-                        "You couldn't connect to the server, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this error, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
-                }
+                Logging.Error("Not Authorized.");
+                trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
+                        .GetComponent<TextMeshProUGUI>().text =
+                    "If you're seeing this, you're most likely not authenticated.\nPlease make sure your API key generated by the mod is in\nthe BepInEx config.\n(Located at BepInEx/config/Lapis.GorillaTrials.cfg)";
+            }
+            if (www.responseCode == 400)
+            {
+                Logging.Error("Not Connected.");
+                trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
+                        .GetComponent<TextMeshProUGUI>().text =
+                    "You couldn't connect to the server, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this error, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
+            }
 
-                if (www.responseCode == 404)
-                {
-                    Logging.Error("Trial leaderboard not found");
-                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
-                            .GetComponent<TextMeshProUGUI>().text =
-                        "This trials leaderboard could not be found, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this error, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
-                }
-                Singleton<TrialManager>.Instance.StartCoroutine(GetPlayerRank());
-                if (www.result == UnityWebRequest.Result.ConnectionError || 
-                    www.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    Logging.Error("Error fetching leaderboard: " + www.error);
-                }
-                else
-                {
-                    string json = www.downloadHandler.text;
-                    
-                    try
-                    {
-                        leaderboardEntries = JsonConvert.DeserializeObject<List<LeaderboardEntry>>(json);
-                        formattedLeaderboardText = "";
+            if (www.responseCode == 404)
+            {
+                Logging.Error("Trial leaderboard not found");
+                trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
+                        .GetComponent<TextMeshProUGUI>().text =
+                    "This trials leaderboard could not be found, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this error, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
+            }
+            Singleton<TrialManager>.Instance.StartCoroutine(GetPlayerRank());
+            if (www.result == UnityWebRequest.Result.ConnectionError ||
+                www.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Logging.Error("Error fetching leaderboard: " + www.error);
+            }
+            else
+            {
+                string json = www.downloadHandler.text;
 
-                        foreach (var entry in leaderboardEntries)
-                        {
-                            if (entry.rank > 10) continue;
-                            TimeSpan timeSpan = TimeSpan.FromSeconds(entry.time);
-                            string formattedTime = timeSpan.TotalHours >= 1
-                                ? timeSpan.ToString(@"h\:mm\:ss\.fff")
-                                : timeSpan.ToString(@"mm\:ss\.fff");
-                            string line = $"{entry.rank}. {entry.playerName} - {formattedTime}\n\n";
-                            formattedLeaderboardText += line;
-                            trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject.GetComponent<TextMeshProUGUI>().text = formattedLeaderboardText;
-                        }
-                    }
-                    catch (Exception e)
+                try
+                {
+                    leaderboardEntries = JsonConvert.DeserializeObject<List<LeaderboardEntry>>(json);
+                    formattedLeaderboardText = "";
+
+                    foreach (var entry in leaderboardEntries)
                     {
-                        Logging.Error("Failed to parse leaderboard JSON: " + e.Message);
+                        if (entry.rank > 10) continue;
+                        TimeSpan timeSpan = TimeSpan.FromSeconds(entry.time);
+                        string formattedTime = timeSpan.TotalHours >= 1
+                            ? timeSpan.ToString(@"h\:mm\:ss\.fff")
+                            : timeSpan.ToString(@"mm\:ss\.fff");
+                        string line = $"{entry.rank}. {entry.playerName} - {formattedTime}\n\n";
+                        formattedLeaderboardText += line;
+                        trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject.GetComponent<TextMeshProUGUI>().text = formattedLeaderboardText;
                     }
+                }
+                catch (Exception e)
+                {
+                    Logging.Error("Failed to parse leaderboard JSON: " + e.Message);
                 }
             }
         }
+
         public void SetPersonalBest(double value)
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(value);
@@ -252,15 +235,11 @@ namespace GorillaTrials.Models
             TimeSpan timeSpan = TimeSpan.FromSeconds(value);
             trialUIObject.transform.Find("UI/Info/LastTime").GetComponent<TextMeshProUGUI>().text = string.Concat("Last Time: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
         }
-        
-        private IEnumerator WaitDelay(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-        }
-        
+
         public IEnumerator GetPlayerRank()
         {
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+
             while (string.IsNullOrEmpty(playerId))
             {
                 yield return new WaitForSeconds(3f);
@@ -296,7 +275,7 @@ namespace GorillaTrials.Models
                     Logging.Error("Parsed rank result is null.");
                     yield break;
                 }
-                
+
                 SetRankText($"Rank: #{result.Rank}");
             }
             catch (Exception ex)
@@ -316,7 +295,5 @@ namespace GorillaTrials.Models
 
             rankObj.GetComponent<TextMeshProUGUI>().text = text;
         }
-
-
     }
 }

@@ -1,17 +1,11 @@
-﻿using System;
-using GorillaTrials.Behaviours;
+﻿using GorillaTrials.Behaviours;
+using System;
 
 namespace GorillaTrials.Models.StateMachine
 {
-    public class Trial_End : TrialState
+    public class Trial_End(Trial trial, bool submitTime) : TrialState(trial)
     {
-        protected bool submitTime = true;
-
-        public Trial_End(Trial trial, bool submitTime) : base(trial)
-        {
-            this.submitTime = submitTime;
-            ;
-        }
+        protected bool submitTime = submitTime;
 
         public override void Enter()
         {
@@ -22,7 +16,7 @@ namespace GorillaTrials.Models.StateMachine
             Trial.stopwatch.Stop();
 
             Trial.trialObject.SetActive(true);
-            
+
             HUDManager.instance.ClearHUD();
 
             Singleton<TrialManager>.Instance.EndTrial(submitTime ? Math.Round(Trial.stopwatch.Elapsed.TotalSeconds, 3) : null);

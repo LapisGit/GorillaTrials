@@ -1,5 +1,4 @@
 using GorillaTrials.Models.StateMachine;
-using GorillaTrials.Tools;
 using UnityEngine;
 
 namespace GorillaTrials.Behaviours;
@@ -27,7 +26,7 @@ public class EarlyEnd : MonoBehaviour
             bothButtonsHeldTime = 0f;
         }
     }
-        
+
     private void OnBothButtonsHeld()
     {
         if (TrialManager.Instance.Started == false)

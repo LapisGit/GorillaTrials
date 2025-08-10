@@ -1,14 +1,7 @@
-﻿using GorillaTrials.Behaviours;
-
-namespace GorillaTrials.Models.StateMachine
+﻿namespace GorillaTrials.Models.StateMachine
 {
-    public class Trial_Start : TrialState
+    public class Trial_Start(Trial trial) : TrialState(trial)
     {
-        public Trial_Start(Trial trial) : base(trial)
-        {
-            ;
-        }
-
         public override void Enter()
         {
             base.Enter();
@@ -24,12 +17,13 @@ namespace GorillaTrials.Models.StateMachine
                 Trial.stateMachine.SwitchState(new Trial_Boxes(Trial));
                 return;
             }
+
             if (Trial.TrialType == (int)ETrialType.Zone)
             {
                 Trial.stateMachine.SwitchState(new Trial_Zones(Trial));
                 return;
             }
-            
+
             Trial.stateMachine.SwitchState(new Trial_End(Trial, false));
         }
     }

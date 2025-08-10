@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using BepInEx;
 using BepInEx.Configuration;
 using GorillaTrials.Tools;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 namespace GorillaTrials.Behaviours
 {

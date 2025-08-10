@@ -7,5 +7,5 @@
         Hard = 2,
         Insane = 3,
         Extreme = 4
-    }    
+    }
 }
