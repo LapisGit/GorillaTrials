@@ -127,7 +127,6 @@ namespace GorillaTrials.Models.StateMachine
                 Logging.Info($"Triggered relevant box {box.gameObject.name} (proceeded to {boxesCollected})");
                 Logging.Info($"{boxesCollected}/{boxesToCollect}");          
 #endif
-
                 if (boxesCollected >= boxesToCollect)
                 {
                     Trial.stateMachine.SwitchState(new Trial_End(Trial, true));

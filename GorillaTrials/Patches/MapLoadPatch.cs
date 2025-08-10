@@ -7,7 +7,6 @@ namespace GorillaTrials.Patches
     [HarmonyPatch("OnLoadComplete")]
     internal class MapLoadPatch
     {
-
         static void Postfix()
         {
             CustomMapManager.instance.CheckIfApprovedMap(CustomMapLoader.LoadedMapModId);

@@ -37,6 +37,7 @@ namespace GorillaTrials.Behaviours
                 if (parentBox != null)
                 {
                     parentBox.OnBoxTriggered();
+                    GorillaTagger.Instance.StartVibration(handIndicator.isLeftHand, GorillaTagger.Instance.tapHapticStrength / 2f, GorillaTagger.Instance.tapHapticDuration);
                 }
                 else
                 {

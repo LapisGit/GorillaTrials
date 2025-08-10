@@ -215,7 +215,7 @@ namespace GorillaTrials.Behaviours
         {
             // replay being slower than the actual time should be fixed now
             
-            if (trackedObjects.Count != 3 || replayFrames == null || currentFrameIndex >= replayFrames.Count)
+            if (trackedObjects.Count != 3 || replayFrames == null || replayFrames.Count == 0)
             {
                 StopReplay();
                 return;
@@ -228,19 +228,23 @@ namespace GorillaTrials.Behaviours
             {
                 currentFrameIndex++;
             }
-
-            if (currentFrameIndex >= replayFrames.Count)
+            
+            if (currentFrameIndex >= replayFrames.Count - 1 && 
+                replayFrames[currentFrameIndex].time <= currentReplayTime)
             {
                 StopReplay();
                 return;
             }
-
-            FrameData frame = replayFrames[currentFrameIndex];
-
-            for (int i = 0; i < trackedObjects.Count; i++)
+            
+            if (currentFrameIndex < replayFrames.Count)
             {
-                trackedObjects[i].transform.position = frame.positions[i];
-                trackedObjects[i].transform.rotation = frame.rotations[i];
+                FrameData frame = replayFrames[currentFrameIndex];
+
+                for (int i = 0; i < trackedObjects.Count; i++)
+                {
+                    trackedObjects[i].transform.position = frame.positions[i];
+                    trackedObjects[i].transform.rotation = frame.rotations[i];
+                }
             }
         }
 
