@@ -166,7 +166,7 @@ namespace GorillaTrials
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.SetActive(true);
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject
-                    .GetComponent<TextMeshProUGUI>().text = request.error;
+                    .GetComponent<TextMeshProUGUI>().text = request.downloadHandler.text;
                 Logging.Error(request.downloadHandler.text);
                 yield break;
             }
