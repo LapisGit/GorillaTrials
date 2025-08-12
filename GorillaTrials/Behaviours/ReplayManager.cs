@@ -95,6 +95,7 @@ namespace GorillaTrials.Behaviours
             }
 
             string path = Path.Combine(Application.persistentDataPath, fileName.EndsWith(".json") ? fileName : fileName + ".json");
+            path = Path.GetFullPath(path); // fix for path being messed up sometimes?
 
             try
             {
