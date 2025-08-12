@@ -1,4 +1,5 @@
-﻿using GorillaLocomotion;
+﻿using BepInEx;
+using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTrials.Models;
 using GorillaTrials.Models.StateMachine;
@@ -9,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -22,7 +24,7 @@ namespace GorillaTrials.Behaviours
         public string refreshBoard = null;
         public Trial currentTrial;
         private readonly List<Trial> trials = [];
-        public GameObject trialAssets, trialUIAsset, trialBoxAsset, achievementsUI, leftHand, rightHand, Head;
+        public GameObject trialAssets, trialUIAsset, trialBoxAsset, trialZoneAsset, achievementsUI, leftHand, rightHand, Head;
         public string trialResultBackup;
 
         private bool isPB = false;
@@ -33,6 +35,7 @@ namespace GorillaTrials.Behaviours
             trialAssets = await AssetLoader.LoadAsset<GameObject>("GorillaTrials");
             trialUIAsset = trialAssets.transform.Find("Trial").gameObject;
             trialBoxAsset = trialAssets.transform.Find("Trial Box").gameObject;
+            trialZoneAsset = trialAssets.transform.Find("Trial Zone").gameObject;
             leftHand = GTPlayer._instance.leftHandFollower.gameObject;
             rightHand = GTPlayer._instance.rightHandFollower.gameObject;
             Head = GTPlayer._instance.headCollider.gameObject;
@@ -222,7 +225,10 @@ namespace GorillaTrials.Behaviours
             if (isPB)
             {
                 TrialResult result = JsonConvert.DeserializeObject<TrialResult>(json);
-                ReplayManager.Instance.UploadReplayWR(lastTrialPlayed, result.PlayerId, result.Time);
+                Task.Run(() => ThreadingHelper.Instance.StartSyncInvoke(async () =>
+                {
+                    await ReplayManager.Instance.UploadReplayWR(lastTrialPlayed, result.PlayerId, result.Time);
+                }));
                 isPB = false;
             }
         }

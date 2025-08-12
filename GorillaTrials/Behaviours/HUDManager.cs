@@ -58,6 +58,7 @@ namespace GorillaTrials.Behaviours
             }
 
             text1 = text;
+            ClearHUD();
 
             //SetHUDText("HUD Initialized :3");
             // debug
