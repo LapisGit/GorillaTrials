@@ -30,15 +30,38 @@ namespace GorillaTrials.Behaviours
         private bool isPB = false;
         public string lastTrialPlayed;
 
+        public JsonSerializerSettings SerializeSettings { get; private set; }
+
+        public JsonSerializerSettings DeserializeSettings { get; private set; }
+
         public async override void Initialize()
         {
+            Vector3Converter vector3Converter = new();
+            QuaternionConverter quaternionConverter = new();
+
+            SerializeSettings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                CheckAdditionalContent = true,
+                Formatting = Formatting.None
+            };
+            SerializeSettings.Converters.Add(vector3Converter);
+            SerializeSettings.Converters.Add(quaternionConverter);
+
+            DeserializeSettings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            DeserializeSettings.Converters.Add(vector3Converter);
+            DeserializeSettings.Converters.Add(quaternionConverter);
+
             trialAssets = await AssetLoader.LoadAsset<GameObject>("GorillaTrials");
             trialUIAsset = trialAssets.transform.Find("Trial").gameObject;
             trialBoxAsset = trialAssets.transform.Find("Trial Box").gameObject;
             trialZoneAsset = trialAssets.transform.Find("Trial Zone").gameObject;
-            leftHand = GTPlayer._instance.leftHandFollower.gameObject;
-            rightHand = GTPlayer._instance.rightHandFollower.gameObject;
-            Head = GTPlayer._instance.headCollider.gameObject;
+            leftHand = GTPlayer.Instance.leftHandFollower.gameObject;
+            rightHand = GTPlayer.Instance.rightHandFollower.gameObject;
+            Head = GTPlayer.Instance.headCollider.gameObject;
 
             string url = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/trials.json";
             using UnityWebRequest request = UnityWebRequest.Get(url);
@@ -185,6 +208,7 @@ namespace GorillaTrials.Behaviours
                     jsonBody)
             );
             currentTrial.SetLastTime(submitTime);
+            currentTrial.UsePlayerInfo(true);
 
             Logging.Info(GetTrialsWithPBCount(trials));
         }

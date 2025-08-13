@@ -25,5 +25,5 @@ public class Position
     public float y;
     public float z;
 
-    public Vector3 ToVector3() => new Vector3(x, y, z);
+    public Vector3 ToVector3() => new(x, y, z);
 }

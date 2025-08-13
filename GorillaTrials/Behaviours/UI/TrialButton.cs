@@ -11,6 +11,11 @@ namespace GorillaTrials.Behaviours.UI
         protected static float lastButtonClick;
 
         public Action onPressed;
+        
+        public void Awake()
+        {
+            gameObject.SetLayer(UnityLayer.GorillaInteractable);
+        }
 
         public void OnTriggerEnter(Collider collider)
         {

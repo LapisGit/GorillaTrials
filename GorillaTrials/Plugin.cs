@@ -207,7 +207,7 @@ namespace GorillaTrials
 
         }
         [Serializable]
-        public class AccountRequest
+        public class     AccountRequest
         {
             public string playerid;
         }

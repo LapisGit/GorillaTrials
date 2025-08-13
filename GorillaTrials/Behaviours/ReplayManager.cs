@@ -99,7 +99,7 @@ namespace GorillaTrials.Behaviours
 
             try
             {
-                string json = JsonConvert.SerializeObject(recordedFrames, Formatting.None);
+                string json = JsonConvert.SerializeObject(recordedFrames, TrialManager.Instance.SerializeSettings);
                 File.WriteAllText(path, json);
                 Logging.Info($"Saved replay to {path}");
             }
@@ -128,7 +128,7 @@ namespace GorillaTrials.Behaviours
             try
             {
                 string json = File.ReadAllText(path);
-                replayFrames = JsonConvert.DeserializeObject<List<FrameData>>(json);
+                replayFrames = JsonConvert.DeserializeObject<List<FrameData>>(json, TrialManager.Instance.DeserializeSettings);
                 Logging.Info($"Successfully loaded replay from {path}");
             }
             catch (Exception ex)
@@ -156,7 +156,7 @@ namespace GorillaTrials.Behaviours
             try
             {
                 string json = File.ReadAllText(path);
-                replayFrames = JsonConvert.DeserializeObject<List<FrameData>>(json);
+                replayFrames = JsonConvert.DeserializeObject<List<FrameData>>(json, TrialManager.Instance.DeserializeSettings);
 
                 trackedObjects = new List<GameObject> { replayHead, replayleftHand, replayrightHand };
 
@@ -263,7 +263,7 @@ namespace GorillaTrials.Behaviours
         {
             try
             {
-                string json = JsonConvert.SerializeObject(recordedFrames, Formatting.None);
+                string json = JsonConvert.SerializeObject(recordedFrames, TrialManager.Instance.SerializeSettings);
 
                 var body = new
                 {
@@ -276,7 +276,7 @@ namespace GorillaTrials.Behaviours
                 using HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Authorization", Plugin.APIKey.Value);
 
-                StringContent content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
+                StringContent content = new StringContent(JsonConvert.SerializeObject(body, TrialManager.Instance.SerializeSettings), Encoding.UTF8, "application/json");
 
                 HttpResponseMessage response = await client.PostAsync($"{Constants.ServerURL}/wr/{track}", content);
 
@@ -305,7 +305,7 @@ namespace GorillaTrials.Behaviours
                 Logging.Info($"getting data from {url}");
 
                 string json = await client.GetStringAsync(url);
-                replayFrames = JsonConvert.DeserializeObject<List<FrameData>>(json);
+                replayFrames = JsonConvert.DeserializeObject<List<FrameData>>(json, TrialManager.Instance.DeserializeSettings);
 
                 if (replayFrames == null || replayFrames.Count == 0)
                 {

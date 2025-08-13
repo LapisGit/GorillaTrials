@@ -97,7 +97,7 @@ namespace GorillaTrials.Models.StateMachine
             Vector3 startPoint = Vector3.MoveTowards(Trial.boxPositions[0], headPosition, -2f).WithY(headPosition.y);
             Vector3 endPoint = Trial.boxPositions[1];
             int resolution = Mathf.FloorToInt(Vector3.Distance(startPoint, endPoint));
-            List<Vector3> curve = SampleCurve(startPoint, ControlPoint(startPoint, endPoint, 28.5f), endPoint, 1.5f, resolution);
+            List<Vector3> curve = SampleCurve(startPoint, ControlPoint(startPoint, endPoint, 32f), endPoint, 2f, resolution);
 
             int curveCount = curve.Count;
             directionalObjects = [];

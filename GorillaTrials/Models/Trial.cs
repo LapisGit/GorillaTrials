@@ -27,7 +27,10 @@ namespace GorillaTrials.Models
 
         public Vector3 position;
         public float y_rotation;
+
+        [NonSerialized]
         public GameObject trialObject; //DO NOT SERIALIZE/DESERIALIZE FROM SERVER, THE MOD IS SUPPOSED TO AUTOMATICALLY ASSIGN THIS.
+
         public string TrialLongName;
         public string TrialServerName;
         public int TrialType; // When deserializing this, make sure to convert the enum on the server (ex: challenge type set to "box") and set it to its corresponding value (ex box challenge type is 0 and zone type is 1, refer to TrialType)
@@ -47,35 +50,35 @@ namespace GorillaTrials.Models
             trialUIObject.name = trialServerName;
             trialUIObject.transform.position = trialPosition;
             trialUIObject.transform.eulerAngles = new Vector3(0, yRotation, 0);
-            trialUIObject.transform.Find("UI/Info/TrialName").gameObject.GetComponent<TextMeshProUGUI>().text = trialLongName;
-            trialUIObject.transform.Find("UI/Buttons/PlayTrial").gameObject.layer = (int)UnityLayer.GorillaInteractable;
-            trialUIObject.transform.Find("UI/Buttons/RefreshBoard").gameObject.layer = (int)UnityLayer.GorillaInteractable;
-            trialUIObject.transform.Find("UI/Buttons/WRReplay").gameObject.layer = (int)UnityLayer.GorillaInteractable;
-            trialUIObject.transform.Find("UI/Buttons/PBReplay").gameObject.layer = (int)UnityLayer.GorillaInteractable;
 
-            TrialButton trialButton = trialUIObject.transform.Find("UI/Buttons/PlayTrial").AddComponent<TrialButton>();
-            TrialButton refreshButton = trialUIObject.transform.Find("UI/Buttons/RefreshBoard").AddComponent<TrialButton>();
-            TrialButton WRReplay = trialUIObject.transform.Find("UI/Buttons/WRReplay").AddComponent<TrialButton>();
-            TrialButton PBReplay = trialUIObject.transform.Find("UI/Buttons/PBReplay").AddComponent<TrialButton>();
+            string colourTag = trialDifficulty switch
+            {
+                ETrialDifficulty.Easy => "<color=#90EE90>",
+                ETrialDifficulty.Medium => "<color=#FDFA72>",
+                ETrialDifficulty.Hard => "<color=#FF6700>",
+                ETrialDifficulty.Insane => "<color=#EE61BD>",
+                ETrialDifficulty.Extreme => "<color=#FF474D>",
+                _ => "<color=red>"
+            };
 
-            SetPersonalBest(PlayerPrefs.GetFloat(string.Concat("PB_", trialServerName), 0));
+            trialUIObject.transform.Find("Stand/FrontCanvas/Text (TMP)").GetComponent<TMP_Text>().text = $"{colourTag}{trialLongName}";
 
-            trialUIObject.transform.Find("UI/Info/TrialType").gameObject.GetComponent<TextMeshProUGUI>().text = trialType switch
+            trialUIObject.transform.Find("UI/InfoMenu/TrialName").GetComponent<TMP_Text>().text = trialLongName;
+
+            UseTrialMenu(TrialMenu.InfoMenu);
+
+            string key = string.Concat("PB_", trialServerName);
+            UsePlayerInfo(PlayerPrefs.HasKey(key));
+            SetPersonalBest(PlayerPrefs.GetFloat(key, 0));
+
+            trialUIObject.transform.Find("UI/InfoMenu/TrialType").gameObject.GetComponent<TextMeshProUGUI>().text = trialType switch
             {
                 ETrialType.Box => "Box Trial",
                 ETrialType.Zone => "Zone Trial",
                 _ => "secret third type"
             };
 
-            trialUIObject.transform.Find("UI/Info/TrialDifficulty").gameObject.GetComponent<TextMeshProUGUI>().text = "Difficulty: " + trialDifficulty switch
-            {
-                ETrialDifficulty.Easy => "<color=#90EE90>Easy",
-                ETrialDifficulty.Medium => "<color=#FDFA72>Medium",
-                ETrialDifficulty.Hard => "<color=#FF6700>Hard",
-                ETrialDifficulty.Insane => "<color=#EE61BD>Insane",
-                ETrialDifficulty.Extreme => "<color=#FF474D>Extreme",
-                _ => "<color=red>Evil"
-            };
+            trialUIObject.transform.Find("UI/InfoMenu/TrialDifficulty").gameObject.GetComponent<TMP_Text>().text = $"Difficulty: {colourTag}{trialDifficulty.GetName()}";
 
             trialObject = trialUIObject;
 
@@ -91,12 +94,28 @@ namespace GorillaTrials.Models
             isFromCustomMap = customMapTrial;
             onApprovedMap = CustomMapManager.instance.approvedMap;
 
+            TrialButton infoButton = trialUIObject.transform.Find("Stand/TopCanvas/InfoButton").gameObject.AddComponent<TrialButton>();
+
+            infoButton.onPressed = delegate ()
+            {
+                UseTrialMenu(TrialMenu.InfoMenu);
+            };
+
+            TrialButton detailsButton = trialUIObject.transform.Find("Stand/TopCanvas/DetailsButton").gameObject.AddComponent<TrialButton>();
+
+            detailsButton.onPressed = delegate ()
+            {
+                UseTrialMenu(TrialMenu.DetailsMenu);
+            };
+
+            TrialButton trialButton = trialUIObject.transform.Find("Stand/TopCanvas/PlayTrial").gameObject.AddComponent<TrialButton>();
+
             trialButton.onPressed = () =>
             {
                 if (Plugin.WrongVersion)
                 {
-                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").GetComponent<TextMeshProUGUI>().text =
-                        "Please update your mod. It is out of date.";
+                    UseTrialMenu(TrialMenu.DetailsMenu);
+                    UseDetailsText(TrialDetailsText.CustomErrorText).text = "Please update your mod. It is out of date.";
                     return;
                 }
 
@@ -113,20 +132,30 @@ namespace GorillaTrials.Models
                 }
                 else
                 {
-                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").GetComponent<TextMeshProUGUI>().text =
-                        "Please enter a casual lobby to begin a trial.";
+                    UseTrialMenu(TrialMenu.DetailsMenu);
+                    UseDetailsText(TrialDetailsText.CustomErrorText).text = "Please enter a casual lobby to begin a trial.";
+
                     Logging.Error($"Gamemode is {GorillaComputer.instance.currentGameMode._value}, and that is not a casual lobby. Not beginning trial.");
                 }
 
             };
+
+            TrialButton refreshButton = trialUIObject.transform.Find("UI/DetailsMenu/RefreshBoard").gameObject.AddComponent<TrialButton>();
+
             refreshButton.onPressed = () =>
             {
                 Singleton<TrialManager>.Instance.StartCoroutine(GetLeaderboardCoroutine(TrialServerName));
             };
+
+            TrialButton PBReplay = trialUIObject.transform.Find("UI/InfoMenu/PBReplay").gameObject.AddComponent<TrialButton>();
+
             PBReplay.onPressed = () =>
             {
                 ReplayManager.Instance.StartReplay($"{trialServerName}_{PlayerPrefs.GetFloat(string.Concat("PB_", trialServerName), 0)}");
             };
+
+            TrialButton WRReplay = trialUIObject.transform.Find("UI/InfoMenu/WRReplay").gameObject.AddComponent<TrialButton>();
+
             WRReplay.onPressed = async () =>
             {
                 if (leaderboardEntries == null || leaderboardEntries.Count == 0)
@@ -144,20 +173,33 @@ namespace GorillaTrials.Models
 
                 await ReplayManager.Instance.DownloadReplayWR(trialServerName, topEntry.PlayerId);
             };
+        }
 
+        public void SetPersonalBest(double value)
+        {
+            TimeSpan timeSpan = TimeSpan.FromSeconds(value);
+            trialUIObject.transform.Find("UI/InfoMenu/TrialPlayerData/PB").GetComponent<TMP_Text>().text = string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
+        }
+
+        public void SetLastTime(double value)
+        {
+            TimeSpan timeSpan = TimeSpan.FromSeconds(value);
+            trialUIObject.transform.Find("UI/InfoMenu/TrialPlayerData/LastTime").GetComponent<TMP_Text>().text = string.Concat("Last Time: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
+        }
+
+        private void SetRankText(string text)
+        {
+            Transform rankObj = trialUIObject.transform.Find("UI/InfoMenu/TrialPlayerData/Rank");
+            rankObj.GetComponent<TextMeshProUGUI>().text = text;
         }
 
         public IEnumerator GetLeaderboardCoroutine(string trialID)
         {
-            if (isFromCustomMap)
+            if (isFromCustomMap && !onApprovedMap)
             {
-                if (!onApprovedMap)
-                {
-                    trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
-                            .GetComponent<TextMeshProUGUI>().text =
-                        "This trial was created by a custom map and this trial is\nnot approved by the GorillaTrials team.\n\nYou may still play the trial, but nothing will be sent\nto any servers.";
-                    yield break;
-                }
+                UseTrialMenu(TrialMenu.DetailsMenu);
+                UseDetailsText(TrialDetailsText.CustomErrorText).text = "This trial was created by a custom map and this trial is\nnot approved by the GorillaTrials team.\n\nYou may still play the trial, but nothing will be sent\nto any servers.";
+                yield break;
             }
 
             string url = $"{Constants.ServerURL}/leaderboard/{trialID}?limit=10";
@@ -170,70 +212,58 @@ namespace GorillaTrials.Models
 
             if (www.responseCode == 401)
             {
+                UseTrialMenu(TrialMenu.DetailsMenu);
+                UseDetailsText(TrialDetailsText.AuthErrorText);
+
                 Logging.Error("Not Authorized.");
-                trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
-                        .GetComponent<TextMeshProUGUI>().text =
-                    "If you're seeing this, you're most likely not authenticated.\nPlease make sure your API key generated by the mod is in\nthe BepInEx config.\n(Located at BepInEx/config/Lapis.GorillaTrials.cfg)";
             }
+
             if (www.responseCode == 400)
             {
+                UseTrialMenu(TrialMenu.DetailsMenu);
+                UseDetailsText(TrialDetailsText.BoardErrorText);
+
                 Logging.Error("Not Connected.");
-                trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
-                        .GetComponent<TextMeshProUGUI>().text =
-                    "You couldn't connect to the server, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this error, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
             }
 
             if (www.responseCode == 404)
             {
+                UseTrialMenu(TrialMenu.DetailsMenu);
+                UseDetailsText(TrialDetailsText.BoardErrorText);
+
                 Logging.Error("Trial leaderboard not found");
-                trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject
-                        .GetComponent<TextMeshProUGUI>().text =
-                    "This trials leaderboard could not be found, try hitting Refresh,\nif that doesn't work, then try restarting your game, and if\\nthat doesn't fix this error, report this to Lapis in the discord\nserver.\n\nhttps://discord.gg/Yc8VXZSPQK";
             }
+
             Singleton<TrialManager>.Instance.StartCoroutine(GetPlayerRank());
-            if (www.result == UnityWebRequest.Result.ConnectionError ||
-                www.result == UnityWebRequest.Result.ProtocolError)
+
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
             {
                 Logging.Error("Error fetching leaderboard: " + www.error);
+                yield break;
             }
-            else
+
+            string json = www.downloadHandler.text;
+
+            try
             {
-                string json = www.downloadHandler.text;
+                leaderboardEntries = JsonConvert.DeserializeObject<List<LeaderboardEntry>>(json);
+                formattedLeaderboardText = "";
 
-                try
+                foreach (var entry in leaderboardEntries)
                 {
-                    leaderboardEntries = JsonConvert.DeserializeObject<List<LeaderboardEntry>>(json);
-                    formattedLeaderboardText = "";
+                    if (entry.rank > 10) continue;
+                    TimeSpan timeSpan = TimeSpan.FromSeconds(entry.time);
+                    string formattedTime = timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff");
+                    string line = $"{entry.rank}. {entry.playerName} - {formattedTime}\n";
+                    formattedLeaderboardText += line;
+                }
 
-                    foreach (var entry in leaderboardEntries)
-                    {
-                        if (entry.rank > 10) continue;
-                        TimeSpan timeSpan = TimeSpan.FromSeconds(entry.time);
-                        string formattedTime = timeSpan.TotalHours >= 1
-                            ? timeSpan.ToString(@"h\:mm\:ss\.fff")
-                            : timeSpan.ToString(@"mm\:ss\.fff");
-                        string line = $"{entry.rank}. {entry.playerName} - {formattedTime}\n\n";
-                        formattedLeaderboardText += line;
-                        trialUIObject.transform.Find("UI/GlobalBoard/GlobalBoardText").gameObject.GetComponent<TextMeshProUGUI>().text = formattedLeaderboardText;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logging.Error("Failed to parse leaderboard JSON: " + e.Message);
-                }
+                UseDetailsText(TrialDetailsText.GlobalBoardText).text = formattedLeaderboardText;
             }
-        }
-
-        public void SetPersonalBest(double value)
-        {
-            TimeSpan timeSpan = TimeSpan.FromSeconds(value);
-            trialUIObject.transform.Find("UI/Info/PB").GetComponent<TextMeshProUGUI>().text = string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
-        }
-
-        public void SetLastTime(double value)
-        {
-            TimeSpan timeSpan = TimeSpan.FromSeconds(value);
-            trialUIObject.transform.Find("UI/Info/LastTime").GetComponent<TextMeshProUGUI>().text = string.Concat("Last Time: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
+            catch (Exception e)
+            {
+                Logging.Error("Failed to parse leaderboard JSON: " + e.Message);
+            }
         }
 
         public IEnumerator GetPlayerRank()
@@ -259,7 +289,7 @@ namespace GorillaTrials.Models
 
                 if (www.responseCode == 404)
                 {
-                    SetRankText("Rank: N/A");
+                    SetRankText("");
                 }
                 yield break;
             }
@@ -277,6 +307,7 @@ namespace GorillaTrials.Models
                 }
 
                 SetRankText($"Rank: #{result.Rank}");
+                UsePlayerInfo(true);
             }
             catch (Exception ex)
             {
@@ -284,16 +315,74 @@ namespace GorillaTrials.Models
             }
         }
 
-        private void SetRankText(string text)
+        public void UsePlayerInfo(bool choice)
         {
-            Transform rankObj = trialUIObject.transform.Find("UI/Info/Rank");
-            if (rankObj == null)
+            Transform[] roots =
+            [
+                trialUIObject.transform.Find("UI/InfoMenu/TrialPlayerData"),
+                trialUIObject.transform.Find("UI/InfoMenu/PBReplay")
+            ];
+
+            foreach(Transform transform in roots)
             {
-                Logging.Error($"Rank object not found in trial {TrialServerName}");
-                return;
+                if (transform.gameObject.activeSelf == choice) continue;
+                transform.gameObject.SetActive(choice);
+            }
+        }
+
+        public void UseTrialMenu(TrialMenu choice)
+        {
+            Transform root = trialUIObject.transform.Find("UI");
+
+            foreach(Transform child in root)
+            {
+                if (!Enum.TryParse(child.gameObject.name, out TrialMenu foundType)) continue;
+
+                bool isActive = foundType == choice;
+                if (child.gameObject.activeSelf != isActive) child.gameObject.SetActive(isActive);
+            }
+        }
+
+        public TMP_Text UseDetailsText(TrialDetailsText choice)
+        {
+            Transform root = trialUIObject.transform.Find("UI/DetailsMenu");
+
+            TMP_Text chosenText = null;
+
+            Dictionary<TrialDetailsText, GameObject> dict = [];
+
+            foreach(Transform child in root)
+            {
+                if (!child.GetComponent<TMP_Text>() || !Enum.TryParse(child.gameObject.name, out TrialDetailsText type) || dict.ContainsKey(type)) continue;
+
+                dict.TryAdd(type, child.gameObject);
             }
 
-            rankObj.GetComponent<TextMeshProUGUI>().text = text;
+            foreach(var (type, gameObject) in dict)
+            {
+                bool isActive = type == choice;
+
+                TMP_Text text = gameObject.GetComponent<TMP_Text>();
+                text.enabled = isActive;
+
+                if (isActive && chosenText is null) chosenText = text;
+            }
+
+            return chosenText;
+        }
+
+        public enum TrialMenu
+        {
+            InfoMenu,
+            DetailsMenu
+        }
+
+        public enum TrialDetailsText
+        {
+            AuthErrorText,
+            BoardErrorText,
+            CustomErrorText,
+            GlobalBoardText
         }
     }
 }
