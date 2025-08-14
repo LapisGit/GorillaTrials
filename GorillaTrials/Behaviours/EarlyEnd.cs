@@ -6,7 +6,7 @@ namespace GorillaTrials.Behaviours;
 public class EarlyEnd : MonoBehaviour
 {
     private float bothButtonsHeldTime = 0f;
-    private readonly float requiredHoldDuration = 3f;
+    private readonly float requiredHoldDuration = Plugin.EarlyEndTime.Value;
     public void Update()
     {
         bool leftHeld = ControllerInputPoller.instance.leftControllerSecondaryButton;

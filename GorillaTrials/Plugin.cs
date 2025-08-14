@@ -26,6 +26,7 @@ namespace GorillaTrials
         public static new ConfigFile Config;
         public static ConfigEntry<string> APIKey;
         public static ConfigEntry<bool> PBNotify;
+        public static ConfigEntry<float> EarlyEndTime;
 
         public static bool WrongVersion;
         public static AchievementManager achievementManager;
@@ -66,6 +67,14 @@ namespace GorillaTrials
                 true,
                 "If true, the HUD will notify you if you get a Personal Best on a trial."
             );
+            EarlyEndTime = Config.Bind
+            (
+                "Gameplay",
+                "Early End Time",
+                3f,
+                "The value in seconds that determineshow long you have to hold your primary face button to end a trial early."
+            );
+
 
 
             GorillaTagger.OnPlayerSpawned(() =>
@@ -153,9 +162,9 @@ namespace GorillaTrials
 
             if (APIKey.Value != "Your-API-Key-Here")
             {
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(false);
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(true);
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").GetComponent<TextMeshProUGUI>().text = "You already seem to have an account!";
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject.SetActive(false);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject.SetActive(true);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").GetComponent<TextMeshProUGUI>().text = "You already seem to have an account!";
                 yield break;
             }
 
@@ -163,9 +172,9 @@ namespace GorillaTrials
             {
                 Logging.Fatal($"create account error {request.responseCode}");
                 Logging.Error(request.error);
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.SetActive(true);
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject.SetActive(true);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.SetActive(true);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject
                     .GetComponent<TextMeshProUGUI>().text = request.downloadHandler.text;
                 Logging.Error(request.downloadHandler.text);
                 yield break;
@@ -183,31 +192,31 @@ namespace GorillaTrials
                     {
                         APIKey.Value = response.api_key;
                         Config.Save();
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(true);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject.SetActive(true);
                     }
                     else
                     {
                         Logging.Error("API key not found in server response.");
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.SetActive(true);
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(false);
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "API key not found in server response.";
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject.SetActive(true);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.SetActive(true);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject.SetActive(false);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "API key not found in server response.";
                     }
                 }
                 catch (Exception ex)
                 {
                     Logging.Fatal("Failed to parse server response");
                     Logging.Error(ex);
-                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorText").gameObject.SetActive(true);
-                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.SetActive(true);
-                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/SuccessText").gameObject.SetActive(false);
-                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page2/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "Failed to parse server response, check logs for more details.";
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject.SetActive(true);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.SetActive(true);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject.SetActive(false);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "Failed to parse server response, check logs for more details.";
                 }
             }
 
         }
         [Serializable]
-        public class     AccountRequest
+        public class AccountRequest
         {
             public string playerid;
         }

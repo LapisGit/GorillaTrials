@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3287313728
+CRC: 3205628946
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 96c96a554e4d38c791cee082ad7ae69e
+    Hash: a21af13275be2e910a3244dbadba66b5
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 15ac9368d70cc633f36105d2de249e24
+    Hash: c6108489a2888d8ad607fe4f1b27d0ae
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -40,9 +40,15 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -74,6 +80,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: TMPro.VertexGradient
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.Events.PersistentCallGroup
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.RectOffset
 - AssemblyName: UnityEngine.TextCoreFontEngineModule
   ClassName: UnityEngine.TextCore.FaceInfo
 - AssemblyName: UnityEngine.TextCoreFontEngineModule
@@ -92,4 +100,5 @@ Assets:
 - Assets/Replay.prefab
 - Assets/HUDUI.prefab
 - Assets/GorillaTrials.prefab
+- Assets/TrialUtilityMenu.prefab
 Dependencies: []

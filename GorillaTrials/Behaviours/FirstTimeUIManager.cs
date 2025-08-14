@@ -12,7 +12,7 @@ public class FirstTimeUIManager : MonoBehaviour
 
     public GameObject UIRoot, UI;
     public int currentPage = 1;
-    public int maxPage = 2;
+    public int maxPage = 5;
     public int minPage = 1;
 
     void Awake()
@@ -58,11 +58,13 @@ public class FirstTimeUIManager : MonoBehaviour
             if (currentPage == maxPage)
             {
                 UI.transform.Find("Buttons/Done").gameObject.SetActive(true);
+                UI.transform.Find("Buttons/NextPage").gameObject.SetActive(false);
             }
-
+ 
             if (currentPage != maxPage)
             {
                 UI.transform.Find("Buttons/Done").gameObject.SetActive(false);
+                UI.transform.Find("Buttons/NextPage").gameObject.SetActive(true);
             }
 
             UI.transform.Find($"StuffLol/Page{currentPage}").gameObject.SetActive(true);
@@ -80,11 +82,13 @@ public class FirstTimeUIManager : MonoBehaviour
             if (currentPage == maxPage)
             {
                 UI.transform.Find("Buttons/Done").gameObject.SetActive(true);
+                UI.transform.Find("Buttons/NextPage").gameObject.SetActive(false);
             }
 
             if (currentPage != maxPage)
             {
                 UI.transform.Find("Buttons/Done").gameObject.SetActive(false);
+                UI.transform.Find("Buttons/NextPage").gameObject.SetActive(true);
             }
 
             UI.transform.Find($"StuffLol/Page{currentPage}").gameObject.SetActive(true);
