@@ -12,13 +12,17 @@ using System.Collections;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using GorillaGameModes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using Utilla.Attributes;
 
 namespace GorillaTrials
 {
     [BepInPlugin(Constants.GUID, Constants.Name, Constants.Version)]
+    [BepInDependency("org.legoandmars.gorillatag.utilla", "1.5.0")]
+    [ModdedGamemode("gtrials", "GORILLATRIALS", GameModeType.Casual)]
     public class Plugin : BaseUnityPlugin
     {
         public static new ManualLogSource Logger;
@@ -29,6 +33,7 @@ namespace GorillaTrials
         public static ConfigEntry<float> EarlyEndTime;
 
         public static bool WrongVersion;
+        public static bool InModdedGamemode;
         public static AchievementManager achievementManager;
         private static readonly HttpClient httpClient = new HttpClient();
 
@@ -42,17 +47,24 @@ namespace GorillaTrials
             Config = base.Config;
             achievementManager = new AchievementManager(Config);
 
-            achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!", "Complete your first trial!"));
-            achievementManager.RegisterAchievement(new Achievement("stump_climb_champ", "Stump Climb Champion!", "Complete the 'Stump Climb' trial in under 11 seconds."));
-            achievementManager.RegisterAchievement(new Achievement("adv_hp2", "Hoverpark 2 Sprint Master", "Complete the 'Hoverpark 2 Sprint Advanced' trial."));
+            achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!",
+                "Complete your first trial!"));
+            achievementManager.RegisterAchievement(new Achievement("stump_climb_champ", "Stump Climb Champion!",
+                "Complete the 'Stump Climb' trial in under 11 seconds."));
+            achievementManager.RegisterAchievement(new Achievement("adv_hp2", "Hoverpark 2 Sprint Master",
+                "Complete the 'Hoverpark 2 Sprint Advanced' trial."));
             achievementManager.RegisterAchievement(new Achievement("5trials", "5 Trials", "Complete 5 Trials"));
             achievementManager.RegisterAchievement(new Achievement("10trials", "10 Trials", "Complete 10 Trials"));
             achievementManager.RegisterAchievement(new Achievement("20trials", "20 Trials", "Complete 20 Trials"));
             achievementManager.RegisterAchievement(new Achievement("30trials", "30 Trials", "Complete 30 Trials"));
-            achievementManager.RegisterAchievement(new Achievement("vinemaster", "Vine Master", "Complete the 'Swinging Around' trial in under 10 seconds."));
-            achievementManager.RegisterAchievement(new Achievement("masterswimmer", "Master Swimmer", "Complete the 'Master Swimmer' trial."));
-            achievementManager.RegisterAchievement(new Achievement("slowpoke", "Slowpoke", "Take over 2 minutes to complete a trial."));
-            achievementManager.RegisterAchievement(new Achievement("ultraslowpoke", "Ultra Slowpoke", "Take over 2 minutes to complete a trial."));
+            achievementManager.RegisterAchievement(new Achievement("vinemaster", "Vine Master",
+                "Complete the 'Swinging Around' trial in under 10 seconds."));
+            achievementManager.RegisterAchievement(new Achievement("masterswimmer", "Master Swimmer",
+                "Complete the 'Master Swimmer' trial."));
+            achievementManager.RegisterAchievement(new Achievement("slowpoke", "Slowpoke",
+                "Take over 2 minutes to complete a trial."));
+            achievementManager.RegisterAchievement(new Achievement("ultraslowpoke", "Ultra Slowpoke",
+                "Take over 2 minutes to complete a trial."));
             APIKey = Config.Bind
             (
                 "Server",
@@ -97,12 +109,13 @@ namespace GorillaTrials
 #if DEBUG
                 root.AddComponent<DebugEditor>();
 #endif
-                CompareVersion("https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt", version =>
-                {
+                CompareVersion("https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt",
+                    version =>
+                    {
 #if RELEASE
                     WrongVersion = version == EVersionCompareResult.Outdated;
 #endif
-                });
+                    });
                 StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
             });
 
@@ -130,14 +143,17 @@ namespace GorillaTrials
             Version current = new(Constants.Version);
             Version remote = new(request.downloadHandler.text.Trim());
 
-            onVersionRecieved?.Invoke(remote > current ? EVersionCompareResult.Outdated : EVersionCompareResult.UpToDate);
+            onVersionRecieved?.Invoke(
+                remote > current ? EVersionCompareResult.Outdated : EVersionCompareResult.UpToDate);
         }
 
-        private IEnumerator YieldWebRequest(UnityWebRequest webRequest, TaskCompletionSource<UnityWebRequest> completionSource)
+        private IEnumerator YieldWebRequest(UnityWebRequest webRequest,
+            TaskCompletionSource<UnityWebRequest> completionSource)
         {
             yield return webRequest.SendWebRequest();
             completionSource.SetResult(webRequest);
         }
+
         public IEnumerator PostRequest(string url)
         {
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
@@ -164,7 +180,8 @@ namespace GorillaTrials
             {
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject.SetActive(false);
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject.SetActive(true);
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").GetComponent<TextMeshProUGUI>().text = "You already seem to have an account!";
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText")
+                    .GetComponent<TextMeshProUGUI>().text = "You already seem to have an account!";
                 yield break;
             }
 
@@ -173,7 +190,8 @@ namespace GorillaTrials
                 Logging.Fatal($"create account error {request.responseCode}");
                 Logging.Error(request.error);
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject.SetActive(true);
-                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.SetActive(true);
+                FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject
+                    .SetActive(true);
                 FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject
                     .GetComponent<TextMeshProUGUI>().text = request.downloadHandler.text;
                 Logging.Error(request.downloadHandler.text);
@@ -192,39 +210,63 @@ namespace GorillaTrials
                     {
                         APIKey.Value = response.api_key;
                         Config.Save();
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject.SetActive(true);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject
+                            .SetActive(true);
                     }
                     else
                     {
                         Logging.Error("API key not found in server response.");
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject.SetActive(true);
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.SetActive(true);
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject.SetActive(false);
-                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "API key not found in server response.";
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject
+                            .SetActive(true);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject
+                            .SetActive(true);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject
+                            .SetActive(false);
+                        FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject
+                            .GetComponent<TextMeshProUGUI>().text = "API key not found in server response.";
                     }
                 }
                 catch (Exception ex)
                 {
                     Logging.Fatal("Failed to parse server response");
                     Logging.Error(ex);
-                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject.SetActive(true);
-                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.SetActive(true);
-                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject.SetActive(false);
-                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject.GetComponent<TextMeshProUGUI>().text = "Failed to parse server response, check logs for more details.";
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorText").gameObject
+                        .SetActive(true);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject
+                        .SetActive(true);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/SuccessText").gameObject
+                        .SetActive(false);
+                    FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page5/ErrorResponse").gameObject
+                            .GetComponent<TextMeshProUGUI>().text =
+                        "Failed to parse server response, check logs for more details.";
                 }
             }
 
         }
+
         [Serializable]
         public class AccountRequest
         {
             public string playerid;
         }
+
         [Serializable]
         public class AccountResponse
         {
             public string message;
             public string api_key;
+        }
+
+        [ModdedGamemodeJoin]
+        public void OnModdedGamemodeJoin()
+        {
+            InModdedGamemode = true;
+        }
+
+        [ModdedGamemodeLeave]
+        public void OnModdedGamemodeLeave()
+        {
+            InModdedGamemode = false;
         }
     }
 }

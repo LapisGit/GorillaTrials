@@ -124,7 +124,7 @@ namespace GorillaTrials.Models
                     ReplayManager.Instance.StopReplay();
                 }
 
-                if (GameModeUtils.CurrentGamemode is Gamemode gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGamemode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual)
+                if (GameModeUtils.CurrentGamemode is Gamemode gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGamemode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual || Plugin.InModdedGamemode)
                 {
                     //TimeManager.instance.maxTime = maxTime;
 
@@ -133,7 +133,7 @@ namespace GorillaTrials.Models
                 else
                 {
                     UseTrialMenu(TrialMenu.DetailsMenu);
-                    UseDetailsText(TrialDetailsText.CustomErrorText).text = "Please enter a casual lobby to begin a trial.";
+                    UseDetailsText(TrialDetailsText.CustomErrorText).text = "Please enter a casual lobby or the GorillaTrial custom gamemode to begin a trial.";
 
                     Logging.Error($"Gamemode is {GorillaComputer.instance.currentGameMode._value}, and that is not a casual lobby. Not beginning trial.");
                 }
