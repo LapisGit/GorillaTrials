@@ -22,24 +22,35 @@ namespace GorillaTrials.Behaviours
             instance = this;
         }
 
+
         public void LoadTrialsFromScene()
         {
-
             DestroyAllTrialsFromCustomMap();
 
-            var scene = SceneManager.GetSceneByName(CustomMapLoader.initialSceneName);
-            var rootObjects = scene.GetRootGameObjects();
+            int sceneCount = SceneManager.sceneCount;
 
-            foreach (var root in rootObjects)
+            for (int i = 0; i < sceneCount; i++)
             {
-                TraverseHierarchy(root.transform);
+                var scene = SceneManager.GetSceneAt(i);
+                
+                if (scene.name == "GorillaTag")
+                    continue;
+
+                Logging.Info($"Checking scene: {scene.name}");
+
+                var rootObjects = scene.GetRootGameObjects();
+                foreach (var root in rootObjects)
+                {
+                    TraverseHierarchy(root.transform);
+                }
             }
 
-            Logging.Info("scene trial loading complete! :3");
+            Logging.Info("Scene trial loading complete! :3");
         }
 
         void TraverseHierarchy(Transform parent)
         {
+            Logging.Info($"Traversing object: {parent.name}");
             ProcessObject(parent.gameObject);
 
             foreach (Transform child in parent)
@@ -47,6 +58,7 @@ namespace GorillaTrials.Behaviours
                 TraverseHierarchy(child);
             }
         }
+
 
         void ProcessObject(GameObject obj)
         {

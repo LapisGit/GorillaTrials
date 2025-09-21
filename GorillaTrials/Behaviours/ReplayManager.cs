@@ -301,7 +301,7 @@ namespace GorillaTrials.Behaviours
             try
             {
                 using HttpClient client = new HttpClient();
-                string url = $"{Constants.ServerURL}/wr_replays/{track}_{playerId}.json";
+                string url = $"{Constants.ServerURL}/data/wr_replays/{track}_{playerId}.json";
                 Logging.Info($"getting data from {url}");
 
                 string json = await client.GetStringAsync(url);

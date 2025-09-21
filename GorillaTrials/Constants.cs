@@ -2,7 +2,7 @@
 {
     internal class Constants
     {
-        public const string GUID = "Lapis.GorillaTrials";
+        public const string GUID = "TrialsTeam.GorillaTrials";
 
         public const string Name = "GorillaTrials";
 
@@ -12,6 +12,6 @@
 
         public const string CustomProperty = "GTrials";
 
-        public const string ServerURL = "https://trials.lapis.codes";
+        public const string ServerURL = "https://trials.soweli.uk";
     }
 }

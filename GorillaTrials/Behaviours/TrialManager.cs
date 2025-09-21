@@ -245,14 +245,15 @@ namespace GorillaTrials.Behaviours
             }
             refreshBoard = "";
             Logging.Info("Trial results uploaded");
-
+            
+            TrialResult result = JsonConvert.DeserializeObject<TrialResult>(json);
+            Task.Run(() => ThreadingHelper.Instance.StartSyncInvoke(async () =>
+            {
+                await ReplayManager.Instance.UploadReplayWR(lastTrialPlayed, result.PlayerId, result.Time);
+            }));
+            
             if (isPB)
             {
-                TrialResult result = JsonConvert.DeserializeObject<TrialResult>(json);
-                Task.Run(() => ThreadingHelper.Instance.StartSyncInvoke(async () =>
-                {
-                    await ReplayManager.Instance.UploadReplayWR(lastTrialPlayed, result.PlayerId, result.Time);
-                }));
                 isPB = false;
             }
         }
