@@ -124,7 +124,7 @@ namespace GorillaTrials.Models
                     ReplayManager.Instance.StopReplay();
                 }
 
-                if (GameModeUtils.CurrentGamemode is Gamemode gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGamemode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual || Plugin.InModdedGamemode)
+                if (GameModeUtils.CurrentGamemode is Gamemode gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGamemode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual || Plugin.InModdedGamemode || GorillaComputer.instance.currentGameMode.ToString() == "MODDED_Casual")
                 {
                     //TimeManager.instance.maxTime = maxTime;
 
