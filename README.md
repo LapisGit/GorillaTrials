@@ -9,7 +9,7 @@ You can join the [Discord!](https://discord.gg/48fCJzPfEk)
 Go to the [latest release](https://github.com/LapisGit/GorillaTrials/releases/latest), and put the .dll inside of your plugins folder.
 
 ## Authentication
-Please contact Lapis if the game does not automatically create an account and set your API Key for you. (BepInEx/config/Lapis.GorillaTrials.cfg under [Authorization])
+Please contact Lapis if the game does not automatically create an account and set your API Key for you. (BepInEx/config/TrialsTeam.GorillaTrials.cfg under [Authorization])
 
 ## Custom Map Creation
 If you are a custom map creator and wish to implement Trials into your custom map, please take a look at the [Wiki.](https://github.com/LapisGit/GorillaTrials/wiki)
