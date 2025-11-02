@@ -23,6 +23,11 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<MakeDir Directories="$(PluginsPath)\GorillaTrials" />
+		<Copy SourceFiles="$(TargetPath);bin/Debug/$(TargetFramework)/GorillaTrials.pdb" DestinationFiles="$(GamePath)/BepInEx/plugins/GorillaTrials/GorillaTrials.dll;$(GamePath)/BepInEx/plugins/GorillaTrials/GorillaTrials.pdb" />
+	</Target>
+
 	<ItemGroup>
 		<Reference Include="0Harmony">
 			<HintPath>$(BepInExAssemblyPath)\0Harmony.dll</HintPath>
@@ -49,7 +54,7 @@
 			<HintPath>$(GameAssemblyPath)\Fusion.Runtime.dll</HintPath>
 		</Reference>
 		<Reference Include="Modio">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Modio.dll</HintPath>
+		  <HintPath>$(GameAssemblyPath)\Modio.dll</HintPath>
 		</Reference>
 		<Reference Include="Mono.Security">
 			<HintPath>$(GameAssemblyPath)\Mono.Security.dll</HintPath>
@@ -301,7 +306,7 @@
 			<HintPath>$(GameAssemblyPath)\UnityEngine.XRModule.dll</HintPath>
 		</Reference>
 		<Reference Include="Utilla">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\BepInEx\plugins\Utilla\Utilla.dll</HintPath>
+		  <HintPath>$(PluginsPath)\Utilla\Utilla.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
