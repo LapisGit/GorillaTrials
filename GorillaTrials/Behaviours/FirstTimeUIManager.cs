@@ -15,12 +15,12 @@ public class FirstTimeUIManager : MonoBehaviour
     public int maxPage = 5;
     public int minPage = 1;
 
-    void Awake()
+    async void Awake()
     {
         instance = this;
         if (PlayerPrefs.GetString("firsttimedone") != "yes :3")
         {
-            Initialize();
+             await Initialize();
         }
     }
 

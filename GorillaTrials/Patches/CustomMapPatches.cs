@@ -15,7 +15,7 @@ namespace GorillaTrials.Patches
     [HarmonyPatch(typeof(CustomMapLoader), nameof(CustomMapLoader.UnloadSceneCoroutine), MethodType.Enumerator)]
     internal class MapUnloadPatch
     {
-        private static async void Postfix()
+        private static void Postfix()
         {
             CustomMapManager.instance.DestroyAllTrialsFromCustomMap();
         }

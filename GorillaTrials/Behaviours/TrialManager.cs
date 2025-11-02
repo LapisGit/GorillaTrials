@@ -59,8 +59,8 @@ namespace GorillaTrials.Behaviours
             trialUIAsset = trialAssets.transform.Find("Trial").gameObject;
             trialBoxAsset = trialAssets.transform.Find("Trial Box").gameObject;
             trialZoneAsset = trialAssets.transform.Find("Trial Zone").gameObject;
-            leftHand = GTPlayer.Instance.leftHandFollower.gameObject;
-            rightHand = GTPlayer.Instance.rightHandFollower.gameObject;
+            leftHand = GTPlayer.Instance.LeftHand.handFollower.gameObject;
+            rightHand = GTPlayer.Instance.RightHand.handFollower.gameObject;
             Head = GTPlayer.Instance.headCollider.gameObject;
 
             string url = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/trials.json";
@@ -190,7 +190,7 @@ namespace GorillaTrials.Behaviours
             }
 
             string playerName = NetworkSystem.Instance.GetMyNickName().ToUpper();
-            playerName = playerName.Substring(0, Math.Min(playerName.Length, 12));
+            playerName = playerName[..Math.Min(playerName.Length, 12)];
             string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
 
             string jsonBody = JsonUtility.ToJson(new TrialResult
