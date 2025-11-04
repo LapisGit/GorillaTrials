@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<GamePath>C:\Program Files (x86)\Steam\steamapps\common\Gorilla Tag</GamePath>
+		<GamePath>D:\SteamLibrary\steamapps\common\Gorilla Tag</GamePath>
 		<GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
 		<BepInExAssemblyPath>$(GamePath)\BepInEx\core</BepInExAssemblyPath>
 		<PluginsPath>$(GamePath)\BepInEx\plugins</PluginsPath>
@@ -306,7 +306,7 @@
 			<HintPath>$(GameAssemblyPath)\UnityEngine.XRModule.dll</HintPath>
 		</Reference>
 		<Reference Include="Utilla">
-		  <HintPath>$(PluginsPath)\Utilla\Utilla.dll</HintPath>
+		  <HintPath>$(PluginsPath)\Utilla.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 

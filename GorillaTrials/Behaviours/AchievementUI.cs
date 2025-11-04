@@ -21,14 +21,14 @@ public class AchievementUI : MonoBehaviour
 
     async Task Initialize()
     {
-        achievementUIRoot = await AssetLoader.LoadAsset<GameObject>("AchievementsUI");
+        achievementUIRoot = await AssetLoader.LoadAsset<GameObject>("TrialUtilityMenu");
         TrialManager.Instance.achievementsUI = achievementUIRoot;
         achievementUIRoot = Instantiate(achievementUIRoot);
         DontDestroyOnLoad(achievementUIRoot);
         achievementUIRoot.transform.position = new Vector3(-69.3592f, 12.1929f, -83.4284f);
         achievementUIRoot.transform.rotation = Quaternion.Euler(358.9055f, 242.0654f, 0f);
 
-        achievementUI = achievementUIRoot.transform.Find("UI").gameObject;
+        achievementUI = achievementUIRoot.transform.Find("UI/Achievements").gameObject;
 
         achievementUI.transform.Find("Buttons/PrevPage").gameObject.layer = (int)UnityLayer.GorillaInteractable;
         achievementUI.transform.Find("Buttons/NextPage").gameObject.layer = (int)UnityLayer.GorillaInteractable;
@@ -36,7 +36,7 @@ public class AchievementUI : MonoBehaviour
         TrialButton nextpage = achievementUI.transform.Find("Buttons/NextPage").AddComponent<TrialButton>();
         TrialButton prevpage = achievementUI.transform.Find("Buttons/PrevPage").AddComponent<TrialButton>();
         TrialButton refresh = achievementUI.transform.Find("Buttons/Refresh").AddComponent<TrialButton>();
-        achievementUI.transform.Find("Info/Page").gameObject.GetComponent<TextMeshProUGUI>().text = $"Page {currentPage}/{maxPage}";
+        achievementUI.transform.Find("Text/Page").gameObject.GetComponent<TextMeshProUGUI>().text = $"Page {currentPage}/{maxPage}";
 
 
         nextpage.onPressed = () =>

@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.1.9f1
-CRC: 2475837622
+CRC: 2048122216
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 6b272c8b3dc3f56532af1eb24e2d89da
+    Hash: 5a4bd466cf08954ad8912f169170755e
   TypeTreeHash:
     serializedVersion: 2
     Hash: aa182ef23027053b829c0a837b1aa9e2
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 90e450ef16bedd5634568581fae3418c
+    Hash: 1e03c2662c4163c192f2d4d149c1d06f
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -102,6 +102,7 @@ Assets:
 - Assets/AchievementsUI.prefab
 - Assets/FirstTimeUI.prefab
 - Assets/Replay.prefab
+- Assets/TrialEditor.prefab
 - Assets/HUDUI.prefab
 - Assets/GorillaTrials.prefab
 - Assets/TrialUtilityMenu.prefab

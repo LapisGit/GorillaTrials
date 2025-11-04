@@ -106,8 +106,9 @@ namespace GorillaTrials
                 root.AddComponent<FirstTimeUIManager>();
                 HUDManager.instance.Init();
                 root.AddComponent<ReplayManager>();
+                root.AddComponent<TrialEditor>();
 #if DEBUG
-                root.AddComponent<DebugEditor>();
+                //root.AddComponent<DebugEditor>();
 #endif
                 CompareVersion("https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt",
                     version =>
