@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BepInEx;
 using GorillaLocomotion;
+using GorillaNetworking;
 using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Models;
 using GorillaTrials.Tools;
@@ -57,20 +58,23 @@ public class TrialEditor : MonoBehaviour
     private string[] trialFiles;
     private Vector2 loadScrollPosition;
     private string selectedFile = "";
+
+    public GameObject panel;
     
     async void Start()
     {
         await Initialize();
+        instance = this;
     }
     
     async Task Initialize()
     { 
         GameObject editorPrefab = await AssetLoader.LoadAsset<GameObject>("TrialEditor");
         editorUI = Instantiate(editorPrefab);
-        GameObject panel = editorUI.transform.Find("Canvas/MainPanel").gameObject;
+        panel = editorUI.transform.Find("Canvas/MainPanel").gameObject;
         panel.transform.rotation = Quaternion.Euler(38.1132f, 242.0654f, 0f);
         panel.transform.position = new Vector3(-68.9191f, 11.9129f, -83.9994f);
-        panel.SetActive(true);
+        panel.SetActive(false);
         DontDestroyOnLoad(editorUI);
         
         trialBoxPrefab = editorUI.transform.Find("TrialBox").gameObject;
@@ -80,8 +84,8 @@ public class TrialEditor : MonoBehaviour
         trialZonePrefab.SetActive(false);
         trialStandPositionPrefab.SetActive(false);
         
-        TrialButton back = editorUI.transform.Find("Canvas/MainPanel/TypeSelection/Close").AddComponent<TrialButton>();
-        TrialButton close = editorUI.transform.Find("Canvas/MainPanel/Editor/Back").AddComponent<TrialButton>();
+        TrialButton back = editorUI.transform.Find("Canvas/MainPanel/Editor/Back").AddComponent<TrialButton>();
+        TrialButton close = editorUI.transform.Find("Canvas/MainPanel/TypeSelection/Close").AddComponent<TrialButton>();
         TrialButton zone = editorUI.transform.Find("Canvas/MainPanel/TypeSelection/Zone").AddComponent<TrialButton>();
         TrialButton box = editorUI.transform.Find("Canvas/MainPanel/TypeSelection/Box").AddComponent<TrialButton>();
         TrialButton save = editorUI.transform.Find("Canvas/MainPanel/Editor/Save").AddComponent<TrialButton>();
@@ -117,6 +121,18 @@ public class TrialEditor : MonoBehaviour
         
         upload.onPressed = () =>
         {
+            string validationError = ValidateTrial();
+            if (!string.IsNullOrEmpty(validationError))
+            {
+                if (HUDManager.instance != null)
+                {
+                    HUDManager.instance.SetHUDText(validationError);
+                    StartCoroutine(ClearHUDDelayed(5f));
+                }
+                Logging.Warning($"Upload blocked: {validationError}");
+                return;
+            }
+            
             showUploadDialog = true;
             guiTrialName = trialName;
             guiTrialDifficulty = TrialDifficulty;
@@ -135,6 +151,10 @@ public class TrialEditor : MonoBehaviour
             editorUI.transform.Find("Canvas/MainPanel/TypeSelection").gameObject.SetActive(false);
             editorUI.transform.Find("Canvas/MainPanel/Editor").gameObject.SetActive(true);
             inEditorMode = true;
+            editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/Boxes").GetComponent<TextMeshProUGUI>().text =
+                $"Amount of Boxes Placed: {positions.Count}";
+            editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/Type").GetComponent<TextMeshProUGUI>().text =
+                "Box Trial";
         };
         
         zone.onPressed = () =>
@@ -145,6 +165,10 @@ public class TrialEditor : MonoBehaviour
             editorUI.transform.Find("Canvas/MainPanel/TypeSelection").gameObject.SetActive(false);
             editorUI.transform.Find("Canvas/MainPanel/Editor").gameObject.SetActive(true);
             inEditorMode = true;
+            editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/Boxes").GetComponent<TextMeshProUGUI>().text =
+                "";
+            editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/Type").GetComponent<TextMeshProUGUI>().text =
+                "Zone Trial";
         };
         
         load.onPressed = () =>
@@ -169,11 +193,18 @@ public class TrialEditor : MonoBehaviour
     
     void SaveTrialToJsonFile()
     {
+        // i have to do this for some reason idk
+        Vector3 adjustedPosition = new Vector3(
+            trialStandPosition.x,
+            trialStandPosition.y + 0.25f,
+            trialStandPosition.z + 0.05f
+        );
+        
         var trialData = new TrialJson
         {
             displayName = trialName,
             trialId = trialName.ToLower().Replace(" ", ""),
-            position = trialStandPosition,
+            position = adjustedPosition,
             angle = trialStandRotation,
             trialType = trialType.ToString(),
             trialDifficulty = TrialDifficulty,
@@ -225,9 +256,14 @@ public class TrialEditor : MonoBehaviour
             editorUI.transform.Find("Canvas/MainPanel/Editor/Info").GetComponent<TextMeshProUGUI>().text =
                 "To place a box, click down your left primary button, to delete the last box you placed, click down your right primary button. To set the trial stand position, click down your left secondary button.";
             editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/Boxes").GetComponent<TextMeshProUGUI>().text = $"Amount of Boxes Placed: {positions.Count}";
+            editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/Type").GetComponent<TextMeshProUGUI>().text =
+                "Box Trial";
         }
         else if (trialType == ETrialType.Zone)
         {
+            editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/Boxes").GetComponent<TextMeshProUGUI>().text = "";
+            editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/Type").GetComponent<TextMeshProUGUI>().text =
+                "Zone Trial";
             if (positions.Count >= 1)
             {
                 SpawnZone(positions[0], Quaternion.identity);
@@ -337,10 +373,6 @@ public class TrialEditor : MonoBehaviour
                 trialStandRotation = standRot.eulerAngles.y;
                 SpawnTrialStandPosition(standPos, standRot);
                 
-                var standPosText = editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/StandPosition")?.GetComponent<TextMeshProUGUI>();
-                if (standPosText != null)
-                    standPosText.text = $"Stand Position Set: {standPos}";
-                
                 Logging.Info($"Trial stand position set at: {standPos} with rotation: {trialStandRotation}");
             }
             
@@ -414,7 +446,6 @@ public class TrialEditor : MonoBehaviour
                     }
                     else if (positions.Count == 0)
                     {
-                        // Clear trial stand position when start zone is removed
                         trialStandPosition = Vector3.zero;
                         trialStandRotation = 0f;
                         if (spawnedStandPosition != null)
@@ -425,9 +456,6 @@ public class TrialEditor : MonoBehaviour
                         var startZoneText = editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/StartZone")?.GetComponent<TextMeshProUGUI>();
                         if (startZoneText != null)
                             startZoneText.text = "Start Zone Point Removed";
-                        var standPosText = editorUI.transform.Find("Canvas/MainPanel/Editor/TrialData/StandPosition")?.GetComponent<TextMeshProUGUI>();
-                        if (standPosText != null)
-                            standPosText.text = "Stand Position: Not Set";
                     }
                     Logging.Info($"Zone point removed from position: {removedPosition}");
                 }
@@ -548,7 +576,7 @@ public class TrialEditor : MonoBehaviour
         GUILayout.Space(10);
         
         GUILayout.Label("Upload Notes:");
-        GUILayout.Label("This will upload your Trial for ANYONE to play, and will be listed under YOUR NAME. Uploading a Trial will also save it locally to your computer.", GUI.skin.box);
+        GUILayout.Label("This will upload your Trial for ANYONE to play, and will be listed under YOU.", GUI.skin.box);
         
         GUILayout.Space(10);
         
@@ -677,17 +705,58 @@ public class TrialEditor : MonoBehaviour
         yield return new WaitForSeconds(delay);
         HUDManager.instance.ClearHUD();
     }
+    
+    private string ValidateTrial()
+    {
+        if (trialStandPosition == Vector3.zero)
+        {
+            return "Trial stand position not set!";
+        }
+        
+        if (trialType == ETrialType.Box)
+        {
+            if (positions.Count < 1)
+            {
+                return "Box trial must have at least 1 box!";
+            }
+        }
+        else if (trialType == ETrialType.Zone)
+        {
+            if (positions.Count < 2)
+            {
+                return "Zone trial must have at least 2 zones (start and end)!";
+            }
+        }
+        
+        return null;
+    }
 
     private IEnumerator UploadTrialToServer()
     {
+        string validationError = ValidateTrial();
+        if (!string.IsNullOrEmpty(validationError))
+        {
+            uploadStatusMessage = validationError;
+            Logging.Error($"Upload validation failed: {validationError}");
+            isUploading = false;
+            yield break;
+        }
+        
         isUploading = true;
         uploadStatusMessage = "Preparing upload...";
+        
+        // Adjust trial stand position before uploading
+        Vector3 adjustedPosition = new Vector3(
+            trialStandPosition.x,
+            trialStandPosition.y + 0.25f,
+            trialStandPosition.z + 0.05f
+        );
         
         var trialData = new TrialJson
         {
             displayName = trialName,
             trialId = trialName.ToLower().Replace(" ", ""),
-            position = trialStandPosition,
+            position = adjustedPosition,
             angle = trialStandRotation,
             trialType = trialType.ToString(),
             trialDifficulty = TrialDifficulty,
@@ -702,10 +771,13 @@ public class TrialEditor : MonoBehaviour
         string url = $"{Constants.ServerURL}/trials/upload";
         using (UnityWebRequest www = new UnityWebRequest(url, "POST"))
         {
+            string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+            
             www.uploadHandler = new UploadHandlerRaw(bodyRaw);
             www.downloadHandler = new DownloadHandlerBuffer();
             www.SetRequestHeader("Content-Type", "application/json");
             www.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+            www.SetRequestHeader("playerid", playerId);
 
             uploadStatusMessage = "Uploading to server...";
             
@@ -720,7 +792,7 @@ public class TrialEditor : MonoBehaviour
                 }
                 else if (www.responseCode == 429)
                 {
-                    uploadStatusMessage = "Error: You can only upload one trial per 10 minutes.";
+                    uploadStatusMessage = "Error: You can only upload one trial per 10 minutes, try again later.";
                     Logging.Error("Upload failed: Rate limited (429)");
                 }
                 else if (www.responseCode == 400)

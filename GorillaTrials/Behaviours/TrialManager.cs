@@ -24,11 +24,14 @@ namespace GorillaTrials.Behaviours
         public string refreshBoard = null;
         public Trial currentTrial;
         private readonly List<Trial> trials = [];
-        public GameObject trialAssets, trialUIAsset, trialBoxAsset, trialZoneAsset, achievementsUI, leftHand, rightHand, Head;
+        public GameObject trialAssets, trialUIAsset, trialBoxAsset, achievementsUI, trialZoneAsset, leftHand, rightHand, Head;
         public string trialResultBackup;
 
         private bool isPB = false;
         public string lastTrialPlayed;
+        
+        private Dictionary<string, string> rankedTrialIds = new Dictionary<string, string>();
+        private bool rankedIdsLoaded = false;
 
         public JsonSerializerSettings SerializeSettings { get; private set; }
 
@@ -97,6 +100,141 @@ namespace GorillaTrials.Behaviours
                     data.customMapTrial,
                     [points]
                 );
+            }
+            
+            await LoadRankedTrialIds();
+            LoadDownloadedTrials();
+        }
+        
+        private async Task LoadRankedTrialIds()
+        {
+            string url = $"{Constants.ServerURL}/trials/rankedids";
+            
+            try
+            {
+                using (UnityWebRequest request = UnityWebRequest.Get(url))
+                {
+                    TaskCompletionSource<UnityWebRequest> completionSource = new();
+                    StartCoroutine(YieldWebRequest(request, completionSource));
+                    await completionSource.Task;
+                    
+                    if (request.result != UnityWebRequest.Result.Success)
+                    {
+                        Logging.Warning($"Failed to fetch ranked trial IDs: {request.error}");
+                        return;
+                    }
+                    
+                    string jsonResponse = request.downloadHandler.text;
+                    rankedTrialIds = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonResponse);
+                    rankedIdsLoaded = true;
+                    Logging.Info($"Loaded {rankedTrialIds.Count} ranked trial IDs");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.Error($"Error loading ranked trial IDs: {ex.Message}");
+            }
+        }
+        
+        private IEnumerator YieldWebRequest(UnityWebRequest webRequest, TaskCompletionSource<UnityWebRequest> completionSource)
+        {
+            yield return webRequest.SendWebRequest();
+            completionSource.SetResult(webRequest);
+        }
+
+        private void LoadDownloadedTrials()
+        {
+            string executableDir = System.IO.Path.GetDirectoryName(Paths.ExecutablePath);
+            if (string.IsNullOrEmpty(executableDir))
+            {
+                Logging.Error("Failed to get executable directory path for loading downloaded trials");
+                return;
+            }
+
+            string downloadedTrialsDir = System.IO.Path.Combine(executableDir, "downloadedtrials");
+
+            if (!System.IO.Directory.Exists(downloadedTrialsDir))
+            {
+                Logging.Info("No downloadedtrials folder found, skipping downloaded trials loading");
+                return;
+            }
+
+            string[] trialFiles = System.IO.Directory.GetFiles(downloadedTrialsDir, "*.json");
+
+            foreach (string filePath in trialFiles)
+            {
+                try
+                {
+                    string json = System.IO.File.ReadAllText(filePath);
+                    TrialDataModel data = JsonConvert.DeserializeObject<TrialDataModel>(json);
+
+                    if (data == null)
+                    {
+                        Logging.Warning($"Failed to parse trial file: {System.IO.Path.GetFileName(filePath)}");
+                        continue;
+                    }
+                    
+                    if (trials.Any(t => t.TrialServerName == data.trialId))
+                    {
+                        Logging.Info($"Trial {data.trialId} already exists, skipping");
+                        continue;
+                    }
+                    
+                    bool isRanked = rankedIdsLoaded && rankedTrialIds.ContainsKey(data.trialId);
+                    bool needsUpdate = false;
+                    
+                    if (isRanked)
+                    {
+                        string friendlyId = rankedTrialIds[data.trialId];
+                        Logging.Info($"Trial {data.trialId} is ranked with friendly ID: {friendlyId}");
+                        
+                        if (data.customMapTrial)
+                        {
+                            data.customMapTrial = false;
+                            needsUpdate = true;
+                            Logging.Info($"Updated trial {data.trialId} to no longer be a custom map trial");
+                        }
+                        
+                        if (data.trialId != friendlyId)
+                        {
+                            data.trialId = friendlyId;
+                            needsUpdate = true;
+                            Logging.Info($"Updated trial ID to friendly ID: {friendlyId}");
+                        }
+                    }
+                    
+                    if (needsUpdate)
+                    {
+                        string updatedJson = JsonConvert.SerializeObject(data, Formatting.Indented);
+                        System.IO.File.WriteAllText(filePath, updatedJson);
+                        Logging.Info($"Saved updated trial data to: {filePath}");
+                    }
+
+                    List<Vector3> points = data.points?.ConvertAll(p => p.ToVector3());
+
+                    if (!Enum.TryParse<ETrialType>(data.trialType, true, out var trialType))
+                        trialType = ETrialType.Box;
+
+                    if (!Enum.TryParse<ETrialDifficulty>(data.trialDifficulty, true, out var trialDifficulty))
+                        trialDifficulty = ETrialDifficulty.Easy;
+
+                    CreateTrial
+                    (
+                        data.displayName,
+                        data.trialId,
+                        data.position.ToVector3(),
+                        data.angle,
+                        trialType,
+                        trialDifficulty,
+                        data.maxTime,
+                        data.customMapTrial,
+                        [points]
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Logging.Error($"Error loading trial file {System.IO.Path.GetFileName(filePath)}: {ex.Message}");
+                }
             }
         }
 

@@ -35,10 +35,6 @@ namespace GorillaTrials
         public static bool WrongVersion;
         public static bool InModdedGamemode;
         public static AchievementManager achievementManager;
-        private static readonly HttpClient httpClient = new HttpClient();
-
-        public string accountCreationResponseCode;
-        public string accountCreationResponse;
 
         public void Awake()
         {
@@ -99,7 +95,7 @@ namespace GorillaTrials
                 root.AddComponent<NetworkHandler>();
                 root.AddComponent<EarlyEnd>();
                 //root.AddComponent<TimeManager>();
-                root.AddComponent<AchievementUI>();
+                root.AddComponent<ControlPanel>();
                 root.AddComponent<CustomMapManager>();
                 root.AddComponent<AchievementChecker>();
                 root.AddComponent<HUDManager>();

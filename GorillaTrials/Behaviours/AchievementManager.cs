@@ -66,7 +66,7 @@ namespace GorillaTrials.Behaviours
                     achievement.ConfigEntry.Value = true; // update config
                     config.Save();
                     Logging.Info($"Unlocked achievement: {achievement.Name} - {achievement.Description}");
-                    AchievementUI.instance?.UpdateAchievements();
+                    ControlPanel.instance?.UpdateAchievements();
                 }
             }
             else
