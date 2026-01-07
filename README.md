@@ -5,6 +5,9 @@ You can join the [Discord!](https://discord.gg/48fCJzPfEk)
 
 ![Compressed GIF](assets/compressed.gif)
 
+> [!WARNING]
+> If you use this mod, you agree to the [Privacy Policy](https://github.com/LapisGit/GorillaTrials/blob/main/PRIVACYPOLICY.md), as stated.
+
 ## Installation
 Go to the [latest release](https://github.com/LapisGit/GorillaTrials/releases/latest), and put the .dll inside of your plugins folder.
 
