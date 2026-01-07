@@ -47,4 +47,5 @@ This Privacy Policy may be updated from time to time. Any changes will be reflec
 If you have questions or concerns about this Privacy Policy, you can contact Lapis using the contact forms below.
 
 Discord: windows11pro
+
 Email: lapis@lapis.codes
