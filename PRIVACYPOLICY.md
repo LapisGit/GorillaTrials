@@ -2,7 +2,7 @@
 
 Last updated: 1/7/2026
 
-GorillaTrials is a Gorilla Tag modification developed by Lapis. This Privacy Policy explains what information is collected, how it is used, and how it is protected.
+GorillaTrials is a Gorilla Tag modification developed by Lapis. This Privacy Policy explains what information is collected, and how it is used.
 
 By using the mod, you agree to this Privacy Policy.
 
