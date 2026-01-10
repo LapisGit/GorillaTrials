@@ -79,9 +79,9 @@
     "displayName": "Cross The Forest",
     "trialId": "ctf",
     "position": {
-      "x": -46.75191,
-      "y": 5.50911,
-      "z": -26.79142
+      "x": -47.611,
+      "y": 5.13,
+      "z": -27.66
     },
     "angle": 180,
     "trialType": "Box",
