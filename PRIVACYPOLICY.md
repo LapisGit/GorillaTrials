@@ -12,7 +12,7 @@ When you use GorillaTrials, the following information may be collected and sent 
 
 - PlayFab Player ID (used to uniquely identify your Gorilla Tag account)
 
-- IP Address (used for tracking bans, and to prevent abuse on servers)
+- IP Address (used for tracking bans, and to prevent abuse on servers, IP's are deleted every 24 hours.(
 
 This information is collected only for the purpose of account creation and authentication.
 
