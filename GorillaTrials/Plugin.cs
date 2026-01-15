@@ -87,7 +87,7 @@ namespace GorillaTrials
             (
                 "Gameplay",
                 "Early End Time",
-                3f,
+                1.5f,
                 "The value in seconds that determines how long you have to hold your primary face button to end a trial early."
             );
 
