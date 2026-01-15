@@ -1,6 +1,8 @@
 using GorillaLocomotion;
 using GorillaTrials.Tools;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +13,12 @@ namespace GorillaTrials.Behaviours
         public GameObject hud;
         public Transform text1;
         public static HUDManager instance;
+        
+        private Queue<string> messageQueue = new Queue<string>();
+        private bool isDisplayingMessage = false;
+        private Coroutine clearCoroutine = null;
+        private string overlayMessage = "";
+        private float overlayUntilTime = 0f;
 
         void Awake()
         {
@@ -59,21 +67,75 @@ namespace GorillaTrials.Behaviours
 
             text1 = text;
             ClearHUD();
-
-            //SetHUDText("HUD Initialized :3");
-            // debug
         }
 
         public void SetHUDText(string message)
         {
-            if (text1 != null)
-                text1.GetComponent<Text>().text = message;
+            messageQueue.Enqueue(message);
+            
+            if (!isDisplayingMessage)
+            {
+                StartCoroutine(DisplayNextMessage());
+            }
+        }
+
+        public void ShowNotificationAlert(string message)
+        {
+            if (TrialManager.Instance != null && TrialManager.Instance.Started)
+            {
+                overlayMessage = message;
+                overlayUntilTime = Time.time + 5f;
+            }
+            else
+            {
+                SetHUDText(message);
+            }
+        }
+
+        private IEnumerator DisplayNextMessage()
+        {
+            while (messageQueue.Count > 0)
+            {
+                isDisplayingMessage = true;
+                string message = messageQueue.Dequeue();
+                
+                if (text1 != null)
+                {
+                    text1.GetComponent<Text>().text = message;
+                }
+                
+                if (clearCoroutine != null)
+                {
+                    StopCoroutine(clearCoroutine);
+                }
+                
+                yield return new WaitForSeconds(5f);
+                
+                if (text1 != null)
+                {
+                    text1.GetComponent<Text>().text = "";
+                }
+            }
+            
+            isDisplayingMessage = false;
         }
 
         public void ClearHUD()
         {
+            messageQueue.Clear();
+            
+            if (clearCoroutine != null)
+            {
+                StopCoroutine(clearCoroutine);
+                clearCoroutine = null;
+            }
+            
             if (text1 != null)
+            {
                 text1.GetComponent<Text>().text = "";
+            }
+            
+            isDisplayingMessage = false;
         }
 
         public void TrialTime()
@@ -88,7 +150,22 @@ namespace GorillaTrials.Behaviours
                     ? timeSpan.ToString(@"h\:mm\:ss\.fff")
                     : timeSpan.ToString(@"mm\:ss\.fff");
 
-                SetHUDText(formattedTime);
+                if (overlayUntilTime > 0f && Time.time > overlayUntilTime)
+                {
+                    overlayUntilTime = 0f;
+                    overlayMessage = "";
+                }
+
+                string displayText = formattedTime;
+                if (!string.IsNullOrEmpty(overlayMessage) && overlayUntilTime > Time.time)
+                {
+                    displayText += "\n" + overlayMessage;
+                }
+
+                if (text1 != null)
+                {
+                    text1.GetComponent<Text>().text = displayText;
+                }
             }
         }
 

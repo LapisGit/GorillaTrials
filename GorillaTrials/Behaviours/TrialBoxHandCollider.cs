@@ -26,14 +26,6 @@ namespace GorillaTrials.Behaviours
             {
                 lastTriggerTime = Time.realtimeSinceStartup + debounceTime;
 
-                //GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(67, handIndicator.isLeftHand, 0.05f);
-                //GorillaTagger.Instance.StartVibration(
-                //   handIndicator.isLeftHand,
-                //   GorillaTagger.Instance.tapHapticStrength / 2f,
-                //   GorillaTagger.Instance.tapHapticDuration
-                // );
-                // used for debugging ^
-
                 if (parentBox != null)
                 {
                     parentBox.OnBoxTriggered();

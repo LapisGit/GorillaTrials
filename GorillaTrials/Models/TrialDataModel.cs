@@ -16,6 +16,9 @@ public class TrialDataModel
     public float maxTime;
     public bool customMapTrial;
     public List<Position> points;
+    public float bronzeTime;
+    public float silverTime;
+    public float goldTime;
 }
 
 [Serializable]

@@ -18,6 +18,11 @@ namespace GorillaTrials.Models.StateMachine
             Trial.trialObject.SetActive(true);
 
             HUDManager.instance.ClearHUD();
+            
+            if (ReplayManager.Instance.isReplaying)
+            {
+                ReplayManager.Instance.StopReplay();   
+            }
 
             Singleton<TrialManager>.Instance.EndTrial(submitTime ? Math.Round(Trial.stopwatch.Elapsed.TotalSeconds, 3) : null);
         }

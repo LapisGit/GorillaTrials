@@ -1,24 +1,24 @@
-﻿using GorillaTrials.Behaviours.UI;
+﻿using System.Collections;
+using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Tools;
 using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GorillaTrials.Behaviours;
 
-// not done yet
 public class FirstTimeUIManager : MonoBehaviour
 {
     public static FirstTimeUIManager instance;
 
     public GameObject UIRoot, UI;
     public int currentPage = 1;
-    public int maxPage = 5;
+    public int maxPage = 6;
     public int minPage = 1;
 
     async void Awake()
     {
         instance = this;
-        if (PlayerPrefs.GetString("firsttimedone") != "yes :3")
+        if (PlayerPrefs.GetString("firsttimedone") != "2yes :3")
         {
              await Initialize();
         }
@@ -41,6 +41,7 @@ public class FirstTimeUIManager : MonoBehaviour
         TrialButton nextpage = UI.transform.Find("Buttons/NextPage").AddComponent<TrialButton>();
         TrialButton prevpage = UI.transform.Find("Buttons/PrevPage").AddComponent<TrialButton>();
         TrialButton done = UI.transform.Find("Buttons/Done").AddComponent<TrialButton>();
+        TrialButton openprivacy = UI.transform.Find("StuffLol/Page1/OpenPolicy").AddComponent<TrialButton>();
         UI.transform.Find("Buttons/Done").gameObject.GetComponent<BoxCollider>().isTrigger = true;
         UI.transform.Find("Buttons/NextPage").gameObject.GetComponent<BoxCollider>().isTrigger = true;
         UI.transform.Find("Buttons/PrevPage").gameObject.GetComponent<BoxCollider>().isTrigger = true;
@@ -97,8 +98,14 @@ public class FirstTimeUIManager : MonoBehaviour
         done.onPressed = () =>
         {
             UIRoot.gameObject.SetActive(false);
-            PlayerPrefs.SetString("firsttimedone", "yes :3");
+            PlayerPrefs.SetString("firsttimedone", "2yes :3");
             PlayerPrefs.Save();
+        };
+
+        openprivacy.onPressed = () =>
+        {
+            HUDManager.instance.SetHUDText("Opening privacy policy in browser...");
+            Application.OpenURL("https://github.com/LapisGit/GorillaTrials/blob/main/PRIVACYPOLICY.md");
         };
     }
 }

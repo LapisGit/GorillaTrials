@@ -21,48 +21,41 @@ public class AchievementChecker : MonoBehaviour
             {
                 Plugin.achievementManager.UnlockAchievement("stump_climb_champ");
                 HUDManager.instance.SetHUDText("Unlocked Achievement: Stump Climb Champion!");
-                StartCoroutine(ClearHUDDelayed(2.5f));
             }
             if (trial.TrialServerName == "swingingaround" && submitTime.Value < 10 &&
                 Plugin.achievementManager.IsUnlocked("vinemaster") == false)
             {
                 Plugin.achievementManager.UnlockAchievement("vinemaster");
                 HUDManager.instance.SetHUDText("Unlocked Achievement: Vine Master!");
-                StartCoroutine(ClearHUDDelayed(2.5f));
             }
             if (submitTime.Value >= 120 &&
                 Plugin.achievementManager.IsUnlocked("slowpoke") == false)
             {
                 Plugin.achievementManager.UnlockAchievement("slowpoke");
                 HUDManager.instance.SetHUDText("Unlocked Achievement: Slowpoke!");
-                StartCoroutine(ClearHUDDelayed(2.5f));
             }
             if (submitTime.Value >= 300 &&
                 Plugin.achievementManager.IsUnlocked("ultraslowpoke") == false)
             {
                 Plugin.achievementManager.UnlockAchievement("ultraslowpoke");
                 HUDManager.instance.SetHUDText("Unlocked Achievement: Ultra Slowpoke!");
-                StartCoroutine(ClearHUDDelayed(2.5f));
             }
             if (trial.TrialServerName == "hp2sprintadvanced" &&
                 Plugin.achievementManager.IsUnlocked("adv_hp2") == false)
             {
                 Plugin.achievementManager.UnlockAchievement("adv_hp2");
                 HUDManager.instance.SetHUDText("Unlocked Achievement: Hoverpark 2 Sprint Master!");
-                StartCoroutine(ClearHUDDelayed(2.5f));
             }
             if (trial.TrialServerName == "masterswimmer" &&
                 Plugin.achievementManager.IsUnlocked("masterswimmer") == false)
             {
                 Plugin.achievementManager.UnlockAchievement("masterswimmer");
                 HUDManager.instance.SetHUDText("Unlocked Achievement: Master Swimmer!");
-                StartCoroutine(ClearHUDDelayed(2.5f));
             }
             if (Plugin.achievementManager.IsUnlocked("first_trial") == false && submitTime != null)
             {
                 Plugin.achievementManager.UnlockAchievement("first_trial");
                 HUDManager.instance.SetHUDText("Unlocked Achievement: First Trial!");
-                StartCoroutine(ClearHUDDelayed(2.5f));
             }
         }
 
@@ -70,31 +63,39 @@ public class AchievementChecker : MonoBehaviour
         {
             Plugin.achievementManager.UnlockAchievement("5trials");
             HUDManager.instance.SetHUDText("Unlocked Achievement: 5 Trials!");
-            StartCoroutine(ClearHUDDelayed(2.5f));
         }
         if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) >= 10 && Plugin.achievementManager.IsUnlocked("10trials") == false)
         {
             Plugin.achievementManager.UnlockAchievement("10trials");
             HUDManager.instance.SetHUDText("Unlocked Achievement: 10 Trials!");
-            StartCoroutine(ClearHUDDelayed(2.5f));
         }
         if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) >= 20 && Plugin.achievementManager.IsUnlocked("20trials") == false)
         {
             Plugin.achievementManager.UnlockAchievement("20trials");
             HUDManager.instance.SetHUDText("Unlocked Achievement: 20 Trials!");
-            StartCoroutine(ClearHUDDelayed(2.5f));
         }
         if (TrialManager.GetTrialsWithPBCount(TrialManager.Instance.Trials) >= 30 && Plugin.achievementManager.IsUnlocked("30trials") == false)
         {
             Plugin.achievementManager.UnlockAchievement("30trials");
             HUDManager.instance.SetHUDText("Unlocked Achievement: 30 Trials!");
-            StartCoroutine(ClearHUDDelayed(2.5f));
         }
-    }
-
-    private IEnumerator ClearHUDDelayed(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        HUDManager.instance.ClearHUD();
+        
+        int goldBadgeCount = TrialManager.GetTotalBadgeCount(BadgeType.Gold);
+        int trialsWithBadges = TrialManager.GetTrialsWithBadgesConfigured(TrialManager.Instance.Trials);
+        
+        if (trialsWithBadges > 0 && goldBadgeCount >= trialsWithBadges && Plugin.achievementManager.IsUnlocked("goldhoarder") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("goldhoarder");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: Gold Hoarder!");
+        }
+        else
+        {
+            if (Plugin.achievementManager.IsUnlocked("goldhoarder") && goldBadgeCount < trialsWithBadges)
+            {
+                Plugin.achievementManager.LockAchievement("goldhoarder");
+            }
+        }
+        
+        ControlPanel.instance.UpdateAchievements();
     }
 }

@@ -75,6 +75,25 @@ namespace GorillaTrials.Behaviours
             }
         }
 
+        public void LockAchievement(string id)
+        {
+            if (achievements.TryGetValue(id, out var achievement))
+            {
+                if (achievement.Unlocked)
+                {
+                    achievement.Unlocked = false;
+                    achievement.ConfigEntry.Value = false; // update config
+                    config.Save();
+                    Logging.Info($"Locked achievement: {achievement.Name}");
+                    ControlPanel.instance?.UpdateAchievements();
+                }
+            }
+            else
+            {
+                Logging.Error($"Tried to lock unknown achievement: {id}");
+            }
+        }
+
         public bool IsUnlocked(string id)
         {
             return achievements.TryGetValue(id, out var achievement) && achievement.Unlocked;

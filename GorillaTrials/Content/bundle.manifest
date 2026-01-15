@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.1.9f1
-CRC: 4264932815
+CRC: 3404588819
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 07774df5006ee8571edf5df0bcf88e86
+    Hash: 49d9f4aa7badd66aa9298464a67d83d1
   TypeTreeHash:
     serializedVersion: 2
     Hash: aa182ef23027053b829c0a837b1aa9e2
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 9dbf5b2f8fe33b94905f01351ff008e1
+    Hash: 10f5e48b2cbe7ae332f9ac1cc72af922
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -100,6 +100,7 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
 Assets:
 - Assets/AchievementsUI.prefab
+- Assets/Keyboard.prefab
 - Assets/FirstTimeUI.prefab
 - Assets/Replay.prefab
 - Assets/TrialEditor.prefab

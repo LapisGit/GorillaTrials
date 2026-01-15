@@ -10,10 +10,17 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<GamePath>D:\SteamLibrary\steamapps\common\Gorilla Tag</GamePath>
+        <GamePath>E:\SteamLibrary\steamapps\common\Gorilla Tag</GamePath>
 		<GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
 		<BepInExAssemblyPath>$(GamePath)\BepInEx\core</BepInExAssemblyPath>
 		<PluginsPath>$(GamePath)\BepInEx\plugins</PluginsPath>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(CI)'=='TRUE'">
+		<GameAssemblyPath>.\Libs</GameAssemblyPath>
+		<BepInExAssemblyPath>.\Libs</BepInExAssemblyPath>
+		<PluginsPath>.\Libs</PluginsPath>
+		<WarningLevel>0</WarningLevel>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -52,9 +59,6 @@
 		</Reference>
 		<Reference Include="Fusion.Runtime">
 			<HintPath>$(GameAssemblyPath)\Fusion.Runtime.dll</HintPath>
-		</Reference>
-		<Reference Include="Modio">
-		  <HintPath>$(GameAssemblyPath)\Modio.dll</HintPath>
 		</Reference>
 		<Reference Include="Mono.Security">
 			<HintPath>$(GameAssemblyPath)\Mono.Security.dll</HintPath>
@@ -305,8 +309,11 @@
 		<Reference Include="UnityEngine.XRModule">
 			<HintPath>$(GameAssemblyPath)\UnityEngine.XRModule.dll</HintPath>
 		</Reference>
+		<Reference Include="Modio">
+			<HintPath>$(GameAssemblyPath)\Modio.dll</HintPath>
+		</Reference>
 		<Reference Include="Utilla">
-		  <HintPath>$(PluginsPath)\Utilla.dll</HintPath>
+		  <HintPath>$(PluginsPath)\Utilla\Utilla.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 

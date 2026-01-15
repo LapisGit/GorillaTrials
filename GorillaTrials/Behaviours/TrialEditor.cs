@@ -47,6 +47,9 @@ public class TrialEditor : MonoBehaviour
     private string guiTrialDifficulty = "Easy";
     private float guiMaxTime = 0f;
     private string guiMaxTimeString = "0";
+    private float guiBronze = 0f;
+    private float guiSilver = 0f;
+    private float guiGold = 0f;
     
     private bool lastLeftPrimaryButton = false;
     private bool lastRightPrimaryButton = false;
@@ -115,7 +118,6 @@ public class TrialEditor : MonoBehaviour
             if (HUDManager.instance != null)
             {
                 HUDManager.instance.SetHUDText("Continue with saving your Trial in the window on your desktop.");
-                StartCoroutine(ClearHUDDelayed(5f));
             }
         };
         
@@ -127,7 +129,6 @@ public class TrialEditor : MonoBehaviour
                 if (HUDManager.instance != null)
                 {
                     HUDManager.instance.SetHUDText(validationError);
-                    StartCoroutine(ClearHUDDelayed(5f));
                 }
                 Logging.Warning($"Upload blocked: {validationError}");
                 return;
@@ -139,7 +140,6 @@ public class TrialEditor : MonoBehaviour
             if (HUDManager.instance != null)
             {
                 HUDManager.instance.SetHUDText("Continue with uploading your Trial in the window on your desktop.");
-                StartCoroutine(ClearHUDDelayed(5f));
             }
         };
         
@@ -186,7 +186,6 @@ public class TrialEditor : MonoBehaviour
             if (HUDManager.instance != null)
             {
                 HUDManager.instance.SetHUDText("Select a trial file from the window on your desktop.");
-                StartCoroutine(ClearHUDDelayed(5f));
             }
         };
     }
@@ -210,7 +209,10 @@ public class TrialEditor : MonoBehaviour
             trialDifficulty = TrialDifficulty,
             maxTime = 0,
             customMapTrial = true,
-            points = positions
+            points = positions,
+            bronzeTime = guiBronze,
+            silverTime = guiSilver,
+            goldTime = guiGold
         };
 
         string json = JsonUtility.ToJson(trialData, true);
@@ -290,7 +292,6 @@ public class TrialEditor : MonoBehaviour
         
         Logging.Info($"Trial '{trialName}' loaded successfully with {positions.Count} points/boxes");
         HUDManager.instance.SetHUDText($"Trial '{trialName}' loaded successfully!");
-        StartCoroutine(ClearHUDDelayed(3f));
     }
 
     private void SpawnBox(Vector3 position)
@@ -515,6 +516,30 @@ public class TrialEditor : MonoBehaviour
         if (GUILayout.Toggle(guiTrialDifficulty == "Extreme", "Extreme"))
             guiTrialDifficulty = "Extreme";
         GUILayout.EndHorizontal();
+#if DEBUG
+        GUILayout.Space(10);
+        
+        GUILayout.Label("Bronze Time (seconds):");
+        string bronzeTimeString = GUILayout.TextField(guiBronze.ToString(), 20);
+        if (float.TryParse(bronzeTimeString, out float bronzeValue))
+        {
+            guiBronze = bronzeValue;
+        }
+        
+        GUILayout.Label("Silver Time (seconds):");
+        string silverTimeString = GUILayout.TextField(guiSilver.ToString(), 20);
+        if (float.TryParse(silverTimeString, out float silverValue))
+        {
+            guiSilver = silverValue;
+        }
+        
+        GUILayout.Label("Gold Time (seconds):");
+        string goldTimeString = GUILayout.TextField(guiGold.ToString(), 20);
+        if (float.TryParse(goldTimeString, out float goldValue))
+        {
+            guiGold = goldValue;
+        }  
+#endif
         
         GUILayout.Space(10);
         
@@ -673,13 +698,11 @@ public class TrialEditor : MonoBehaviour
                 {
                     Logging.Error($"Failed to load trial: {ex.Message}");
                     HUDManager.instance.SetHUDText($"Failed to load trial: {ex.Message}");
-                    StartCoroutine(ClearHUDDelayed(5f));
                 }
             }
             else
             {
                 HUDManager.instance.SetHUDText("Please select a valid trial file.");
-                StartCoroutine(ClearHUDDelayed(3f));
             }
         }
         
@@ -698,12 +721,6 @@ public class TrialEditor : MonoBehaviour
         
         GUILayout.EndVertical();
         GUI.DragWindow(new Rect(0, 0, 10000, 10000));
-    }
-    
-    private IEnumerator ClearHUDDelayed(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        HUDManager.instance.ClearHUD();
     }
     
     private string ValidateTrial()
@@ -821,10 +838,11 @@ public class TrialEditor : MonoBehaviour
                     uploadStatusMessage = $"Success! Trial uploaded with ID: {response.trialId}";
                     Logging.Info($"Trial uploaded successfully! Trial ID: {response.trialId}");
                     
+                    ControlPanel.IncrementCustomTrialsUploaded();
+                    
                     if (HUDManager.instance != null)
                     {
                         HUDManager.instance.SetHUDText($"Trial '{trialName}' uploaded successfully!");
-                        StartCoroutine(ClearHUDDelayed(5f));
                     }
                 }
                 catch (Exception ex)
@@ -860,6 +878,9 @@ public class TrialEditor : MonoBehaviour
         public float maxTime;
         public bool customMapTrial;
         public List<Vector3> points;
+        public float bronzeTime;
+        public float silverTime;
+        public float goldTime;
     }
 }
 

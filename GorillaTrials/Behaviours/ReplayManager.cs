@@ -21,7 +21,8 @@ namespace GorillaTrials.Behaviours
 
         public bool isReplaying = false;
         private float replayTime;
-        private List<FrameData> replayFrames;
+        public List<FrameData> replayFrames;
+        private List<FrameData> cachedRaceFrames; // Separate cache for race mode replays
         private int currentFrameIndex = 0;
 
         private float lastRecordTime = 0f;
@@ -63,7 +64,9 @@ namespace GorillaTrials.Behaviours
             }
 
             if (isReplaying)
-                PlayFrame();
+            {
+                PlayFrame();   
+            }
         }
 
         public void SetTrackedObjects(GameObject obj1, GameObject obj2, GameObject obj3)
@@ -77,7 +80,6 @@ namespace GorillaTrials.Behaviours
             startTime = Time.time;
             lastRecordTime = 0f;
             isRecording = true;
-            isReplaying = false;
         }
 
 
@@ -101,7 +103,7 @@ namespace GorillaTrials.Behaviours
             {
                 string json = JsonConvert.SerializeObject(recordedFrames, TrialManager.Instance.SerializeSettings);
                 File.WriteAllText(path, json);
-                Logging.Info($"Saved replay to {path}");
+                Logging.Info($"Saved replay to {path} with {recordedFrames.Count} frames");
             }
             catch (Exception ex)
             {
@@ -169,7 +171,6 @@ namespace GorillaTrials.Behaviours
                 replayTime = 0f;
                 currentFrameIndex = 0;
                 isReplaying = true;
-                isRecording = false;
                 lastPlaybackTime = Time.time;
 
                 Logging.Info($"Started replay from {fileName}");
@@ -250,6 +251,8 @@ namespace GorillaTrials.Behaviours
         {
             isReplaying = false;
 
+            replayFrames = null;
+
             foreach (var obj in trackedObjects)
             {
                 if (obj != null)
@@ -295,8 +298,41 @@ namespace GorillaTrials.Behaviours
             }
         }
 
+        public void StartWRRaceReplay()
+        {
+            var frames = cachedRaceFrames ?? replayFrames;
+            
+            if (frames == null || frames.Count == 0)
+            {
+                Logging.Warning("No race replay frames available.");
+                return;
+            }
 
-        public async Task<List<FrameData>> DownloadReplayWR(string track, string playerId)
+            replayFrames = new List<FrameData>(frames);
+
+            trackedObjects = new List<GameObject> { replayHead, replayleftHand, replayrightHand };
+
+            foreach (var obj in trackedObjects)
+            {
+                if (obj != null)
+                    obj.SetActive(true);
+            }
+
+            replayTime = 0f;
+            currentFrameIndex = 0;
+            isReplaying = true;
+            lastPlaybackTime = Time.time;
+        
+            Logging.Info("Started WR race replay");
+        }
+
+        public void ClearCachedRaceFrames()
+        {
+            cachedRaceFrames = null;
+            Logging.Info("Cleared cached race frames");
+        }
+        
+        public async Task<List<FrameData>> DownloadReplayWR(string track, string playerId, bool raceMode)
         {
             try
             {
@@ -305,32 +341,45 @@ namespace GorillaTrials.Behaviours
                 Logging.Info($"getting data from {url}");
 
                 string json = await client.GetStringAsync(url);
-                replayFrames = JsonConvert.DeserializeObject<List<FrameData>>(json, TrialManager.Instance.DeserializeSettings);
+                var frames = JsonConvert.DeserializeObject<List<FrameData>>(json, TrialManager.Instance.DeserializeSettings);
 
-                if (replayFrames == null || replayFrames.Count == 0)
+                if (frames == null || frames.Count == 0)
                 {
                     Logging.Warning("Downloaded replay is empty or invalid.");
                     return null;
                 }
 
-                trackedObjects = new List<GameObject> { replayHead, replayleftHand, replayrightHand };
-
-                foreach (var obj in trackedObjects)
+                if (raceMode)
                 {
-                    if (obj != null)
-                        obj.SetActive(true);
+                    if (cachedRaceFrames != null)
+                    {
+                        cachedRaceFrames.Clear();
+                    }
+                    cachedRaceFrames = frames;
+                    replayFrames = new List<FrameData>(frames);
+                    Logging.Info($"Cached WR race replay for {track}_{playerId}");
+                }
+                else
+                {
+                    replayFrames = frames;
+                    
+                    trackedObjects = new List<GameObject> { replayHead, replayleftHand, replayrightHand };
+
+                    foreach (var obj in trackedObjects)
+                    {
+                        if (obj != null)
+                            obj.SetActive(true);
+                    }
+
+                    replayTime = 0f;
+                    currentFrameIndex = 0;
+                    isReplaying = true;
+                    lastPlaybackTime = Time.time;
+
+                    Logging.Info($"started replay for {track}_{playerId}");   
                 }
 
-                replayTime = 0f;
-                currentFrameIndex = 0;
-                isReplaying = true;
-                isRecording = false;
-                lastPlaybackTime = Time.time;
-
-
-                Logging.Info($"started replay for {track}_{playerId}");
-
-                return replayFrames;
+                return frames;
             }
             catch (Exception e)
             {

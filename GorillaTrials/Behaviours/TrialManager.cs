@@ -66,7 +66,7 @@ namespace GorillaTrials.Behaviours
             rightHand = GTPlayer.Instance.RightHand.handFollower.gameObject;
             Head = GTPlayer.Instance.headCollider.gameObject;
 
-            string url = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/trials.json";
+            string url = "https://suwiparty.lapis.codes/Trial.json";
             using UnityWebRequest request = UnityWebRequest.Get(url);
             await request.SendWebRequest();
 
@@ -98,7 +98,10 @@ namespace GorillaTrials.Behaviours
                     trialDifficulty,
                     data.maxTime,
                     data.customMapTrial,
-                    [points]
+                    [points],
+                    data.bronzeTime,
+                    data.silverTime,
+                    data.goldTime
                 );
             }
             
@@ -218,6 +221,8 @@ namespace GorillaTrials.Behaviours
                     if (!Enum.TryParse<ETrialDifficulty>(data.trialDifficulty, true, out var trialDifficulty))
                         trialDifficulty = ETrialDifficulty.Easy;
 
+                    Logging.Info($"Loading downloaded trial '{data.displayName}' with medal times: Bronze={data.bronzeTime}, Silver={data.silverTime}, Gold={data.goldTime}");
+
                     CreateTrial
                     (
                         data.displayName,
@@ -228,7 +233,10 @@ namespace GorillaTrials.Behaviours
                         trialDifficulty,
                         data.maxTime,
                         data.customMapTrial,
-                        [points]
+                        [points],
+                        data.bronzeTime,
+                        data.silverTime,
+                        data.goldTime
                     );
                 }
                 catch (Exception ex)
@@ -239,14 +247,14 @@ namespace GorillaTrials.Behaviours
         }
 
 
-        public void CreateTrial(string displayName, string trialId, Vector3 position, float angle, ETrialType trialType = ETrialType.Box, ETrialDifficulty trialDifficulty = ETrialDifficulty.Easy, float maxTime = 0, bool customMapTrial = false, object[] parameters = null)
+        public void CreateTrial(string displayName, string trialId, Vector3 position, float angle, ETrialType trialType = ETrialType.Box, ETrialDifficulty trialDifficulty = ETrialDifficulty.Easy, float maxTime = 0, bool customMapTrial = false, object[] parameters = null, float bronzeTime = 0, float silverTime = 0, float goldTime = 0)
         {
             Trial trial = null;
 
             if (trialType == ETrialType.Box && parameters is not null && parameters.ElementAtOrDefault(0) is List<Vector3> points)
-                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, points);
+                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, points, bronzeTime, silverTime, goldTime);
             else if (trialType == ETrialType.Zone && parameters?.ElementAtOrDefault(0) is List<Vector3> zonePoints)
-                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, zonePoints);
+                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, zonePoints, bronzeTime, silverTime, goldTime);
 
 
             if (trial is not null)
@@ -272,6 +280,8 @@ namespace GorillaTrials.Behaviours
                 return;
             }
 
+            ControlPanel.IncrementTrialsAttempted();
+            
             currentTrial = trialData;
             currentTrial.stateMachine.SwitchState(new Trial_Start(currentTrial));
             ReplayManager.Instance.SetTrackedObjects(Head, leftHand, rightHand);
@@ -286,6 +296,7 @@ namespace GorillaTrials.Behaviours
             if (submitTime.HasValue && currentTrial.isFromCustomMap == false || submitTime.HasValue && currentTrial.onApprovedMap)
             {
                 Logging.Info($"Submiting time {submitTime.Value}");
+                ControlPanel.IncrementTrialsCompleted();
                 SubmitTrial(submitTime.Value);
             }
 
@@ -316,14 +327,34 @@ namespace GorillaTrials.Behaviours
                 Logging.Info($"New personal best for {currentTrial.TrialServerName}: {submitTime} seconds");
                 PlayerPrefs.SetFloat(pbKey, (float)submitTime);
                 PlayerPrefs.Save();
+                ControlPanel.instance.CalculateSumOfBest();
                 currentTrial.SetPersonalBest(submitTime);
                 ReplayManager.Instance.StopRecording();
                 ReplayManager.Instance.SaveRecording($"{currentTrial.TrialServerName}_{submitTime}");
+                
+                BadgeType earnedBadge = currentTrial.CheckBadgeEarned((float)submitTime);
+                bool newBadgeEarned = currentTrial.SaveBadgeIfBetter(earnedBadge);
+                
                 if (Plugin.PBNotify.Value)
                 {
                     TimeSpan timeSpan = TimeSpan.FromSeconds(submitTime);
-                    HUDManager.instance.SetHUDText($"New PB! {string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"))}");
-                    StartCoroutine(ClearHUDDelayed(3f));
+                    string hudText = $"New PB! {string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"))}";
+                    
+                    if (newBadgeEarned && earnedBadge != BadgeType.None)
+                    {
+                        hudText += $"\n{earnedBadge} Badge Earned!";
+                    }
+                    
+                    HUDManager.instance.SetHUDText(hudText);
+                }
+            }
+            else
+            {
+                float currentPB = PlayerPrefs.GetFloat(pbKey, 0);
+                if (currentPB > 0)
+                {
+                    BadgeType earnedBadge = currentTrial.CheckBadgeEarned(currentPB);
+                    currentTrial.SaveBadgeIfBetter(earnedBadge);
                 }
             }
 
@@ -342,16 +373,28 @@ namespace GorillaTrials.Behaviours
 
             StartCoroutine(PostRequest
                 (
+                    currentTrial,
                     string.Concat($"{Constants.ServerURL}/leaderboard/", currentTrial.TrialServerName),
                     jsonBody)
             );
+            
+            if (!string.IsNullOrEmpty(currentTrial.selectedChallengeRecipientId))
+            {
+                StartCoroutine(currentTrial.SendChallengeAfterCompletion(submitTime));
+            }
+            
+            if (currentTrial.hasAcceptedChallenge && !string.IsNullOrEmpty(currentTrial.acceptedChallengeId))
+            {
+                StartCoroutine(currentTrial.CompleteChallengeAfterCompletion(submitTime));
+            }
+            
             currentTrial.SetLastTime(submitTime);
             currentTrial.UsePlayerInfo(true);
 
             Logging.Info(GetTrialsWithPBCount(trials));
         }
 
-        private IEnumerator PostRequest(string url, string json)
+        private IEnumerator PostRequest(Trial trial, string url, string json)
         {
             string apiKey = Plugin.APIKey.Value;
 
@@ -373,7 +416,8 @@ namespace GorillaTrials.Behaviours
                     StartCoroutine(WaitDelay(5f));
                     StartCoroutine(PostRequest
                         (
-                            string.Concat($"{Constants.ServerURL}/leaderboard/", currentTrial.TrialServerName),
+                            trial,
+                            string.Concat($"{Constants.ServerURL}/leaderboard/", trial.TrialServerName),
                             trialResultBackup)
                     );
                 }
@@ -396,12 +440,6 @@ namespace GorillaTrials.Behaviours
             }
         }
 
-        private IEnumerator ClearHUDDelayed(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            HUDManager.instance.ClearHUD();
-        }
-
         private IEnumerator WaitDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
@@ -421,8 +459,42 @@ namespace GorillaTrials.Behaviours
 
             return count;
         }
+        
+        public static int GetTrialsWithBadgesConfigured(List<Trial> allTrials)
+        {
+            int count = 0;
 
+            foreach (var trial in allTrials)
+            {
+                if (trial.BronzeTime > 0 && trial.SilverTime > 0 && trial.GoldTime > 0)
+                    count++;
+            }
 
+            return count;
+        }
+        public static int GetTotalBadgeCount(BadgeType badgeType)
+        {
+            if (badgeType == BadgeType.None)
+                return 0;
+                
+            string key = $"Total_{badgeType}Badges";
+            return PlayerPrefs.GetInt(key, 0);
+        }
+
+        public void RefreshAcceptedChallenges()
+        {
+            foreach (var trial in trials)
+            {
+                try
+                {
+                    trial.LoadAcceptedChallenge();
+                }
+                catch (Exception ex)
+                {
+                    Logging.Error($"Failed to refresh accepted challenge for {trial.TrialServerName}: {ex.Message}");
+                }
+            }
+        }
     }
 
 }
