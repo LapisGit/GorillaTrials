@@ -68,7 +68,7 @@ namespace GorillaTrials
             achievementManager.RegisterAchievement(new Achievement("gooutside", "Go Outside", "Attempt Trials 2500 times."));
             achievementManager.RegisterAchievement(new Achievement("pbpro", "PB Pro", "Complete trials 20 times."));
             achievementManager.RegisterAchievement(new Achievement("whatarethose", "WHAT ARE THOSE!!??", "Complete trials 100 times."));
-            achievementManager.RegisterAchievement(new Achievement("trialmaster", "Trial Master", "Attempt Trials 500 times."));
+            achievementManager.RegisterAchievement(new Achievement("trialmaster", "Trial Master", "Complete trials 500 times."));
             APIKey = Config.Bind
             (
                 "Server",

@@ -82,6 +82,8 @@ public class AchievementChecker : MonoBehaviour
         
         int goldBadgeCount = TrialManager.GetTotalBadgeCount(BadgeType.Gold);
         int trialsWithBadges = TrialManager.GetTrialsWithBadgesConfigured(TrialManager.Instance.Trials);
+        int trialAttempts =  PlayerPrefs.GetInt("Stats_TrialsAttempted", 0);
+        int trialCompletions =  PlayerPrefs.GetInt("Stats_TrialsCompleted", 0);
         
         if (trialsWithBadges > 0 && goldBadgeCount >= trialsWithBadges && Plugin.achievementManager.IsUnlocked("goldhoarder") == false)
         {
@@ -94,6 +96,60 @@ public class AchievementChecker : MonoBehaviour
             {
                 Plugin.achievementManager.LockAchievement("goldhoarder");
             }
+        }
+        
+        if (trialAttempts >= 50 && Plugin.achievementManager.IsUnlocked("trialanderror") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("trialanderror");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: Trial and Error!");
+        }
+        
+        if (trialAttempts >= 100 && Plugin.achievementManager.IsUnlocked("dedication") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("dedication");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: Dedication!");
+        }
+        
+        if (trialAttempts >= 200 && Plugin.achievementManager.IsUnlocked("perseverance") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("perseverance");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: Perseverance!");
+        }
+        
+        if (trialAttempts >= 500 && Plugin.achievementManager.IsUnlocked("timeandtimeagain") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("timeandtimeagain");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: Time and Time Again!");
+        }
+        
+        if (trialAttempts >= 1000 && Plugin.achievementManager.IsUnlocked("giveup") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("giveup");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: Give Up!");
+        }
+        
+        if (trialAttempts >= 2500 && Plugin.achievementManager.IsUnlocked("gooutside") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("gooutside");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: Go Outside!");
+        }
+        
+        if (trialCompletions >= 20 && Plugin.achievementManager.IsUnlocked("pbpro") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("pbpro");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: PB Pro!");
+        }
+        
+        if (trialCompletions >= 20 && Plugin.achievementManager.IsUnlocked("whatarethose") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("whatarethose");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: WHAT ARE THOSE!!??");
+        }
+        
+        if (trialCompletions >= 20 && Plugin.achievementManager.IsUnlocked("trialmaster") == false)
+        {
+            Plugin.achievementManager.UnlockAchievement("trialmaster");
+            HUDManager.instance.SetHUDText("Unlocked Achievement: Trial Master!");
         }
         
         ControlPanel.instance.UpdateAchievements();
