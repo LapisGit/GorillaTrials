@@ -12,6 +12,6 @@
 
         public const string CustomProperty = "GTrials";
 
-        public const string ServerURL = "https://trials.soweli.uk";
+        public const string ServerURL = "http://localhost:2763";
     }
 }

@@ -35,6 +35,8 @@ namespace GorillaTrials
         public static bool WrongVersion;
         public static bool InModdedGamemode;
         public static AchievementManager achievementManager;
+        
+        internal static WebSocketClient WebSocketClientInstance;
 
         public void Awake()
         {
@@ -90,8 +92,9 @@ namespace GorillaTrials
                 1.5f,
                 "The value in seconds that determines how long you have to hold your primary face button to end a trial early."
             );
-
-
+            
+            WebSocketClientInstance = new WebSocketClient();
+            WebSocketClientInstance.Start();
 
             GorillaTagger.OnPlayerSpawned(() =>
             {
@@ -183,6 +186,8 @@ namespace GorillaTrials
 
             if (APIKey.Value != "Your-API-Key-Here")
             {
+                WebSocketClientInstance.Authenticate(APIKey.Value);
+                
                 if (FirstTimeUIManager.instance != null && FirstTimeUIManager.instance.UI != null)
                 {
                     FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page6/ErrorText").gameObject.SetActive(false);
@@ -221,6 +226,7 @@ namespace GorillaTrials
                     {
                         APIKey.Value = response.api_key;
                         Config.Save();
+                        WebSocketClientInstance.Authenticate(APIKey.Value);
                         if (FirstTimeUIManager.instance != null && FirstTimeUIManager.instance.UI != null)
                         {
                             FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page6/SuccessText").gameObject

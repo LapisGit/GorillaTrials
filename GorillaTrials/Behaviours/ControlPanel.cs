@@ -4,6 +4,7 @@ using GorillaTrials.Tools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 namespace GorillaTrials.Behaviours;
 
@@ -55,6 +57,11 @@ public class ControlPanel : MonoBehaviour
 
     public bool requestsPage;
     public bool searchPage;
+
+    public string eventUrl;
+    public int eventTotalCompleted;
+    public int eventRequiredAmount;
+    public int eventPlayerRank;
     
     public void Awake()
     {
@@ -68,7 +75,7 @@ public class ControlPanel : MonoBehaviour
         UpdateAchievements();
         StartCoroutine(FetchOwnPlayerProfile());
         CalculateSumOfBest();
-        StartCoroutine(NotificationPoller());
+        StartCoroutine(CheckForEvent());
     }
 
     async Task Initialize()
@@ -585,6 +592,37 @@ public class ControlPanel : MonoBehaviour
                 }
             };
         }
+        
+        // event logic
+        
+        TrialButton eventBtn = controlPanelRoot.transform.Find("UI/ControlCenter/Event").AddComponent<TrialButton>();
+        TrialButton eventReturn = controlPanelRoot.transform.Find("UI/Event/Buttons/Return").AddComponent<TrialButton>();;
+        TrialButton eventTrailer = controlPanelRoot.transform.Find("UI/Event/Buttons/WhatIsThis").AddComponent<TrialButton>();
+        TrialButton eventRefresh = controlPanelRoot.transform.Find("UI/Event/Buttons/RefreshBoard").AddComponent<TrialButton>();
+        
+        eventBtn.onPressed = () =>
+        {
+            controlPanelRoot.transform.Find("UI/ControlCenter").gameObject.SetActive(false);
+            controlPanelRoot.transform.Find("UI/Event").gameObject.SetActive(true);
+            StartCoroutine(GetEventLeaderboard());
+        };
+        
+        eventReturn.onPressed = () =>
+        {
+            controlPanelRoot.transform.Find("UI/ControlCenter").gameObject.SetActive(true);
+            controlPanelRoot.transform.Find("UI/Event").gameObject.SetActive(false);
+        };
+        
+        eventTrailer.onPressed = () =>
+        {
+            Application.OpenURL(eventUrl);
+            HUDManager.instance.SetHUDText("Opening event details in browser...");
+        };
+        
+        eventRefresh.onPressed = () =>
+        {
+            StartCoroutine(GetEventLeaderboard());
+        };
     }
 
     public void LoadCommunityTrials()
@@ -1056,7 +1094,11 @@ public class ControlPanel : MonoBehaviour
                         trialDifficulty,
                         trialData.maxTime,
                         trialData.customMapTrial,
-                        parameters
+                        parameters,
+                        0,
+                        0,
+                        0,
+                        $"{trialId}.json"
                     );
                     
                     if (HUDManager.instance != null)
@@ -1973,6 +2015,172 @@ public class ControlPanel : MonoBehaviour
         }
     }
     
+    private IEnumerator CheckForEvent()
+    {
+        string url = $"{Constants.ServerURL}/event";
+        
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+            yield return request.SendWebRequest();
+            
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Error($"failed to get event: {request.error}");
+                yield break;
+            }
+            
+            string jsonResponse = request.downloadHandler.text;
+            
+            EventResponse response = JsonConvert.DeserializeObject<EventResponse>(jsonResponse);
+            
+            if (response != null && response.active == true)
+            {
+                string startIso = response.createdAt;
+                string endIso = response.endDate;
+                DateTime startdate = DateTime.Parse(startIso, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+                DateTime enddate = DateTime.Parse(endIso, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+                int startday = startdate.Day;
+                int endday = enddate.Day;
+                string startmonth = startdate.ToString("MMMM", CultureInfo.InvariantCulture);
+                string endmonth = enddate.ToString("MMMM", CultureInfo.InvariantCulture);
+                string startsuffix = GetDateSuffix(startday);
+                string endsuffix = GetDateSuffix(endday);
+
+                eventUrl = response.url;
+                
+                eventTotalCompleted = response.totalCompleted;
+                eventRequiredAmount = response.requiredAmount;
+                
+                controlPanelRoot.transform.Find("UI/ControlCenter/Event/EventDate").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = $"{startmonth} {startday}{startsuffix} - {endmonth} {endday}{endsuffix}";
+                
+                controlPanelRoot.transform.Find("UI/ControlCenter/Buttons").gameObject
+                    .GetComponent<VerticalLayoutGroup>().spacing = 30;
+                
+                controlPanelRoot.transform.Find("UI/ControlCenter/Event/EventName").gameObject
+                    .GetComponent<TextMeshProUGUI>().text = response.displayName;
+
+                controlPanelRoot.transform.Find("UI/Event/Text/Header (5)").GetComponent<TextMeshProUGUI>().text =
+                    response.displayName;
+                
+                UpdateEventProgress();
+                
+                controlPanelRoot.transform.Find("UI/ControlCenter/Event").gameObject.SetActive(true);
+            }
+            else
+            {
+                controlPanelRoot.transform.Find("UI/ControlCenter/Buttons").gameObject
+                    .GetComponent<VerticalLayoutGroup>().spacing = 75;
+                controlPanelRoot.transform.Find("UI/ControlCenter/Event").gameObject.SetActive(false); 
+            }
+        }
+    }
+    
+    private IEnumerator GetEventLeaderboard()
+    {
+        yield return CheckForEvent();
+        
+        yield return GetEventPlayerRank();
+        
+        string url = $"{Constants.ServerURL}/event/leaderboard";
+        
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+            yield return request.SendWebRequest();
+            
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Error($"failed to get event leaderboard: {request.error}");
+                yield break;
+            }
+            
+            string jsonResponse = request.downloadHandler.text;
+            
+            try
+            {
+                List<EventLeaderboardEntry> leaderboardEntries = JsonConvert.DeserializeObject<List<EventLeaderboardEntry>>(jsonResponse);
+                
+                if (leaderboardEntries != null && leaderboardEntries.Count > 0)
+                {
+                    UpdateEventLeaderboard(leaderboardEntries);
+                    Logging.Info($"Event leaderboard refreshed successfully");
+                }
+                else
+                {
+                    Logging.Warning("no leaderboard entries found");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.Error($"failed to parse event leaderboard response: {ex.Message}");
+            }
+        }
+    }
+
+    private IEnumerator GetEventPlayerRank()
+    {
+        string url = $"{Constants.ServerURL}/event/myrank";
+        
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+            yield return request.SendWebRequest();
+            
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Error($"failed to get player event rank: {request.error}");
+                yield break;
+            }
+            
+            string jsonResponse = request.downloadHandler.text;
+            
+            try
+            {
+                EventPlayerRankResponse response = JsonConvert.DeserializeObject<EventPlayerRankResponse>(jsonResponse);
+                
+                if (response != null)
+                {
+                    eventPlayerRank = response.rank;
+                    UpdateEventPlayerRankUI();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.Error($"failed to parse player event rank response: {ex.Message}");
+            }
+        }
+    }
+
+    private void UpdateEventPlayerRankUI()
+    {
+        try
+        {
+            Transform rankTextTransform = controlPanelRoot.transform.Find("UI/Event/EventStats/Leaderboard/YourRank");
+            if (rankTextTransform != null)
+            {
+                TextMeshProUGUI rankText = rankTextTransform.GetComponent<TextMeshProUGUI>();
+                if (rankText != null)
+                {
+                    rankText.text = $"Your Rank: #{eventPlayerRank}";
+                }
+                else
+                {
+                    Logging.Warning("no text comp found");
+                }
+            }
+            else
+            {
+                Logging.Warning("gameobject not found for myrank");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logging.Error($"error updating player rank: {ex.Message}");
+        }
+    }
+    
     public IEnumerator SendFriendRequest(string playerId)
     {
         string url = $"{Constants.ServerURL}/profile/addfriend";
@@ -2165,6 +2373,128 @@ public class ControlPanel : MonoBehaviour
         keyboard.keyboard.SetActive(true);
     }
     
+    public static string GetDateSuffix(int day)
+    {
+        if (day % 100 >= 11 && day % 100 <= 13)
+        {
+            return "th";
+        }
+        switch (day % 10)
+        {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
+    }
+    
+    public float GetEventProgressPercentage()
+    {
+        if (eventRequiredAmount <= 0)
+            return 0f;
+        
+        return (eventTotalCompleted / (float)eventRequiredAmount) * 100f;
+    }
+
+    public float GetEventProgressDecimal()
+    {
+        if (eventRequiredAmount <= 0)
+            return 0f;
+        
+        return eventTotalCompleted / (float)eventRequiredAmount;
+    }
+    
+    public void UpdateEventProgress()
+    {
+        float percentage = GetEventProgressPercentage();
+        float decimal_progress = GetEventProgressDecimal();
+
+        try
+        {
+            Transform progressTextTransform = controlPanelRoot.transform.Find("UI/Event/EventStats/ActualAmount");
+            if (progressTextTransform != null)
+            {
+                TextMeshProUGUI progressText = progressTextTransform.GetComponent<TextMeshProUGUI>();
+                if (progressText != null)
+                {
+                    progressText.text = $"{eventTotalCompleted}/{eventRequiredAmount}";
+                }
+            }
+
+            Transform percentageTextTransform = controlPanelRoot.transform.Find("UI/Event/EventStats/Percent");
+            if (percentageTextTransform != null)
+            {
+                TextMeshProUGUI percentageText = percentageTextTransform.GetComponent<TextMeshProUGUI>();
+                if (percentageText != null)
+                {
+                    percentageText.text = $"{percentage:F1}%";
+                }
+            }
+
+            Transform progressBarTransform = controlPanelRoot.transform.Find("UI/Event/EventStats/Progress");
+            if (progressBarTransform != null)
+            {
+                Image progressBar = progressBarTransform.GetComponent<Image>();
+                if (progressBar != null)
+                {
+                    progressBar.fillAmount = Mathf.Clamp01(decimal_progress);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logging.Error($"error updating event progress: {ex.Message}");
+        }
+    }
+
+    public void UpdateEventLeaderboard(List<EventLeaderboardEntry> entries)
+    {
+        if (entries == null || entries.Count == 0)
+        {
+            Logging.Warning("no leaderboard entries to display");
+            return;
+        }
+
+        var formattedLeaderboardText = "";
+
+        foreach (var entry in entries)
+        {
+            if (entry.rank > 10) continue;
+            string line = $"{entry.rank}. {entry.username} - {entry.count} completed Trials\n\n";
+            formattedLeaderboardText += line;
+        }
+        
+        try
+        {
+            Transform boardTextTransform = controlPanelRoot.transform.Find("UI/Event/EventStats/Leaderboard/BoardText");
+            if (boardTextTransform != null)
+            {
+                TextMeshProUGUI boardText = boardTextTransform.GetComponent<TextMeshProUGUI>();
+                if (boardText != null)
+                {
+                    boardText.text = formattedLeaderboardText;
+                }
+                else
+                {
+                    Logging.Error("text component on leaderboard is null");
+                }
+            }
+            else
+            {
+                Logging.Error("leaderboard transform is null");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logging.Error($"error updating event leaderboard: {ex.Message}");
+        }
+    }
+
+    
     [Serializable]
     public class BrowseTrialsResponse
     {
@@ -2273,5 +2603,34 @@ public class ControlPanel : MonoBehaviour
     {
         public SearchResult[] results;
         public PaginationData pagination;
+    }
+
+    [Serializable]
+    public class EventResponse
+    {
+        public string eventId;
+        public string displayName;
+        public string endDate;
+        public string url;
+        public int requiredAmount;
+        public string createdAt;
+        public bool active;
+        public int totalCompleted;
+        public Dictionary<string, int> contributions;
+    }
+    
+    [Serializable]
+    public class EventLeaderboardEntry
+    {
+        public string playerId;
+        public string username;
+        public int count;
+        public int rank;
+    }
+    
+    [Serializable]
+    public class EventPlayerRankResponse
+    {
+        public int rank;
     }
 }

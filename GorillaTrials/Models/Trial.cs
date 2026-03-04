@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using BepInEx;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -48,6 +49,8 @@ namespace GorillaTrials.Models
         public float MaxTime;
         public bool isFromCustomMap = false;
         public bool onApprovedMap = false;
+        public string downloadedFileName = null;
+        public bool isPlaytest = false;
         public bool racing = false;
         public RaceType raceType = RaceType.None;
         public bool wrReplayAvailable = false;
@@ -62,7 +65,7 @@ namespace GorillaTrials.Models
         public string selectedChallengeRecipientId = null;
         public string selectedChallengeRecipientUsername = null;
 
-        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, float maxTime, TrialZone zoneData = null, bool customMapTrial = false, List<Vector3> boxPositions = null, float bronzeTime = 0f, float silverTime = 0f, float goldTime = 0f)
+        public Trial(Vector3 trialPosition, float yRotation, string trialLongName, string trialServerName, ETrialType trialType, ETrialDifficulty trialDifficulty, float maxTime, TrialZone zoneData = null, bool customMapTrial = false, List<Vector3> boxPositions = null, float bronzeTime = 0f, float silverTime = 0f, float goldTime = 0f, string downloadedFileName = null, bool isPlaytest = false)
         {
             trialUIObject = Instantiate(Singleton<TrialManager>.Instance.trialUIAsset);
             trialUIObject.transform.SetParent(Singleton<TrialManager>.Instance.transform);
@@ -154,6 +157,24 @@ namespace GorillaTrials.Models
             this.boxPositions = boxPositions;
             isFromCustomMap = customMapTrial;
             onApprovedMap = CustomMapManager.instance.approvedMap;
+            this.downloadedFileName = downloadedFileName;
+            this.isPlaytest = isPlaytest;
+            
+            TrialButton deleteTrial = trialUIObject.transform.Find("UI/InfoMenu/DeleteTrial").gameObject.AddComponent<TrialButton>();
+            
+            deleteTrial.onPressed = () =>
+            {
+                DeleteCustomTrial();
+            };
+            
+            if (isFromCustomMap)
+            {
+                deleteTrial.gameObject.SetActive(true);
+            }
+            else
+            {
+                deleteTrial.gameObject.SetActive(false);
+            }
             
             TrialButton raceButton = trialUIObject.transform.Find("Stand/TopCanvas/RaceButton").gameObject.AddComponent<TrialButton>();
 
@@ -1269,8 +1290,6 @@ namespace GorillaTrials.Models
                     string resultText = response.result == "win" ? "WON" : "LOST";
                     string resultColor = response.result == "win" ? "#00FF00" : "#FF0000";
                     
-                    Logging.Info($"Challenge completed! Result: {response.result} | Your time: {response.yourTime}s vs Challenge: {response.challengeTime}s");
-                    
                     if (HUDManager.instance != null)
                     {
                         HUDManager.instance.SetHUDText($"<color={resultColor}>Challenge {resultText}!</color> Your time: {response.yourTime:F3}s vs {challengerUsername}'s {response.challengeTime:F3}s");
@@ -1331,6 +1350,56 @@ namespace GorillaTrials.Models
             public int perPage;
             public bool hasNextPage;
             public bool hasPrevPage;
+        }
+
+        public void DeleteCustomTrial()
+        {
+            if (!isFromCustomMap)
+            {
+                return;
+            }
+            
+            if (string.IsNullOrEmpty(downloadedFileName))
+            {
+                Logging.Warning($"cannot delete trial {TrialServerName}: it doesnt have its filename stored ?");
+                return;
+            }
+            
+            try
+            {
+                // this shouldnt ever ever happen but just in case ig lol
+                if (TrialManager.Instance != null && TrialManager.Instance.Started && TrialManager.Instance.currentTrial == this)
+                {
+                    stateMachine.SwitchState(new Trial_End(this, false));
+                }
+                
+                if (trialUIObject != null)
+                {
+                    Destroy(trialUIObject);
+                }
+                
+                if (TrialManager.Instance != null && TrialManager.Instance.Trials.Contains(this))
+                {
+                    TrialManager.Instance.Trials.Remove(this);
+                }
+                
+                string executableDir = System.IO.Path.GetDirectoryName(Paths.ExecutablePath);
+                string downloadedTrialsDir = System.IO.Path.Combine(executableDir, "downloadedtrials");
+                string trialDataPath = System.IO.Path.Combine(downloadedTrialsDir, downloadedFileName);
+                
+                if (System.IO.File.Exists(trialDataPath))
+                {
+                    System.IO.File.Delete(trialDataPath);
+                }
+                else
+                {
+                    Logging.Error($"trial data file for {TrialServerName} not found at: {trialDataPath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.Error($"error deleting custom trial {TrialServerName}: {ex.Message}");
+            }
         }
 
         public enum TrialMenu

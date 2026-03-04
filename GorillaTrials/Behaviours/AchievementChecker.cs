@@ -140,13 +140,13 @@ public class AchievementChecker : MonoBehaviour
             HUDManager.instance.SetHUDText("Unlocked Achievement: PB Pro!");
         }
         
-        if (trialCompletions >= 20 && Plugin.achievementManager.IsUnlocked("whatarethose") == false)
+        if (trialCompletions >= 100 && Plugin.achievementManager.IsUnlocked("whatarethose") == false)
         {
             Plugin.achievementManager.UnlockAchievement("whatarethose");
             HUDManager.instance.SetHUDText("Unlocked Achievement: WHAT ARE THOSE!!??");
         }
         
-        if (trialCompletions >= 20 && Plugin.achievementManager.IsUnlocked("trialmaster") == false)
+        if (trialCompletions >= 500 && Plugin.achievementManager.IsUnlocked("trialmaster") == false)
         {
             Plugin.achievementManager.UnlockAchievement("trialmaster");
             HUDManager.instance.SetHUDText("Unlocked Achievement: Trial Master!");

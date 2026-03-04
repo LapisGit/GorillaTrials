@@ -11,6 +11,13 @@ namespace GorillaTrials.Behaviours.Networking
 {
     internal class NetworkHandler : Singleton<NetworkHandler>, IInRoomCallbacks
     {
+        // there's no need for a custom prop, so i'm removing it for now.
+        // it just increases chances of players being harassed by stupid ass "mod checkers"
+        // also, Another Axiom just completely fucked custom props so they don't even apply inside of rooms!
+        // if you're someone who harasses people for having mods, using a cheat/illegal mod yourself,
+        // go find help, you're really weird.
+        // - lapis
+        
         public Action<NetPlayer, Dictionary<string, object>> OnPlayerPropertyChanged;
 
         private readonly Dictionary<string, object> properties = [];
@@ -21,7 +28,7 @@ namespace GorillaTrials.Behaviours.Networking
         {
             if (NetworkSystem.Instance && NetworkSystem.Instance is NetworkSystemPUN)
             {
-                SetProperty("Version", Constants.Version);
+                //SetProperty("Version", Constants.Version);
 
                 PhotonNetwork.AddCallbackTarget(this);
                 Application.quitting += () => PhotonNetwork.RemoveCallbackTarget(this);
@@ -30,8 +37,8 @@ namespace GorillaTrials.Behaviours.Networking
 
             enabled = false; // either no netsys or not in a pun environment - i doubt fusion will ever come
         }
-
-        public void FixedUpdate()
+        
+       /* public void FixedUpdate()
         {
             properties_timer -= Time.deltaTime;
 
@@ -55,7 +62,7 @@ namespace GorillaTrials.Behaviours.Networking
             if (properties.ContainsKey(key)) properties[key] = value;
             else properties.Add(key, value);
             set_properties = true;
-        }
+        }*/
 
         public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
