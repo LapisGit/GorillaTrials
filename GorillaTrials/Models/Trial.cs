@@ -13,9 +13,11 @@ using BepInEx;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using Utilla.Utils;
-using Utilla.Models;
+using MelonLoader;
 using GorillaGameModes;
+using GorillaLibrary.GameModes.Models;
+using GorillaLibrary.GameModes.Utilities;
+using MelonLoader.Utils;
 
 namespace GorillaTrials.Models
 {
@@ -306,7 +308,7 @@ namespace GorillaTrials.Models
                     ReplayManager.Instance.StopReplay();
                 }
 
-                if (GameModeUtils.CurrentGamemode is Gamemode gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGamemode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual || Plugin.InModdedGamemode || GorillaComputer.instance.currentGameMode.ToString() == "MODDED_Casual")
+                if (GameModeUtility.CurrentGamemode is Gamemode gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGamemode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual || Plugin.InModdedGamemode || GorillaComputer.instance.currentGameMode.ToString() == "MODDED_Casual")
                 {
                     //TimeManager.instance.maxTime = maxTime;
                     
@@ -1383,7 +1385,7 @@ namespace GorillaTrials.Models
                     TrialManager.Instance.Trials.Remove(this);
                 }
                 
-                string executableDir = System.IO.Path.GetDirectoryName(Paths.ExecutablePath);
+                string executableDir = System.IO.Path.GetDirectoryName(MelonEnvironment.GameRootDirectory);
                 string downloadedTrialsDir = System.IO.Path.Combine(executableDir, "downloadedtrials");
                 string trialDataPath = System.IO.Path.Combine(downloadedTrialsDir, downloadedFileName);
                 

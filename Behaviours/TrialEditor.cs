@@ -1,8 +1,7 @@
-﻿﻿﻿using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx;
@@ -10,9 +9,7 @@ using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Models;
-using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
-using MelonLoader.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -40,30 +37,29 @@ public class TrialEditor : MonoBehaviour
     private List<GameObject> spawnedObjects = new List<GameObject>();
     private GameObject spawnedStandPosition = null;
     
+    private bool showSaveDialog = false;
+    private bool showUploadDialog = false;
+    private bool showLoadDialog = false;
+    private Rect saveWindowRect = new Rect(100, 100, 500, 450);
+    private Rect uploadWindowRect = new Rect(100, 100, 500, 500);
+    private Rect loadWindowRect = new Rect(100, 100, 700, 550);
+    private string guiTrialName = "Trial";
+    private string guiTrialDifficulty = "Easy";
     private float guiMaxTime = 0f;
     private string guiMaxTimeString = "0";
-    private float guiBronze = 0f;
-    
-    private int loadCurrentPage = 1;
-    private int loadTotalPages = 1;
-    private int trialsPerPage = 9;
-    private float guiSilver = 0f;
-    private float guiGold = 0f;
     
     private bool lastLeftPrimaryButton = false;
     private bool lastRightPrimaryButton = false;
     private bool lastLeftSecondaryButton = false;
     
     private bool isUploading = false;
+    private string uploadStatusMessage = "";
     
     private string[] trialFiles;
     private Vector2 loadScrollPosition;
     private string selectedFile = "";
 
     public GameObject panel;
-    
-    private Trial playtestTrial = null;
-    private bool trialLoadedFromFile = false;
     
     async void Start()
     {
@@ -89,106 +85,12 @@ public class TrialEditor : MonoBehaviour
         trialStandPositionPrefab.SetActive(false);
         
         TrialButton back = editorUI.transform.Find("Canvas/MainPanel/Editor/Back").AddComponent<TrialButton>();
-        TrialButton backupload = editorUI.transform.Find("Canvas/MainPanel/Upload/Back").AddComponent<TrialButton>();
-        TrialButton backload = editorUI.transform.Find("Canvas/MainPanel/Load/Back").AddComponent<TrialButton>();
         TrialButton close = editorUI.transform.Find("Canvas/MainPanel/TypeSelection/Close").AddComponent<TrialButton>();
         TrialButton zone = editorUI.transform.Find("Canvas/MainPanel/TypeSelection/Zone").AddComponent<TrialButton>();
         TrialButton box = editorUI.transform.Find("Canvas/MainPanel/TypeSelection/Box").AddComponent<TrialButton>();
         TrialButton save = editorUI.transform.Find("Canvas/MainPanel/Editor/Save").AddComponent<TrialButton>();
         TrialButton upload = editorUI.transform.Find("Canvas/MainPanel/Editor/Upload").AddComponent<TrialButton>();
         TrialButton load = editorUI.transform.Find("Canvas/MainPanel/TypeSelection/Load").AddComponent<TrialButton>();
-        TrialButton playtest = editorUI.transform.Find("Canvas/MainPanel/Editor/Playtest").AddComponent<TrialButton>();
-        TrialButton easy = editorUI.transform.Find("Canvas/MainPanel/Upload/DifficultySelection/Easy").AddComponent<TrialButton>();
-        TrialButton medium = editorUI.transform.Find("Canvas/MainPanel/Upload/DifficultySelection/Medium").AddComponent<TrialButton>();
-        TrialButton hard = editorUI.transform.Find("Canvas/MainPanel/Upload/DifficultySelection/Hard").AddComponent<TrialButton>();
-        TrialButton insane = editorUI.transform.Find("Canvas/MainPanel/Upload/DifficultySelection/Insane").AddComponent<TrialButton>();
-        TrialButton extreme = editorUI.transform.Find("Canvas/MainPanel/Upload/DifficultySelection/Extreme").AddComponent<TrialButton>();
-        TrialButton editname = editorUI.transform.Find("Canvas/MainPanel/Upload/Trial Name Label/Edit").AddComponent<TrialButton>();
-        TrialButton actuallyupload = editorUI.transform.Find("Canvas/MainPanel/Upload/UploadSpecific/Upload").AddComponent<TrialButton>();
-        TrialButton actuallysave = editorUI.transform.Find("Canvas/MainPanel/Upload/SaveSpecific/Save").AddComponent<TrialButton>();
-        TrialButton endplaytest = editorUI.transform.Find("Canvas/MainPanel/Playtesting/StopPlaytesting").AddComponent<TrialButton>();
-
-        endplaytest.onPressed = () =>
-        {
-            StopPlaytest();
-        };
-
-        actuallysave.onPressed = () =>
-        {
-            SaveTrialToJsonFile();
-            panel.transform.Find("TypeSelection").gameObject.SetActive(true);
-            panel.transform.Find("Upload").gameObject.SetActive(false);
-            ClearAllSpawnedObjects();
-        };
-        
-        actuallyupload.onPressed = () =>
-        {
-            SaveTrialToJsonFile();
-            StartCoroutine(UploadTrialToServer());
-            panel.transform.Find("TypeSelection").gameObject.SetActive(true);
-            panel.transform.Find("Upload").gameObject.SetActive(false);
-            ClearAllSpawnedObjects();
-        };
-        
-        editname.onPressed = () =>
-        {
-            OpenKeyboard();
-        };
-        
-        easy.onPressed = () =>
-        {
-            TrialDifficulty = "Easy";
-            var difficultyText = editorUI.transform.Find("Canvas/MainPanel/Upload/SelectedDifficulty")?.GetComponent<TextMeshProUGUI>();
-            if (difficultyText != null)
-                difficultyText.text = $"Selected: <color=#90EE90>{TrialDifficulty}";
-        };
-        
-        medium.onPressed = () =>
-        {
-            TrialDifficulty = "Medium";
-            var difficultyText = editorUI.transform.Find("Canvas/MainPanel/Upload/SelectedDifficulty")?.GetComponent<TextMeshProUGUI>();
-            if (difficultyText != null)
-                difficultyText.text = $"Selected: <color=#FDFA72>{TrialDifficulty}";
-        };
-        
-        hard.onPressed = () =>
-        {
-            TrialDifficulty = "Hard";
-            var difficultyText = editorUI.transform.Find("Canvas/MainPanel/Upload/SelectedDifficulty")?.GetComponent<TextMeshProUGUI>();
-            if (difficultyText != null)
-                difficultyText.text = $"Selected: <color=#FF6700>{TrialDifficulty}";
-        };
-        
-        insane.onPressed = () =>
-        {
-            TrialDifficulty = "Insane";
-            var difficultyText = editorUI.transform.Find("Canvas/MainPanel/Upload/SelectedDifficulty")?.GetComponent<TextMeshProUGUI>();
-            if (difficultyText != null)
-                difficultyText.text = $"Selected: <color=#EE61BD>{TrialDifficulty}";
-        };
-        
-        extreme.onPressed = () =>
-        {
-            TrialDifficulty = "Extreme";
-            var difficultyText = editorUI.transform.Find("Canvas/MainPanel/Upload/SelectedDifficulty")?.GetComponent<TextMeshProUGUI>();
-            if (difficultyText != null)
-                difficultyText.text = $"Selected: <color=#FF474D>{TrialDifficulty}";
-        };
-        
-        playtest.onPressed = () =>
-        {
-            string validationError = ValidateTrial();
-            if (!string.IsNullOrEmpty(validationError))
-            {
-                if (HUDManager.instance != null)
-                {
-                    HUDManager.instance.SetHUDText(validationError);
-                }
-                return;
-            }
-            
-            StartPlaytest();
-        };
         
         back.onPressed = () =>
         {
@@ -196,20 +98,6 @@ public class TrialEditor : MonoBehaviour
             panel.transform.Find("Editor").gameObject.SetActive(false);
             inEditorMode = false;
             ClearAllSpawnedObjects();
-        };
-        
-        backload.onPressed = () =>
-        {
-            panel.transform.Find("TypeSelection").gameObject.SetActive(true);
-            panel.transform.Find("Load").gameObject.SetActive(false);
-            inEditorMode = false;
-        };
-        
-        backupload.onPressed = () =>
-        {
-            panel.transform.Find("Editor").gameObject.SetActive(true);
-            panel.transform.Find("Upload").gameObject.SetActive(false);
-            inEditorMode = true;
         };
         
         close.onPressed = () =>
@@ -221,20 +109,14 @@ public class TrialEditor : MonoBehaviour
         
         save.onPressed = () =>
         {
-            string validationError = ValidateTrial();
-            if (!string.IsNullOrEmpty(validationError))
+            showSaveDialog = true;
+            guiTrialName = trialName;
+            guiTrialDifficulty = TrialDifficulty;
+            if (HUDManager.instance != null)
             {
-                if (HUDManager.instance != null)
-                {
-                    HUDManager.instance.SetHUDText(validationError);
-                }
-                return;
+                HUDManager.instance.SetHUDText("Continue with saving your Trial in the window on your desktop.");
+                StartCoroutine(ClearHUDDelayed(5f));
             }
-            
-            panel.transform.Find("Editor").gameObject.SetActive(false);
-            panel.transform.Find("Upload").gameObject.SetActive(true);
-            panel.transform.Find("Upload/UploadSpecific").gameObject.SetActive(false);
-            panel.transform.Find("Upload/SaveSpecific").gameObject.SetActive(true);
         };
         
         upload.onPressed = () =>
@@ -245,20 +127,24 @@ public class TrialEditor : MonoBehaviour
                 if (HUDManager.instance != null)
                 {
                     HUDManager.instance.SetHUDText(validationError);
+                    StartCoroutine(ClearHUDDelayed(5f));
                 }
                 Logging.Warning($"Upload blocked: {validationError}");
                 return;
             }
             
-            panel.transform.Find("Editor").gameObject.SetActive(false);
-            panel.transform.Find("Upload").gameObject.SetActive(true);
-            panel.transform.Find("Upload/UploadSpecific").gameObject.SetActive(true);
-            panel.transform.Find("Upload/SaveSpecific").gameObject.SetActive(false);
+            showUploadDialog = true;
+            guiTrialName = trialName;
+            guiTrialDifficulty = TrialDifficulty;
+            if (HUDManager.instance != null)
+            {
+                HUDManager.instance.SetHUDText("Continue with uploading your Trial in the window on your desktop.");
+                StartCoroutine(ClearHUDDelayed(5f));
+            }
         };
         
         box.onPressed = () =>
         {
-            trialLoadedFromFile = false;
             trialType = ETrialType.Box;
             editorUI.transform.Find("Canvas/MainPanel/Editor/Info").GetComponent<TextMeshProUGUI>().text =
                 "To place a box, click down your left primary button, to delete the last box you placed, click down your right primary button. To set the trial stand position, click down your left secondary button.";
@@ -273,7 +159,6 @@ public class TrialEditor : MonoBehaviour
         
         zone.onPressed = () =>
         {
-            trialLoadedFromFile = false;
             trialType = ETrialType.Zone;
             editorUI.transform.Find("Canvas/MainPanel/Editor/Info").GetComponent<TextMeshProUGUI>().text =
                 "To place a zone, click down your left primary button, to delete the last zone you placed, click down your right primary button. The start zone automatically sets the trial stand position.";
@@ -288,10 +173,7 @@ public class TrialEditor : MonoBehaviour
         
         load.onPressed = () =>
         {
-            panel.transform.Find("TypeSelection").gameObject.SetActive(false);
-            panel.transform.Find("Load").gameObject.SetActive(true);
-            
-            string trialsDir = Path.Combine(Path.GetDirectoryName(MelonEnvironment.GameExecutablePath), "trials");
+            string trialsDir = Path.Combine(Path.GetDirectoryName(Paths.ExecutablePath), "trials");
             
             if (!Directory.Exists(trialsDir))
             {
@@ -299,83 +181,42 @@ public class TrialEditor : MonoBehaviour
             }
             
             trialFiles = Directory.GetFiles(trialsDir, "*.json");
-            loadCurrentPage = 1;
-            
-            Transform nextPageBtnTransform = panel.transform.Find("Load/NextPage");
-            if (nextPageBtnTransform != null)
+            showLoadDialog = true;
+            selectedFile = "";
+            if (HUDManager.instance != null)
             {
-                nextPageBtnTransform.gameObject.layer = (int)UnityLayer.GorillaInteractable;
-                TrialButton nextPageBtn = nextPageBtnTransform.GetComponent<TrialButton>();
-                if (nextPageBtn == null)
-                {
-                    nextPageBtn = nextPageBtnTransform.AddComponent<TrialButton>();
-                }
-                
-                nextPageBtn.onPressed = () =>
-                {
-                    if (loadCurrentPage < loadTotalPages)
-                    {
-                        loadCurrentPage++;
-                        UpdateLoadTrialsUI(trialFiles);
-                    }
-                };
+                HUDManager.instance.SetHUDText("Select a trial file from the window on your desktop.");
+                StartCoroutine(ClearHUDDelayed(5f));
             }
-            
-            Transform prevPageBtnTransform = panel.transform.Find("Load/PrevPage");
-            if (prevPageBtnTransform != null)
-            {
-                prevPageBtnTransform.gameObject.layer = (int)UnityLayer.GorillaInteractable;
-                TrialButton prevPageBtn = prevPageBtnTransform.GetComponent<TrialButton>();
-                if (prevPageBtn == null)
-                {
-                    prevPageBtn = prevPageBtnTransform.AddComponent<TrialButton>();
-                }
-                
-                prevPageBtn.onPressed = () =>
-                {
-                    if (loadCurrentPage > 1)
-                    {
-                        loadCurrentPage--;
-                        UpdateLoadTrialsUI(trialFiles);
-                    }
-                };
-            }
-            
-            UpdateLoadTrialsUI(trialFiles);
         };
     }
     
     void SaveTrialToJsonFile()
     {
-        Vector3 positionToUse = trialStandPosition;
-        if (!trialLoadedFromFile)
-        {
-            positionToUse = new Vector3(
-                trialStandPosition.x,
-                trialStandPosition.y + 0.25f,
-                trialStandPosition.z + 0.05f
-            );
-        }
+        // i have to do this for some reason idk
+        Vector3 adjustedPosition = new Vector3(
+            trialStandPosition.x,
+            trialStandPosition.y + 0.25f,
+            trialStandPosition.z + 0.05f
+        );
         
         var trialData = new TrialJson
         {
             displayName = trialName,
             trialId = trialName.ToLower().Replace(" ", ""),
-            position = positionToUse,
+            position = adjustedPosition,
             angle = trialStandRotation,
             trialType = trialType.ToString(),
             trialDifficulty = TrialDifficulty,
             maxTime = 0,
             customMapTrial = true,
-            points = positions,
-            bronzeTime = guiBronze,
-            silverTime = guiSilver,
-            goldTime = guiGold
+            points = positions
         };
 
         string json = JsonUtility.ToJson(trialData, true);
-        string trialsDir = Path.Combine(Path.GetDirectoryName(MelonEnvironment.GameExecutablePath), "trials");
+        string trialsDir = Path.Combine(Path.GetDirectoryName(Paths.ExecutablePath), "trials");
         
+        // create directory if it doesn't exit, i think it should auto create but just to be safe
         if (!Directory.Exists(trialsDir))
         {
             Directory.CreateDirectory(trialsDir);
@@ -384,21 +225,19 @@ public class TrialEditor : MonoBehaviour
         string filePath = Path.Combine(trialsDir, $"{trialName}.json");
         File.WriteAllText(filePath, json);
         
-        HUDManager.instance.SetHUDText("Trial saved: "+ trialName);
+        Logging.Info($"Trial saved to: {filePath}");
     }
 
     void LoadTrialData(TrialJson trialData)
     {
         ClearAllSpawnedObjects();
-        trialLoadedFromFile = true;
         
         trialName = trialData.displayName;
+        guiTrialName = trialData.displayName;
         TrialDifficulty = trialData.trialDifficulty;
+        guiTrialDifficulty = trialData.trialDifficulty;
         trialStandPosition = trialData.position;
         trialStandRotation = trialData.angle;
-        
-        panel.transform.Find("Upload/TrialName").GetComponent<TextMeshProUGUI>().text = trialName;
-        panel.transform.Find("Upload/SelectedDifficulty").GetComponent<TextMeshProUGUI>().text = TrialDifficulty;
         
         if (Enum.TryParse(trialData.trialType, out ETrialType loadedTrialType))
         {
@@ -451,6 +290,7 @@ public class TrialEditor : MonoBehaviour
         
         Logging.Info($"Trial '{trialName}' loaded successfully with {positions.Count} points/boxes");
         HUDManager.instance.SetHUDText($"Trial '{trialName}' loaded successfully!");
+        StartCoroutine(ClearHUDDelayed(3f));
     }
 
     private void SpawnBox(Vector3 position)
@@ -472,23 +312,13 @@ public class TrialEditor : MonoBehaviour
 
     private void SpawnTrialStandPosition(Vector3 position, Quaternion rotation)
     {
-        Vector3 adjustedPosition = position;
-        if (!trialLoadedFromFile)
-        {
-            adjustedPosition = new Vector3(
-                position.x,
-                position.y + 0.25f,
-                position.z + 0.05f
-            );
-        }
-        
         if (spawnedStandPosition != null)
         {
             Destroy(spawnedStandPosition);
         }
         
         spawnedStandPosition = Instantiate(trialStandPositionPrefab);
-        spawnedStandPosition.transform.position = adjustedPosition;
+        spawnedStandPosition.transform.position = position;
         spawnedStandPosition.transform.rotation = Quaternion.Euler(0, rotation.eulerAngles.y, 0);
         spawnedStandPosition.SetActive(true);
     }
@@ -532,7 +362,6 @@ public class TrialEditor : MonoBehaviour
         bool placeButtonDown = currentLeftPrimaryButton && !lastLeftPrimaryButton;
         bool removeButtonDown = currentRightPrimaryButton && !lastRightPrimaryButton;
         bool standPositionButtonDown = currentLeftSecondaryButton && !lastLeftSecondaryButton;
-
         
         if (inEditorMode && editorUI != null)
         {
@@ -637,6 +466,245 @@ public class TrialEditor : MonoBehaviour
         lastRightPrimaryButton = currentRightPrimaryButton;
         lastLeftSecondaryButton = currentLeftSecondaryButton;
     }
+
+    private void OnGUI()
+    {
+        GUI.skin.label.fontSize = 14;
+        GUI.skin.button.fontSize = 14;
+        GUI.skin.textField.fontSize = 14;
+        GUI.skin.toggle.fontSize = 14;
+        GUI.skin.box.fontSize = 12;
+        
+        if (showSaveDialog)
+        {
+            saveWindowRect = GUI.Window(1, saveWindowRect, SaveDialogWindow, "Save Trial");
+        }
+        
+        if (showUploadDialog)
+        {
+            uploadWindowRect = GUI.Window(2, uploadWindowRect, UploadDialogWindow, "Upload Trial");
+        }
+        
+        if (showLoadDialog)
+        {
+            loadWindowRect = GUI.Window(3, loadWindowRect, LoadDialogWindow, "Load Trial");
+        }
+    }
+
+    private void SaveDialogWindow(int windowID)
+    {
+        GUILayout.BeginVertical();
+        
+        GUILayout.Space(10);
+        
+        GUILayout.Label("Trial Name:");
+        guiTrialName = GUILayout.TextField(guiTrialName, 50);
+        
+        GUILayout.Space(10);
+        
+        GUILayout.Label("Difficulty:");
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Toggle(guiTrialDifficulty == "Easy", "Easy"))
+            guiTrialDifficulty = "Easy";
+        if (GUILayout.Toggle(guiTrialDifficulty == "Medium", "Medium"))
+            guiTrialDifficulty = "Medium";
+        if (GUILayout.Toggle(guiTrialDifficulty == "Hard", "Hard"))
+            guiTrialDifficulty = "Hard";
+        if (GUILayout.Toggle(guiTrialDifficulty == "Insane", "Insane"))
+            guiTrialDifficulty = "Insane";
+        if (GUILayout.Toggle(guiTrialDifficulty == "Extreme", "Extreme"))
+            guiTrialDifficulty = "Extreme";
+        GUILayout.EndHorizontal();
+        
+        GUILayout.Space(10);
+        
+        GUILayout.Label($"Trial Type: {trialType}");
+        GUILayout.Label($"Points/Boxes: {positions.Count}");
+        
+        GUILayout.Space(20);
+        
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Save", GUILayout.Height(30)))
+        {
+            trialName = guiTrialName;
+            TrialDifficulty = guiTrialDifficulty;
+            SaveTrialToJsonFile();
+            showSaveDialog = false;
+            Logging.Info($"Saving Trial '{trialName}'...");
+        }
+        
+        if (GUILayout.Button("Cancel", GUILayout.Height(30)))
+        {
+            showSaveDialog = false;
+        }
+        GUILayout.EndHorizontal();
+        
+        GUILayout.EndVertical();
+        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+    }
+
+    private void UploadDialogWindow(int windowID)
+    {
+        GUILayout.BeginVertical();
+        
+        GUILayout.Space(10);
+        
+        GUILayout.Label("Trial Name:");
+        guiTrialName = GUILayout.TextField(guiTrialName, 50);
+        
+        GUILayout.Space(10);
+        
+        GUILayout.Label("Difficulty:");
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Toggle(guiTrialDifficulty == "Easy", "Easy"))
+            guiTrialDifficulty = "Easy";
+        if (GUILayout.Toggle(guiTrialDifficulty == "Medium", "Medium"))
+            guiTrialDifficulty = "Medium";
+        if (GUILayout.Toggle(guiTrialDifficulty == "Hard", "Hard"))
+            guiTrialDifficulty = "Hard";
+        if (GUILayout.Toggle(guiTrialDifficulty == "Insane", "Insane"))
+            guiTrialDifficulty = "Insane";
+        if (GUILayout.Toggle(guiTrialDifficulty == "Extreme", "Extreme"))
+            guiTrialDifficulty = "Extreme";
+        GUILayout.EndHorizontal();
+        
+        GUILayout.Space(10);
+        
+        GUILayout.Label($"Trial Type: {trialType}");
+        GUILayout.Label($"Points/Boxes: {positions.Count}");
+        
+        GUILayout.Space(10);
+        
+        GUILayout.Label("Upload Notes:");
+        GUILayout.Label("This will upload your Trial for ANYONE to play, and will be listed under YOU.", GUI.skin.box);
+        
+        GUILayout.Space(10);
+        
+        if (!string.IsNullOrEmpty(uploadStatusMessage))
+        {
+            GUILayout.Label(uploadStatusMessage, GUI.skin.box);
+        }
+        
+        GUILayout.Space(20);
+        
+        GUI.enabled = !isUploading;
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button(isUploading ? "Uploading..." : "Upload", GUILayout.Height(30)))
+        {
+            trialName = guiTrialName;
+            TrialDifficulty = guiTrialDifficulty;
+            SaveTrialToJsonFile();
+            StartCoroutine(UploadTrialToServer());
+        }
+        
+        if (GUILayout.Button("Cancel", GUILayout.Height(30)))
+        {
+            if (!isUploading)
+            {
+                showUploadDialog = false;
+                uploadStatusMessage = "";
+            }
+        }
+        GUILayout.EndHorizontal();
+        GUI.enabled = true;
+        
+        GUILayout.EndVertical();
+        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+    }
+
+    private void LoadDialogWindow(int windowID)
+    {
+        GUILayout.BeginVertical();
+        
+        GUILayout.Space(10);
+        
+        GUILayout.Label("Select a Trial to Load:");
+        GUILayout.Label($"Trials Directory: {Path.Combine(Path.GetDirectoryName(Paths.ExecutablePath), "trials")}", GUI.skin.box);
+        
+        GUILayout.Space(10);
+        
+        if (trialFiles == null || trialFiles.Length == 0)
+        {
+            GUILayout.Label("No trial files found in the trials directory.", GUI.skin.box);
+        }
+        else
+        {
+            loadScrollPosition = GUILayout.BeginScrollView(loadScrollPosition, GUILayout.Height(300));
+            
+            foreach (string filePath in trialFiles)
+            {
+                string fileName = Path.GetFileName(filePath);
+                bool isSelected = selectedFile == filePath;
+                
+                GUILayout.BeginHorizontal(GUI.skin.box);
+                
+                if (GUILayout.Toggle(isSelected, "", GUILayout.Width(20)))
+                {
+                    selectedFile = filePath;
+                }
+                
+                GUILayout.Label(fileName);
+                
+                GUILayout.EndHorizontal();
+            }
+            
+            GUILayout.EndScrollView();
+        }
+        
+        GUILayout.Space(10);
+        
+        GUILayout.Label(!string.IsNullOrEmpty(selectedFile) ? $"Selected: {Path.GetFileName(selectedFile)}" : "No file selected");
+        
+        GUILayout.Space(20);
+        
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Load", GUILayout.Height(30)))
+        {
+            if (!string.IsNullOrEmpty(selectedFile) && File.Exists(selectedFile))
+            {
+                try
+                {
+                    string json = File.ReadAllText(selectedFile);
+                    TrialJson trialData = JsonUtility.FromJson<TrialJson>(json);
+                    LoadTrialData(trialData);
+                    showLoadDialog = false;
+                }
+                catch (Exception ex)
+                {
+                    Logging.Error($"Failed to load trial: {ex.Message}");
+                    HUDManager.instance.SetHUDText($"Failed to load trial: {ex.Message}");
+                    StartCoroutine(ClearHUDDelayed(5f));
+                }
+            }
+            else
+            {
+                HUDManager.instance.SetHUDText("Please select a valid trial file.");
+                StartCoroutine(ClearHUDDelayed(3f));
+            }
+        }
+        
+        if (GUILayout.Button("Refresh", GUILayout.Height(30)))
+        {
+            string trialsDir = Path.Combine(Path.GetDirectoryName(Paths.ExecutablePath), "trials");
+            trialFiles = Directory.GetFiles(trialsDir, "*.json");
+            selectedFile = "";
+        }
+        
+        if (GUILayout.Button("Cancel", GUILayout.Height(30)))
+        {
+            showLoadDialog = false;
+        }
+        GUILayout.EndHorizontal();
+        
+        GUILayout.EndVertical();
+        GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+    }
+    
+    private IEnumerator ClearHUDDelayed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        HUDManager.instance.ClearHUD();
+    }
     
     private string ValidateTrial()
     {
@@ -663,145 +731,32 @@ public class TrialEditor : MonoBehaviour
         return null;
     }
 
-    private void UpdateLoadTrialsUI(string[] trialFilePaths)
-    {
-        if (trialFilePaths == null || trialFilePaths.Length == 0)
-        {
-            Transform noneTransform = panel.transform.Find("Load/None");
-            if (noneTransform != null)
-            {
-                noneTransform.gameObject.SetActive(true);
-            }
-            
-            Transform pageTextTransform = panel.transform.Find("Load/Text/Page");
-            if (pageTextTransform != null)
-            {
-                pageTextTransform.GetComponent<TextMeshProUGUI>().text = "";
-            }
-            
-            Transform optionsContainer = panel.transform.Find("Load/Options");
-            if (optionsContainer != null)
-            {
-                for (int i = 1; i <= 9; i++)
-                {
-                    optionsContainer.Find(i.ToString())?.gameObject.SetActive(false);
-                }
-            }
-            return;
-        }
-        
-        Transform noneTransform2 = panel.transform.Find("Load/None");
-        if (noneTransform2 != null)
-        {
-            noneTransform2.gameObject.SetActive(false);
-        }
-        
-        loadTotalPages = Mathf.CeilToInt(trialFilePaths.Length / (float)trialsPerPage);
-        if (loadCurrentPage > loadTotalPages)
-        {
-            loadCurrentPage = loadTotalPages;
-        }
-        
-        Transform pageTextTransform2 = panel.transform.Find("Load/Text/Page");
-        if (pageTextTransform2 != null)
-        {
-            pageTextTransform2.GetComponent<TextMeshProUGUI>().text = $"Page {loadCurrentPage}/{loadTotalPages}";
-        }
-        
-        Transform optionsContainer2 = panel.transform.Find("Load/Options");
-        if (optionsContainer2 == null) return;
-        
-        int startIndex = (loadCurrentPage - 1) * trialsPerPage;
-        int endIndex = Mathf.Min(startIndex + trialsPerPage, trialFilePaths.Length);
-        
-        for (int i = 1; i <= 9; i++)
-        {
-            Transform trialSlot = optionsContainer2.Find(i.ToString());
-            if (trialSlot == null) continue;
-            
-            int actualIndex = startIndex + (i - 1);
-            
-            if (actualIndex < endIndex)
-            {
-                string filePath = trialFilePaths[actualIndex];
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                
-                trialSlot.gameObject.SetActive(true);
-                trialSlot.gameObject.layer = (int)UnityLayer.GorillaInteractable;
-                
-                Transform nameTransform = trialSlot.Find("TrialName");
-                if (nameTransform != null)
-                {
-                    TextMeshProUGUI nameText = nameTransform.GetComponent<TextMeshProUGUI>();
-                    if (nameText != null)
-                    {
-                        nameText.text = fileName;
-                    }
-                }
-                
-                TrialButton slotButton = trialSlot.GetComponent<TrialButton>();
-                if (slotButton == null)
-                {
-                    slotButton = trialSlot.gameObject.AddComponent<TrialButton>();
-                }
-                
-                string trialFilePath = filePath;
-                slotButton.onPressed = () =>
-                {
-                    try
-                    {
-                        string json = File.ReadAllText(trialFilePath);
-                        TrialJson trialData = JsonUtility.FromJson<TrialJson>(json);
-                        LoadTrialData(trialData);
-                        
-                        panel.transform.Find("Load").gameObject.SetActive(false);
-                        panel.transform.Find("Editor").gameObject.SetActive(true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logging.Error($"Failed to load trial '{fileName}': {ex.Message}");
-                        if (HUDManager.instance != null)
-                        {
-                            HUDManager.instance.SetHUDText($"Failed to load trial: {ex.Message}");
-                        }
-                    }
-                };
-            }
-            else
-            {
-                trialSlot.gameObject.SetActive(false);
-            }
-        }
-    }
-
     private IEnumerator UploadTrialToServer()
     {
         string validationError = ValidateTrial();
         if (!string.IsNullOrEmpty(validationError))
         {
+            uploadStatusMessage = validationError;
             Logging.Error($"Upload validation failed: {validationError}");
             isUploading = false;
             yield break;
         }
         
         isUploading = true;
+        uploadStatusMessage = "Preparing upload...";
         
-        // Only apply adjustment if trial wasn't loaded from a file
-        Vector3 positionToUse = trialStandPosition;
-        if (!trialLoadedFromFile)
-        {
-            positionToUse = new Vector3(
-                trialStandPosition.x,
-                trialStandPosition.y + 0.25f,
-                trialStandPosition.z + 0.05f
-            );
-        }
+        // Adjust trial stand position before uploading
+        Vector3 adjustedPosition = new Vector3(
+            trialStandPosition.x,
+            trialStandPosition.y + 0.25f,
+            trialStandPosition.z + 0.05f
+        );
         
         var trialData = new TrialJson
         {
             displayName = trialName,
             trialId = trialName.ToLower().Replace(" ", ""),
-            position = positionToUse,
+            position = adjustedPosition,
             angle = trialStandRotation,
             trialType = trialType.ToString(),
             trialDifficulty = TrialDifficulty,
@@ -824,6 +779,7 @@ public class TrialEditor : MonoBehaviour
             www.SetRequestHeader("Authorization", Plugin.APIKey.Value);
             www.SetRequestHeader("playerid", playerId);
 
+            uploadStatusMessage = "Uploading to server...";
             
             yield return www.SendWebRequest();
 
@@ -831,22 +787,27 @@ public class TrialEditor : MonoBehaviour
             {
                 if (www.responseCode == 401)
                 {
+                    uploadStatusMessage = "Error: Unauthorized. Check your API key.";
                     Logging.Error("Upload failed: Unauthorized (401)");
                 }
                 else if (www.responseCode == 429)
                 {
+                    uploadStatusMessage = "Error: You can only upload one trial per 10 minutes, try again later.";
                     Logging.Error("Upload failed: Rate limited (429)");
                 }
                 else if (www.responseCode == 400)
                 {
+                    uploadStatusMessage = "Error: Invalid trial data.";
                     Logging.Error("Upload failed: Bad request (400)");
                 }
                 else if (www.responseCode == 500)
                 {
+                    uploadStatusMessage = "Error: Server error. Please try again later.";
                     Logging.Error("Upload failed: Server error (500)");
                 }
                 else
                 {
+                    uploadStatusMessage = $"Error: {www.error}";
                     Logging.Error($"Upload failed: {www.error}");
                 }
                 
@@ -857,47 +818,27 @@ public class TrialEditor : MonoBehaviour
                 try
                 {
                     var response = JsonUtility.FromJson<UploadResponse>(www.downloadHandler.text);
+                    uploadStatusMessage = $"Success! Trial uploaded with ID: {response.trialId}";
                     Logging.Info($"Trial uploaded successfully! Trial ID: {response.trialId}");
-                    
-                    ControlPanel.IncrementCustomTrialsUploaded();
                     
                     if (HUDManager.instance != null)
                     {
                         HUDManager.instance.SetHUDText($"Trial '{trialName}' uploaded successfully!");
+                        StartCoroutine(ClearHUDDelayed(5f));
                     }
                 }
                 catch (Exception ex)
                 {
+                    uploadStatusMessage = "Upload succeeded but failed to parse response.";
                     Logging.Error($"Failed to parse upload response: {ex.Message}");
                 }
                 
                 yield return new WaitForSeconds(3f);
+                showUploadDialog = false;
+                uploadStatusMessage = "";
                 isUploading = false;
             }
         }
-    }
-    
-    private void OpenKeyboard()
-    {
-        TrialKeyboard keyboard = FindFirstObjectByType<TrialKeyboard>();
-
-        keyboard.forUsername = true;
-        
-        keyboard.SetMaxLength(30);
-        
-        keyboard.onSubmit = (text) =>
-        {
-            trialName = text;
-            panel.transform.Find("Upload/TrialName").GetComponent<TextMeshProUGUI>().text = trialName;
-            keyboard.keyboard.SetActive(false);
-        };
-        
-        keyboard.onCancel = () =>
-        {
-            keyboard.keyboard.SetActive(false);
-        };
-        
-        keyboard.keyboard.SetActive(true);
     }
 
     [Serializable]
@@ -919,106 +860,6 @@ public class TrialEditor : MonoBehaviour
         public float maxTime;
         public bool customMapTrial;
         public List<Vector3> points;
-        public float bronzeTime;
-        public float silverTime;
-        public float goldTime;
-    }
-
-    private void StartPlaytest()
-    {
-        try
-        {
-            if (!Enum.TryParse(TrialDifficulty, true, out ETrialDifficulty difficulty))
-            {
-                difficulty = ETrialDifficulty.Easy;
-            }
-
-            string playtestTrialId = $"playtest_{trialName.ToLower().Replace(" ", "")}";
-
-            Vector3 positionToUse = trialStandPosition;
-            if (!trialLoadedFromFile)
-            {
-                positionToUse = new Vector3(
-                    trialStandPosition.x,
-                    trialStandPosition.y + 0.25f,
-                    trialStandPosition.z + 0.05f
-                );
-            }
-
-            TrialManager.Instance.CreateTrial(
-                trialName,
-                playtestTrialId,
-                positionToUse,
-                trialStandRotation,
-                trialType,
-                difficulty,
-                0f,
-                true,
-                trialType == ETrialType.Box ? new object[] { positions } : new object[] { positions },
-                0,
-                0,
-                0,
-                null,
-                true
-            );
-            
-            foreach (GameObject obj in spawnedObjects)
-            {
-                if (obj != null)
-                {
-                    obj.SetActive(false);
-                }
-            }
-            
-            if (spawnedStandPosition != null)
-            {
-                spawnedStandPosition.SetActive(false);
-            }
-            
-            inEditorMode = false;
-            panel.transform.Find("Editor").gameObject.SetActive(false);
-            panel.transform.Find("Playtesting").gameObject.SetActive(true);
-        }
-        catch (Exception ex)
-        {
-            Logging.Error($"Error starting playtest: {ex.Message}");
-            if (HUDManager.instance != null)
-            {
-                HUDManager.instance.SetHUDText($"Error starting playtest: {ex.Message}");
-            }
-        }
-    }
-
-    public void StopPlaytest()
-    {
-        try
-        {
-            TrialManager.Instance.DeleteAllPlaytestTrials();
-            
-            foreach (GameObject obj in spawnedObjects)
-            {
-                if (obj != null)
-                {
-                    obj.SetActive(true);
-                }
-            }
-            
-            if (spawnedStandPosition != null)
-            {
-                spawnedStandPosition.SetActive(true);
-            }
-            
-            panel.transform.Find("Playtesting").gameObject.SetActive(false);
-            panel.transform.Find("Editor").gameObject.SetActive(true);
-            inEditorMode = true;
-        }
-        catch (Exception ex)
-        {
-            Logging.Error($"Error stopping playtest: {ex.Message}");
-            if (HUDManager.instance != null)
-            {
-                HUDManager.instance.SetHUDText($"Error stopping playtest: {ex.Message}");
-            }
-        }
     }
 }
+

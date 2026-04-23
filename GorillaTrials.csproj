@@ -12,14 +12,14 @@
 	<PropertyGroup>
         <GamePath>E:\SteamLibrary\steamapps\common\Gorilla Tag</GamePath>
 		<GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
-		<MelonLoaderAssemblyPath>$(GamePath)\MelonLoader\net35</MelonLoaderAssemblyPath>
-		<ModsPath>$(GamePath)\Mods</ModsPath>
+		<BepInExAssemblyPath>$(GamePath)\BepInEx\core</BepInExAssemblyPath>
+		<PluginsPath>$(GamePath)\BepInEx\plugins</PluginsPath>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(CI)'=='TRUE'">
 		<GameAssemblyPath>.\Libs</GameAssemblyPath>
-		<MelonLoaderAssemblyPath>.\Libs</MelonLoaderAssemblyPath>
-		<ModsPath>.\Libs</ModsPath>
+		<BepInExAssemblyPath>.\Libs</BepInExAssemblyPath>
+		<PluginsPath>.\Libs</PluginsPath>
 		<WarningLevel>0</WarningLevel>
 	</PropertyGroup>
 
@@ -31,12 +31,13 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Copy SourceFiles="$(TargetPath);bin/Debug/$(TargetFramework)/GorillaTrials.pdb" DestinationFiles="$(GamePath)/Mods/GorillaTrials.dll;$(GamePath)/Mods/GorillaTrials.pdb" />
+		<MakeDir Directories="$(PluginsPath)\GorillaTrials" />
+		<Copy SourceFiles="$(TargetPath);bin/Debug/$(TargetFramework)/GorillaTrials.pdb" DestinationFiles="$(GamePath)/BepInEx/plugins/GorillaTrials/GorillaTrials.dll;$(GamePath)/BepInEx/plugins/GorillaTrials/GorillaTrials.pdb" />
 	</Target>
 
 	<ItemGroup>
 		<Reference Include="0Harmony">
-			<HintPath>$(MelonLoaderAssemblyPath)\0Harmony.dll</HintPath>
+			<HintPath>$(BepInExAssemblyPath)\0Harmony.dll</HintPath>
 		</Reference>
 		<Reference Include="Assembly-CSharp" Publicize="true">
 			<HintPath>$(GameAssemblyPath)\Assembly-CSharp.dll</HintPath>
@@ -47,14 +48,11 @@
 		<Reference Include="BakeryRuntimeAssembly">
 			<HintPath>$(GameAssemblyPath)\BakeryRuntimeAssembly.dll</HintPath>
 		</Reference>
-		<Reference Include="GorillaLibrary">
-		  <HintPath>E:\SteamLibrary\steamapps\common\Gorilla Tag\Mods\GorillaLibrary.dll</HintPath>
+		<Reference Include="BepInEx">
+			<HintPath>$(BepInExAssemblyPath)\BepInEx.dll</HintPath>
 		</Reference>
-		<Reference Include="GorillaLibrary.GameModes">
-		  <HintPath>E:\SteamLibrary\steamapps\common\Gorilla Tag\Mods\GorillaLibrary.GameModes.dll</HintPath>
-		</Reference>
-		<Reference Include="MelonLoader">
-			<HintPath>$(MelonLoaderAssemblyPath)\MelonLoader.dll</HintPath>
+		<Reference Include="BepInEx.Harmony">
+			<HintPath>$(BepInExAssemblyPath)\BepInEx.Harmony.dll</HintPath>
 		</Reference>
 		<Reference Include="Cinemachine">
 			<HintPath>$(GameAssemblyPath)\Cinemachine.dll</HintPath>
@@ -315,7 +313,7 @@
 			<HintPath>$(GameAssemblyPath)\Modio.dll</HintPath>
 		</Reference>
 		<Reference Include="Utilla">
-		  <HintPath>$(ModsPath)\Utilla\Utilla.dll</HintPath>
+		  <HintPath>$(PluginsPath)\Utilla\Utilla.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 

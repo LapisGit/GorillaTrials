@@ -8,8 +8,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BepInEx;
 using GorillaNetworking;
+using MelonLoader.Utils;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
@@ -987,7 +987,7 @@ public class ControlPanel : MonoBehaviour
             
             string trialJson = request.downloadHandler.text;
             
-            string executableDir = Path.GetDirectoryName(Paths.ExecutablePath);
+            string executableDir = Path.GetDirectoryName(MelonEnvironment.GameExecutablePath);
             if (string.IsNullOrEmpty(executableDir))
             {
                 Logging.Error("Failed to get executable directory path");

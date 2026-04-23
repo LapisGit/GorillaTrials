@@ -1,36 +1,34 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.Logging;
-using GorillaNetworking;
+﻿using GorillaNetworking;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.Networking;
 using GorillaTrials.Models;
 using GorillaTrials.Tools;
-using HarmonyLib;
 using System;
 using System.Collections;
-using System.Net.Http;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using GorillaGameModes;
+using GorillaLibrary.GameModes.Attributes;
+using GorillaTrials;
+using MelonLoader;
+using MelonLoader.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using Utilla.Attributes;
 
+[assembly: MelonInfo(typeof(Plugin), "GorillaTrials", "1.5.0", "Lapis, dev9998, Mia")]
+[assembly: MelonGame("Another Axiom", "Gorilla Tag")]
+[assembly: MelonAdditionalDependencies("GorillaLibrary", "GorillaLibrary.GameModes", "GorillaLibrary.Web")]
 namespace GorillaTrials
 {
-    [BepInPlugin(Constants.GUID, Constants.Name, Constants.Version)]
-    [BepInDependency("org.legoandmars.gorillatag.utilla", "1.5.0")]
     [ModdedGamemode("gtrials", "GORILLATRIALS", GameModeType.Casual)]
-    public class Plugin : BaseUnityPlugin
+    public class Plugin : MelonMod
     {
-        public static new ManualLogSource Logger;
-
-        public static new ConfigFile Config;
-        public static ConfigEntry<string> APIKey;
-        public static ConfigEntry<bool> PBNotify;
-        public static ConfigEntry<float> EarlyEndTime;
+        public static new MelonPreferences_Category Config;
+        public static MelonPreferences_Entry<string> APIKey;
+        public static MelonPreferences_Entry<bool> PBNotify;
+        public static MelonPreferences_Entry<float> EarlyEndTime;
 
         public static bool WrongVersion;
         public static bool InModdedGamemode;
@@ -38,11 +36,17 @@ namespace GorillaTrials
         
         internal static WebSocketClient WebSocketClientInstance;
 
-        public void Awake()
+        public override void OnInitializeMelon()
         {
-            Logger = base.Logger;
+            Config = MelonPreferences.CreateCategory("GorillaTrials");
 
-            Config = base.Config;
+            string configPath = Path.Combine(MelonEnvironment.UserDataDirectory, "GorillaTrials.cfg");
+            Config.SetFilePath(configPath);
+            Config.LoadFromFile();
+        }
+
+        public override void OnLateInitializeMelon()
+        {
             achievementManager = new AchievementManager(Config);
 
             achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!",
@@ -71,27 +75,28 @@ namespace GorillaTrials
             achievementManager.RegisterAchievement(new Achievement("pbpro", "PB Pro", "Complete trials 20 times."));
             achievementManager.RegisterAchievement(new Achievement("whatarethose", "WHAT ARE THOSE!!??", "Complete trials 100 times."));
             achievementManager.RegisterAchievement(new Achievement("trialmaster", "Trial Master", "Complete trials 500 times."));
-            APIKey = Config.Bind
+            APIKey = Config.CreateEntry
             (
-                "Server",
-                "APIKey",
+                "apikey",
                 "Your-API-Key-Here",
+                "Server API Key",
                 "The API key used to authenticate server requests for trials. DO NOT SEND YOUR KEY TO ANYONE!"
             );
-            PBNotify = Config.Bind
+            PBNotify = Config.CreateEntry
             (
-                "Gameplay",
-                "PB Notify",
+                "pbnotify",
                 true,
+                "PB Notify",
                 "If true, the HUD will notify you if you get a Personal Best on a trial."
             );
-            EarlyEndTime = Config.Bind
+            EarlyEndTime = Config.CreateEntry
             (
-                "Gameplay",
-                "Early End Time",
+                "earlyendtime",
                 1.5f,
+                "Early End Time",
                 "The value in seconds that determines how long you have to hold your primary face button to end a trial early."
             );
+            Config.SaveToFile();
             
             WebSocketClientInstance = new WebSocketClient();
             WebSocketClientInstance.Start();
@@ -101,7 +106,7 @@ namespace GorillaTrials
 
 
                 GameObject root = new(Constants.Name);
-                DontDestroyOnLoad(root);
+                UnityEngine.Object.DontDestroyOnLoad(root);
                 root.AddComponent<TrialManager>();
                 root.AddComponent<NetworkHandler>();
                 root.AddComponent<EarlyEnd>();
@@ -125,11 +130,8 @@ namespace GorillaTrials
                     WrongVersion = version == EVersionCompareResult.Outdated;
 #endif
                     });
-                StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
+                MelonCoroutines.Start(PostRequest($"{Constants.ServerURL}/createaccount"));
             });
-
-
-            Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
         }
 
         public async void CompareVersion(string url, Action<EVersionCompareResult> onVersionRecieved)
@@ -137,13 +139,13 @@ namespace GorillaTrials
             using UnityWebRequest request = UnityWebRequest.Get(url);
             TaskCompletionSource<UnityWebRequest> completionSource = new();
 
-            StartCoroutine(YieldWebRequest(request, completionSource));
+            MelonCoroutines.Start(YieldWebRequest(request, completionSource));
             await completionSource.Task;
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Logger.LogFatal($"Failed to check version {url}");
-                Logger.LogError(request.error);
+                Logging.Fatal($"Failed to check version {url}");
+                Logging.Error(request.error);
 
                 onVersionRecieved?.Invoke(EVersionCompareResult.Invalid);
                 return;
@@ -225,7 +227,7 @@ namespace GorillaTrials
                     if (!string.IsNullOrEmpty(response.api_key))
                     {
                         APIKey.Value = response.api_key;
-                        Config.Save();
+                        Config.SaveToFile();
                         WebSocketClientInstance.Authenticate(APIKey.Value);
                         if (FirstTimeUIManager.instance != null && FirstTimeUIManager.instance.UI != null)
                         {

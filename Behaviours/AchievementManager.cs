@@ -1,8 +1,7 @@
+using BepInEx.Configuration;
 using GorillaTrials.Tools;
 using System;
 using System.Collections.Generic;
-using Fusion;
-using MelonLoader;
 
 namespace GorillaTrials.Behaviours
 {
@@ -14,7 +13,7 @@ namespace GorillaTrials.Behaviours
         public string Description;
         public bool Unlocked;
 
-        internal MelonPreferences_Entry<bool> ConfigEntry;
+        internal ConfigEntry<bool> ConfigEntry;
 
         public Achievement(string id, string name, string description)
         {
@@ -28,9 +27,9 @@ namespace GorillaTrials.Behaviours
     public class AchievementManager
     {
         private readonly Dictionary<string, Achievement> achievements = new();
-        private readonly MelonPreferences_Category config;
+        private readonly ConfigFile config;
 
-        public AchievementManager(MelonPreferences_Category configFile)
+        public AchievementManager(ConfigFile configFile)
         {
             config = configFile;
         }
@@ -39,8 +38,17 @@ namespace GorillaTrials.Behaviours
         {
             if (!achievements.ContainsKey(achievement.ID))
             {
-                achievement.ConfigEntry = config.CreateEntry(achievement.ID, false, achievement.Name, IsUnlocked(achievement.ID)) as MelonPreferences_Entry<bool>;
+                // Register config entry for unlocked state
+                achievement.ConfigEntry = config.Bind(
+                    "Achievements",
+                    achievement.ID,
+                    false,
+                    $"Whether the achievement '{achievement.Name}' is unlocked."
+                );
+
+                // Load saved unlocked state
                 achievement.Unlocked = achievement.ConfigEntry.Value;
+
                 achievements.Add(achievement.ID, achievement);
 # if DEBUG
                 Logging.Info($"Registered achievement: {achievement.Name} (unlocked: {achievement.Unlocked})");
@@ -56,7 +64,7 @@ namespace GorillaTrials.Behaviours
                 {
                     achievement.Unlocked = true;
                     achievement.ConfigEntry.Value = true; // update config
-                    config.SaveToFile();
+                    config.Save();
                     Logging.Info($"Unlocked achievement: {achievement.Name} - {achievement.Description}");
                     ControlPanel.instance?.UpdateAchievements();
                 }
@@ -64,25 +72,6 @@ namespace GorillaTrials.Behaviours
             else
             {
                 Logging.Error($"Tried to unlock unknown achievement: {id}");
-            }
-        }
-
-        public void LockAchievement(string id)
-        {
-            if (achievements.TryGetValue(id, out var achievement))
-            {
-                if (achievement.Unlocked)
-                {
-                    achievement.Unlocked = false;
-                    achievement.ConfigEntry.Value = false; // update config
-                    config.SaveToFile();
-                    Logging.Info($"Locked achievement: {achievement.Name}");
-                    ControlPanel.instance?.UpdateAchievements();
-                }
-            }
-            else
-            {
-                Logging.Error($"Tried to lock unknown achievement: {id}");
             }
         }
 
