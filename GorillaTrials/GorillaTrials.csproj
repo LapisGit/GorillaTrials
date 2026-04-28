@@ -48,10 +48,7 @@
 			<HintPath>$(GameAssemblyPath)\BakeryRuntimeAssembly.dll</HintPath>
 		</Reference>
 		<Reference Include="GorillaLibrary">
-		  <HintPath>E:\SteamLibrary\steamapps\common\Gorilla Tag\Mods\GorillaLibrary.dll</HintPath>
-		</Reference>
-		<Reference Include="GorillaLibrary.GameModes">
-		  <HintPath>E:\SteamLibrary\steamapps\common\Gorilla Tag\Mods\GorillaLibrary.GameModes.dll</HintPath>
+		  <HintPath>$(ModsPath)\GorillaLibrary.dll</HintPath>
 		</Reference>
 		<Reference Include="MelonLoader">
 			<HintPath>$(MelonLoaderAssemblyPath)\MelonLoader.dll</HintPath>

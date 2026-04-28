@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.1.9f1
-CRC: 1234006954
+CRC: 3544659638
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e337d0e386a3b0a0913b2dedf5c97d2a
+    Hash: cbb1c9de59cf6f52468300b7a87a87a0
   TypeTreeHash:
     serializedVersion: 2
     Hash: aa182ef23027053b829c0a837b1aa9e2
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 5770e206cdb8762b5dd8a25a8d28fd93
+    Hash: 3a2baaca12cc18afa3e2ac727e540656
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -99,11 +99,16 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
 Assets:
+- Assets/Badge/GoldBadge.prefab
 - Assets/AchievementsUI.prefab
+- Assets/Badge/SilverBadge.prefab
+- Assets/Badge/ContribBadge.prefab
 - Assets/Keyboard.prefab
 - Assets/FirstTimeUI.prefab
+- Assets/Badge/Trophy.prefab
 - Assets/Replay.prefab
 - Assets/TrialEditor.prefab
+- Assets/Badge/BronzeBadge.prefab
 - Assets/HUDUI.prefab
 - Assets/GorillaTrials.prefab
 - Assets/TrialUtilityMenu.prefab

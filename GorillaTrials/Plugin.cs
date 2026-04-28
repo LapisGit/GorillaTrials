@@ -9,7 +9,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using GorillaGameModes;
-using GorillaLibrary.GameModes.Attributes;
+using GorillaLibrary.Attributes;
 using GorillaTrials;
 using MelonLoader;
 using MelonLoader.Utils;
@@ -19,7 +19,8 @@ using UnityEngine.Networking;
 
 [assembly: MelonInfo(typeof(Plugin), "GorillaTrials", "1.5.0", "Lapis, dev9998, Mia")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
-[assembly: MelonAdditionalDependencies("GorillaLibrary", "GorillaLibrary.GameModes", "GorillaLibrary.Web")]
+[assembly: MelonAdditionalDependencies("GorillaLibrary")]
+[assembly: WardrobeCategory("Badges", typeof(BadgeWardrobe))]
 namespace GorillaTrials
 {
     [ModdedGamemode("gtrials", "GORILLATRIALS", GameModeType.Casual)]
@@ -116,6 +117,7 @@ namespace GorillaTrials
                 root.AddComponent<AchievementChecker>();
                 root.AddComponent<HUDManager>();
                 root.AddComponent<FirstTimeUIManager>();
+                root.AddComponent<RigBadgeManager>();
                 HUDManager.instance.Init();
                 root.AddComponent<ReplayManager>();
                 root.AddComponent<TrialEditor>();

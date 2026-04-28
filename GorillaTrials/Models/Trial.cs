@@ -15,8 +15,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using MelonLoader;
 using GorillaGameModes;
-using GorillaLibrary.GameModes.Models;
-using GorillaLibrary.GameModes.Utilities;
+using GorillaLibrary.Models;
+using GorillaLibrary.Utilities;
 using MelonLoader.Utils;
 
 namespace GorillaTrials.Models
@@ -308,7 +308,7 @@ namespace GorillaTrials.Models
                     ReplayManager.Instance.StopReplay();
                 }
 
-                if (GameModeUtility.CurrentGamemode is Gamemode gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGamemode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual || Plugin.InModdedGamemode || GorillaComputer.instance.currentGameMode.ToString() == "MODDED_Casual")
+                if (GameModeUtility.CurrentGameMode is GameModeWrapper gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGameMode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual || Plugin.InModdedGamemode || GorillaComputer.instance.currentGameMode.ToString() == "MODDED_Casual")
                 {
                     //TimeManager.instance.maxTime = maxTime;
                     
