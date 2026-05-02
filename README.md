@@ -7,6 +7,8 @@ You can join the [Discord!](https://discord.gg/48fCJzPfEk)
 
 > [!WARNING]
 > If you use this mod, you agree to the [Privacy Policy](https://github.com/LapisGit/GorillaTrials/blob/main/PRIVACYPOLICY.md), as stated.
+>
+> This mod send web requests to https://trials.soweli.uk for accounts, in-game leaderboards, etc.
 
 ## Installation
 Go to the [latest release](https://github.com/LapisGit/GorillaTrials/releases/latest), and put the .dll inside of your plugins folder.
