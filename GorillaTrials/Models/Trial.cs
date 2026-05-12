@@ -13,11 +13,10 @@ using BepInEx;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using MelonLoader;
 using GorillaGameModes;
+using GorillaLibrary.Extensions;
 using GorillaLibrary.Models;
 using GorillaLibrary.Utilities;
-using MelonLoader.Utils;
 
 namespace GorillaTrials.Models
 {
@@ -140,7 +139,7 @@ namespace GorillaTrials.Models
                 _ => "secret third type"
             };
 
-            trialUIObject.transform.Find("UI/InfoMenu/TrialDifficulty").gameObject.GetComponent<TMP_Text>().text = $"Difficulty: {colourTag}{trialDifficulty.GetName()}";
+            trialUIObject.transform.Find("UI/InfoMenu/TrialDifficulty").gameObject.GetComponent<TMP_Text>().text = $"Difficulty: {colourTag}{trialDifficulty.ToString()}";
 
             trialObject = trialUIObject;
             
@@ -1385,7 +1384,7 @@ namespace GorillaTrials.Models
                     TrialManager.Instance.Trials.Remove(this);
                 }
                 
-                string executableDir = System.IO.Path.GetDirectoryName(MelonEnvironment.GameRootDirectory);
+                string executableDir = System.IO.Path.GetDirectoryName(Paths.GameRootPath);
                 string downloadedTrialsDir = System.IO.Path.Combine(executableDir, "downloadedtrials");
                 string trialDataPath = System.IO.Path.Combine(downloadedTrialsDir, downloadedFileName);
                 

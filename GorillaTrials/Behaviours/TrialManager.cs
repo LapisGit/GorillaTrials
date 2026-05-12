@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MelonLoader.Utils;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -148,7 +147,7 @@ namespace GorillaTrials.Behaviours
 
         private void LoadDownloadedTrials()
         {
-            string executableDir = System.IO.Path.GetDirectoryName(MelonEnvironment.GameExecutablePath);
+            string executableDir = System.IO.Path.GetDirectoryName(Paths.GameRootPath);
             if (string.IsNullOrEmpty(executableDir))
             {
                 Logging.Error("Failed to get executable directory path for loading downloaded trials");

@@ -9,27 +9,27 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using GorillaGameModes;
-using GorillaLibrary.Attributes;
 using GorillaTrials;
-using MelonLoader;
-using MelonLoader.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
+using GorillaLibrary.Attributes;
 
-[assembly: MelonInfo(typeof(Plugin), "GorillaTrials", "1.5.0", "Lapis, dev9998, Mia")]
-[assembly: MelonGame("Another Axiom", "Gorilla Tag")]
-[assembly: MelonAdditionalDependencies("GorillaLibrary")]
-[assembly: WardrobeCategory("Badges", typeof(BadgeWardrobe))]
+[assembly: ModdedWardrobeSection("GorillaTrials", typeof(BadgeWardrobe))]
 namespace GorillaTrials
 {
     [ModdedGamemode("gtrials", "GORILLATRIALS", GameModeType.Casual)]
-    public class Plugin : MelonMod
+    [BepInPlugin(Constants.GUID, Constants.Name, Constants.Version)]
+    public class Plugin : BaseUnityPlugin
     {
-        public static new MelonPreferences_Category Config;
-        public static MelonPreferences_Entry<string> APIKey;
-        public static MelonPreferences_Entry<bool> PBNotify;
-        public static MelonPreferences_Entry<float> EarlyEndTime;
+        public static new ManualLogSource Logger;
+
+        public static ConfigEntry<string> APIKey;
+        public static ConfigEntry<bool> PBNotify;
+        public static ConfigEntry<float> EarlyEndTime;
 
         public static bool WrongVersion;
         public static bool InModdedGamemode;
@@ -37,17 +37,12 @@ namespace GorillaTrials
         
         internal static WebSocketClient WebSocketClientInstance;
 
-        public override void OnInitializeMelon()
+        public void Awake()
         {
-            Config = MelonPreferences.CreateCategory("GorillaTrials");
-
-            string configPath = Path.Combine(MelonEnvironment.UserDataDirectory, "GorillaTrials.cfg");
-            Config.SetFilePath(configPath);
-            Config.LoadFromFile();
-        }
-
-        public override void OnLateInitializeMelon()
-        {
+            Logger = base.Logger;
+            Config.SaveOnConfigSet = true;
+            GorillaTagger.OnPlayerSpawned(OnGameInit);
+            
             achievementManager = new AchievementManager(Config);
 
             achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!",
@@ -76,72 +71,72 @@ namespace GorillaTrials
             achievementManager.RegisterAchievement(new Achievement("pbpro", "PB Pro", "Complete trials 20 times."));
             achievementManager.RegisterAchievement(new Achievement("whatarethose", "WHAT ARE THOSE!!??", "Complete trials 100 times."));
             achievementManager.RegisterAchievement(new Achievement("trialmaster", "Trial Master", "Complete trials 500 times."));
-            APIKey = Config.CreateEntry
+            APIKey = Config.Bind
             (
-                "apikey",
+                "Authentication",
+                "API Key",
                 "Your-API-Key-Here",
-                "Server API Key",
                 "The API key used to authenticate server requests for trials. DO NOT SEND YOUR KEY TO ANYONE!"
             );
-            PBNotify = Config.CreateEntry
+            PBNotify = Config.Bind
             (
-                "pbnotify",
-                true,
+                "Gameplay",
                 "PB Notify",
+                true,
                 "If true, the HUD will notify you if you get a Personal Best on a trial."
             );
-            EarlyEndTime = Config.CreateEntry
+            EarlyEndTime = Config.Bind
             (
-                "earlyendtime",
-                1.5f,
+                "Gameplay",
                 "Early End Time",
+                1.5f,
                 "The value in seconds that determines how long you have to hold your primary face button to end a trial early."
             );
-            Config.SaveToFile();
+            Config.Save();
             
             WebSocketClientInstance = new WebSocketClient();
             WebSocketClientInstance.Start();
+        }
 
-            GorillaTagger.OnPlayerSpawned(() =>
-            {
-
-
-                GameObject root = new(Constants.Name);
-                UnityEngine.Object.DontDestroyOnLoad(root);
-                root.AddComponent<TrialManager>();
-                root.AddComponent<NetworkHandler>();
-                root.AddComponent<EarlyEnd>();
-                //root.AddComponent<TimeManager>();
-                root.AddComponent<ControlPanel>();
-                root.AddComponent<CustomMapManager>();
-                root.AddComponent<AchievementChecker>();
-                root.AddComponent<HUDManager>();
-                root.AddComponent<FirstTimeUIManager>();
-                root.AddComponent<RigBadgeManager>();
-                HUDManager.instance.Init();
-                root.AddComponent<ReplayManager>();
-                root.AddComponent<TrialEditor>();
-                root.AddComponent<TrialKeyboard>();
+        private void OnGameInit()
+        {
+            Logging.Info("game init");
+            GameObject root = new(Constants.Name);
+            DontDestroyOnLoad(root);
+            root.AddComponent<TrialManager>();
+            root.AddComponent<NetworkHandler>();
+            root.AddComponent<NetworkBadgeSolution_RaiseEvent>();
+            root.AddComponent<EarlyEnd>();
+            //root.AddComponent<TimeManager>();
+            root.AddComponent<ControlPanel>();
+            root.AddComponent<CustomMapManager>();
+            root.AddComponent<AchievementChecker>();
+            root.AddComponent<HUDManager>();
+            root.AddComponent<FirstTimeUIManager>();
+            root.AddComponent<RigBadgeManager>();
+            HUDManager.instance.Init();
+            root.AddComponent<ReplayManager>();
+            root.AddComponent<TrialEditor>();
+            root.AddComponent<TrialKeyboard>();
 #if DEBUG
-                //root.AddComponent<DebugEditor>();
+            //root.AddComponent<DebugEditor>();
 #endif
-                CompareVersion("https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt",
-                    version =>
-                    {
+            CompareVersion("https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt",
+                version =>
+                {
 #if RELEASE
                     WrongVersion = version == EVersionCompareResult.Outdated;
 #endif
-                    });
-                MelonCoroutines.Start(PostRequest($"{Constants.ServerURL}/createaccount"));
-            });
+                });
+            StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
         }
-
+        
         public async void CompareVersion(string url, Action<EVersionCompareResult> onVersionRecieved)
         {
             using UnityWebRequest request = UnityWebRequest.Get(url);
             TaskCompletionSource<UnityWebRequest> completionSource = new();
 
-            MelonCoroutines.Start(YieldWebRequest(request, completionSource));
+            StartCoroutine(YieldWebRequest(request, completionSource));
             await completionSource.Task;
 
             if (request.result != UnityWebRequest.Result.Success)
@@ -199,6 +194,13 @@ namespace GorillaTrials
                     FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page6/SuccessText")
                         .GetComponent<TextMeshProUGUI>().text = "You already seem to have an account!";
                 }
+                
+                BadgeWardrobe tempBadgeWardrobe = FindObjectOfType<BadgeWardrobe>();
+                if (tempBadgeWardrobe != null)
+                {
+                    tempBadgeWardrobe.StartFetchingInventory();
+                }
+                
                 yield break;
             }
 
@@ -229,12 +231,18 @@ namespace GorillaTrials
                     if (!string.IsNullOrEmpty(response.api_key))
                     {
                         APIKey.Value = response.api_key;
-                        Config.SaveToFile();
+                        Config.Save();
                         WebSocketClientInstance.Authenticate(APIKey.Value);
                         if (FirstTimeUIManager.instance != null && FirstTimeUIManager.instance.UI != null)
                         {
                             FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page6/SuccessText").gameObject
                                 .SetActive(true);
+                        }
+                        
+                        BadgeWardrobe tempBadgeWardrobe2 = FindObjectOfType<BadgeWardrobe>();
+                        if (tempBadgeWardrobe2 != null)
+                        {
+                            tempBadgeWardrobe2.StartFetchingInventory();
                         }
                     }
                     else

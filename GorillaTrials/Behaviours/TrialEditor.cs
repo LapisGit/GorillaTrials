@@ -1,4 +1,4 @@
-﻿﻿﻿using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +12,6 @@ using GorillaTrials.Behaviours.UI;
 using GorillaTrials.Models;
 using GorillaTrials.Models.StateMachine;
 using GorillaTrials.Tools;
-using MelonLoader.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -291,7 +290,7 @@ public class TrialEditor : MonoBehaviour
             panel.transform.Find("TypeSelection").gameObject.SetActive(false);
             panel.transform.Find("Load").gameObject.SetActive(true);
             
-            string trialsDir = Path.Combine(Path.GetDirectoryName(MelonEnvironment.GameExecutablePath), "trials");
+            string trialsDir = Path.Combine(Path.GetDirectoryName(Paths.GameRootPath), "trials");
             
             if (!Directory.Exists(trialsDir))
             {
@@ -374,7 +373,7 @@ public class TrialEditor : MonoBehaviour
         };
 
         string json = JsonUtility.ToJson(trialData, true);
-        string trialsDir = Path.Combine(Path.GetDirectoryName(MelonEnvironment.GameExecutablePath), "trials");
+        string trialsDir = Path.Combine(Path.GetDirectoryName(Paths.GameRootPath), "trials");
         
         if (!Directory.Exists(trialsDir))
         {

@@ -1,42 +1,24 @@
-﻿using MelonLoader;
+﻿using BepInEx.Logging;
 
 namespace GorillaTrials.Tools
 {
     internal class Logging
     {
-        public static void Message(object message) => Log(message, "Message");
+        public static void Message(object message) => Log(LogLevel.Message, message);
 
-        public static void Info(object message) => Log(message, "Info");
+        public static void Info(object message) => Log(LogLevel.Info, message);
 
-        public static void Warning(object message) => Log(message, "Warning");
+        public static void Warning(object message) => Log(LogLevel.Warning, message);
 
-        public static void Error(object message) => Log(message, "Error");
+        public static void Error(object message) => Log(LogLevel.Error, message);
 
-        public static void Fatal(object message) => Log(message, "Fatal");
+        public static void Fatal(object message) => Log(LogLevel.Fatal, message);
 
-        private static void Log(object message, string level)
+        public static void Log(LogLevel level, object message)
         {
-            switch (level)
-            {
-                case "Warning":
-                    MelonLogger.Warning(message.ToString());
-                    break;
-                case "Error":
-                    MelonLogger.Error(message.ToString());
-                    break;
-                case "Fatal":
-                    MelonLogger.Error(message.ToString());
-                    break;
-                case "Info":
-                    MelonLogger.Msg(message.ToString());
-                    break;
-                case "Message":
-                    MelonLogger.Msg(message.ToString());
-                    break;
-                default:
-                    MelonLogger.Msg(message.ToString());
-                    break;
-            }
+#if DEBUG
+            Plugin.Logger?.Log(level, message);
+#endif
         }
     }
 }
