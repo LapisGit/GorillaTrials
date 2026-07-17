@@ -48,4 +48,4 @@ If you have questions or concerns about this Privacy Policy, you can contact Lap
 
 Discord: windows11pro
 
-Email: lapis@lapis.codes
+Email: lapis@lapiscreates.tech
