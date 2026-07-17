@@ -3,6 +3,7 @@ using GorillaTrials.Behaviours.Networking;
 using GorillaTrials.Tools;
 using System.Collections;
 using System.Collections.Generic;
+using PlayFab.ClientModels;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -12,7 +13,7 @@ namespace GorillaTrials.Behaviours;
 public class BadgeWardrobe : WardrobeCategory
 {
     public BadgeWardrobe instance;
-    
+    private readonly List<GameObject> _spawnedBadges = new();
     public override string Title => "Badges";
     
     private int _selectedBadgeIndex = -1;
@@ -79,17 +80,14 @@ public class BadgeWardrobe : WardrobeCategory
     {
         selection.displayHead.SetCosmeticActiveArray([], []);
         
-        foreach (Transform child in selection.displayHead.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        
         GameObject badgePrefab = GetBadgeForIndex(index);
         
         if (badgePrefab != null)
         {
             GameObject badge = Instantiate(badgePrefab, selection.displayHead.transform, false);
             badge.name = badgePrefab.name;
+            
+            _spawnedBadges.Add(badge);
             
             ApplyBadgeTransform(badge.transform);
         }
@@ -174,13 +172,20 @@ public class BadgeWardrobe : WardrobeCategory
         {
             UpdateCosmetics();
         }
-        else
+    }
+    
+    public override void OnPageHide()
+    {
+        Logging.Info("onpagehide");
+        foreach (GameObject badge in _spawnedBadges)
         {
-            foreach (Transform child in transform)
+            if (badge != null)
             {
-                Destroy(child.gameObject);
+                Destroy(badge);
             }
         }
+
+        _spawnedBadges.Clear();
     }
 
     [System.Serializable]

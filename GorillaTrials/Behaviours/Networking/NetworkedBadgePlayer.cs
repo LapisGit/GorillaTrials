@@ -144,8 +144,8 @@ internal class NetworkedBadgePlayer : MonoBehaviour
 
     private void ApplyBadgeTransform(Transform badgeTransform)
     {
-        badgeTransform.localPosition = new Vector3(0.0929f, -0.1155f, 0.0601f);
-        badgeTransform.localRotation = Quaternion.Euler(90f, 0, 0);
+        badgeTransform.localPosition = new Vector3(0.0977f, 0.2845f, 0.1104f);
+        badgeTransform.localRotation = Quaternion.Euler(0, 0, 0);
         badgeTransform.localScale = Vector3.one;
     }
 

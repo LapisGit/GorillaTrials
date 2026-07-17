@@ -6,12 +6,12 @@
 
         public const string Name = "GorillaTrials";
 
-        public const string Version = "1.5.0";
+        public const string Version = "1.6.0";
 
         public const float NetworkSetInterval = 0.25f;
 
         public const string CustomProperty = "GTrials";
 
-        public const string ServerURL = "http://localhost:2763";
+        public const string ServerURL = "https://trials.lapiscreates.tech";
     }
 }

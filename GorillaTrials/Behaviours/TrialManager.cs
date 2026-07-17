@@ -66,7 +66,7 @@ namespace GorillaTrials.Behaviours
             rightHand = GTPlayer.Instance.RightHand.handFollower.gameObject;
             Head = GTPlayer.Instance.headCollider.gameObject;
 
-            string url = "https://suwiparty.lapis.codes/Trial.json";
+            string url = "https://suwiparty.lapiscreates.tech/Trial.json";
             using UnityWebRequest request = UnityWebRequest.Get(url);
             await request.SendWebRequest();
 
