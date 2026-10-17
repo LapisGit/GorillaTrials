@@ -19,6 +19,8 @@ namespace GorillaTrials.Behaviours.Networking
         private int _reconnectAttempt = 0;
         private string _pendingAuthToken;
 
+        private int _notifqueue = 0;
+
         public WebSocketClient() { }
 
         public void Start()
@@ -180,8 +182,12 @@ namespace GorillaTrials.Behaviours.Networking
                         {
                             foreach (var notification in notificationsToken)
                             {
-                                string message = notification.Value<string>("message") ?? "Notification";
-                                HUDManager.instance?.ShowNotificationAlert(message);
+                                _notifqueue += 1;
+                            }
+
+                            if (_notifqueue != 0)
+                            { 
+                                HUDManager.instance?.ShowNotificationAlert($"You have {_notifqueue} unread notifications.");   
                             }
                         }
                         catch (Exception ex)

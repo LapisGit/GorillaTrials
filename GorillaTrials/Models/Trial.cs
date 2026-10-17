@@ -379,6 +379,7 @@ namespace GorillaTrials.Models
         public void SetPersonalBest(double value)
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(value);
+            Logging.Info("PB: " + timeSpan.ToString(@"mm\:ss\.fff"));
             trialUIObject.transform.Find("UI/InfoMenu/TrialPlayerData/PB").GetComponent<TMP_Text>().text = string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
             trialUIObject.transform.Find("UI/RaceMenu/Allowed/PB/PBData/PB").GetComponent<TMP_Text>().text = string.Concat("Personal Best: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"));
         }

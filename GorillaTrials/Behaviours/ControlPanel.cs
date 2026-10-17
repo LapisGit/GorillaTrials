@@ -90,8 +90,8 @@ public class ControlPanel : MonoBehaviour
         controlPanelRoot = await AssetLoader.LoadAsset<GameObject>("TrialUtilityMenu");
         controlPanelRoot = Instantiate(controlPanelRoot);
         DontDestroyOnLoad(controlPanelRoot);
-        controlPanelRoot.transform.position = new Vector3(-69.3592f, 12.1929f, -83.4284f);
-        controlPanelRoot.transform.rotation = Quaternion.Euler(358.9055f, 242.0654f, 0f);
+        controlPanelRoot.transform.position = new Vector3(-69.62f, 12.05f, -83.2f);
+        controlPanelRoot.transform.rotation = Quaternion.Euler(358.9055f, 255.8669f, 0f);
 
         TrialButton achievements = controlPanelRoot.transform.Find("UI/ControlCenter/Buttons/Achievements").AddComponent<TrialButton>();
         TrialButton trialeditor = controlPanelRoot.transform.Find("UI/ControlCenter/Buttons/Trial Editor").AddComponent<TrialButton>();
@@ -182,13 +182,6 @@ public class ControlPanel : MonoBehaviour
         Transform refreshBtn = achievementUI.transform.Find("Buttons/Refresh");
         Transform returnBtn = achievementUI.transform.Find("Buttons/Return");
         Transform pageText = achievementUI.transform.Find("Text/Page");
-        
-        if (prevPageBtn == null || nextPageBtn == null || refreshBtn == null || returnBtn == null || pageText == null)
-        {
-            Logging.Error("One or more achievement UI elements not found. Check asset structure.");
-            Logging.Error($"prevPageBtn: {prevPageBtn != null}, nextPageBtn: {nextPageBtn != null}, refreshBtn: {refreshBtn != null}, returnBtn: {returnBtn != null}, pageText: {pageText != null}");
-            return;
-        }
         
         prevPageBtn.gameObject.layer = (int)UnityLayer.GorillaInteractable;
         nextPageBtn.gameObject.layer = (int)UnityLayer.GorillaInteractable;
@@ -2040,7 +2033,7 @@ public class ControlPanel : MonoBehaviour
         string challengerUsername)
     {
         Trial targetTrial = TrialManager.Instance.Trials.Find(t => t.TrialServerName == trialServerName);
-        if (targetTrial != null && targetTrial.HasAcceptedChallenge())
+        if (targetTrial is not null && targetTrial.HasAcceptedChallenge())
         {
             if (HUDManager.instance != null)
             {
@@ -2073,7 +2066,7 @@ public class ControlPanel : MonoBehaviour
                 yield break;
             }
 
-            if (targetTrial != null)
+            if (targetTrial is not null)
             {
                 targetTrial.SaveAcceptedChallenge(challengeId, timeToBeat, challengerUsername);
             }

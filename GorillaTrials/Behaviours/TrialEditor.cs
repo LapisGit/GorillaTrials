@@ -75,8 +75,8 @@ public class TrialEditor : MonoBehaviour
         GameObject editorPrefab = await AssetLoader.LoadAsset<GameObject>("TrialEditor");
         editorUI = Instantiate(editorPrefab);
         panel = editorUI.transform.Find("Canvas/MainPanel").gameObject;
-        panel.transform.rotation = Quaternion.Euler(38.1132f, 242.0654f, 0f);
-        panel.transform.position = new Vector3(-68.9191f, 11.9129f, -83.9994f);
+        panel.transform.rotation = Quaternion.Euler(39.0151f, 255.8669f, 0f);
+        panel.transform.position = new Vector3(-69.3865f, 11.7504f, -83.8731f);
         panel.SetActive(false);
         DontDestroyOnLoad(editorUI);
         

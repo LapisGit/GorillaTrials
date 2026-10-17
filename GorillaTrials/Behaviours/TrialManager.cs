@@ -302,13 +302,13 @@ namespace GorillaTrials.Behaviours
                 if (currentTrial.isFromCustomMap && !currentTrial.onApprovedMap)
                 {
                     Logging.Info("Trial was created by a Custom Map and was not approved, not submitting a time.");
-                    UpdateLocalPersonalBest(submitTime.Value);
+                    UpdateLocalPersonalBest(submitTime.Value, currentTrial);
                 }
                 else
                 {
                     Logging.Info($"Submiting time {submitTime.Value}");
                     ControlPanel.IncrementTrialsCompleted();
-                    SubmitTrial(submitTime.Value);
+                    SubmitTrial(submitTime.Value, currentTrial);
                 }
             }
 
@@ -323,29 +323,31 @@ namespace GorillaTrials.Behaviours
             currentTrial = null;
         }
 
-        private void UpdateLocalPersonalBest(double submitTime)
+        private void UpdateLocalPersonalBest(double submitTime, Trial trial)
         {
-            if (currentTrial == null)
+            // Trial is a MonoBehaviour created with `new`, so Unity's overloaded `==` treats it as
+            // null ("fake null"). Use a reference check so a valid currentTrial isn't rejected.
+            if (trial is null)
             {
                 Logging.Warning("No current trial when updating local PB.");
                 return;
             }
 
-            string pbKey = string.Concat("PB_", currentTrial.TrialServerName);
-            Logging.Info(PlayerPrefs.GetFloat(pbKey, 0));
+            string pbKey = string.Concat("PB_", trial.TrialServerName);
+            Logging.Info("pbkey: " + PlayerPrefs.GetFloat(pbKey, 0));
             if (submitTime < PlayerPrefs.GetFloat(pbKey, 0) || PlayerPrefs.GetFloat(pbKey, 0) == 0)
             {
                 isPB = true;
-                Logging.Info($"New personal best for {currentTrial.TrialServerName}: {submitTime} seconds");
+                Logging.Info($"New personal best for {trial.TrialServerName}: {submitTime} seconds");
                 PlayerPrefs.SetFloat(pbKey, (float)submitTime);
                 PlayerPrefs.Save();
                 ControlPanel.instance.CalculateSumOfBest();
-                currentTrial.SetPersonalBest(submitTime);
+                trial.SetPersonalBest(submitTime);
                 ReplayManager.Instance.StopRecording();
-                ReplayManager.Instance.SaveRecording($"{currentTrial.TrialServerName}_{submitTime}");
+                ReplayManager.Instance.SaveRecording($"{trial.TrialServerName}_{submitTime}");
 
-                BadgeType earnedBadge = currentTrial.CheckBadgeEarned((float)submitTime);
-                bool newBadgeEarned = currentTrial.SaveBadgeIfBetter(earnedBadge);
+                BadgeType earnedBadge = trial.CheckBadgeEarned((float)submitTime);
+                bool newBadgeEarned = trial.SaveBadgeIfBetter(earnedBadge);
 
                 if (Plugin.PBNotify.Value)
                 {
@@ -365,17 +367,17 @@ namespace GorillaTrials.Behaviours
                 float currentPB = PlayerPrefs.GetFloat(pbKey, 0);
                 if (currentPB > 0)
                 {
-                    BadgeType earnedBadge = currentTrial.CheckBadgeEarned(currentPB);
-                    currentTrial.SaveBadgeIfBetter(earnedBadge);
+                    BadgeType earnedBadge = trial.CheckBadgeEarned(currentPB);
+                    trial.SaveBadgeIfBetter(earnedBadge);
                 }
             }
         }
 
-        public void SubmitTrial(double submitTime)
+        public void SubmitTrial(double submitTime, Trial trial)
         {
             string pbKey = string.Concat("PB_", currentTrial.TrialServerName);
             refreshBoard = currentTrial.TrialServerName;
-            UpdateLocalPersonalBest(submitTime);
+            UpdateLocalPersonalBest(submitTime, trial);
 
             string playerName = NetworkSystem.Instance.GetMyNickName().ToUpper();
             playerName = playerName[..Math.Min(playerName.Length, 12)];

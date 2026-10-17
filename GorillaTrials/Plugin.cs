@@ -16,6 +16,7 @@ using UnityEngine.Networking;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using HarmonyLib;
 
 namespace GorillaTrials
 {
@@ -69,8 +70,8 @@ namespace GorillaTrials
             achievementManager.RegisterAchievement(new Achievement("trialmaster", "Trial Master", "Complete trials 500 times."));
             APIKey = Config.Bind
             (
-                "Authentication",
-                "API Key",
+                "Server",
+                "APIKey",
                 "Your-API-Key-Here",
                 "The API key used to authenticate server requests for trials. DO NOT SEND YOUR KEY TO ANYONE!"
             );
@@ -125,6 +126,8 @@ namespace GorillaTrials
 #endif
                 });
             StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
+            
+            Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
         }
         
         public async void CompareVersion(string url, Action<EVersionCompareResult> onVersionRecieved)
