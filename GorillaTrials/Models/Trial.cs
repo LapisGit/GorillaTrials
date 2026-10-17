@@ -13,10 +13,6 @@ using BepInEx;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using GorillaGameModes;
-using GorillaLibrary.Extensions;
-using GorillaLibrary.Models;
-using GorillaLibrary.Utilities;
 
 namespace GorillaTrials.Models
 {
@@ -307,7 +303,7 @@ namespace GorillaTrials.Models
                     ReplayManager.Instance.StopReplay();
                 }
 
-                if (GameModeUtility.CurrentGameMode is GameModeWrapper gamemode && gamemode.ID == GameModeType.Casual.GetName() && gamemode.BaseGameMode.GetValueOrDefault(GameModeType.Infection) == GameModeType.Casual || Plugin.InModdedGamemode || GorillaComputer.instance.currentGameMode.ToString() == "MODDED_Casual")
+                if (GorillaComputer.instance.currentGameMode.ToString() == "MODDED_Casual" || GorillaComputer.instance.currentGameMode.ToString() == "Casual")
                 {
                     //TimeManager.instance.maxTime = maxTime;
                     

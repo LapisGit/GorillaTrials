@@ -16,7 +16,9 @@ namespace GorillaTrials.Behaviours
     {
         public static CustomMapManager instance;
         public bool approvedMap = false;
-
+        
+        private const string approvedMapsUrl = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/approvedmaps.json";
+        
         public void Awake()
         {
             instance = this;
@@ -50,7 +52,6 @@ namespace GorillaTrials.Behaviours
 
         void TraverseHierarchy(Transform parent)
         {
-            Logging.Info($"Traversing object: {parent.name}");
             ProcessObject(parent.gameObject);
 
             foreach (Transform child in parent)
@@ -148,14 +149,12 @@ namespace GorillaTrials.Behaviours
                 TrialManager.Instance.currentTrial.stateMachine.SwitchState(new Trial_End(TrialManager.Instance.currentTrial, false));
             }
         }
-
-        private const string approvedMapsUrl = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/approvedmaps.json";
-
-
+        
         public class ApprovedMapsWrapper
         {
             public List<long> approvedMaps { get; set; }
         }
+        
         public async Task CheckIfApprovedMap(long mapID)
         {
             try

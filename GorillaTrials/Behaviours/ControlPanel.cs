@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BepInEx;
 using GorillaNetworking;
+using GorillaTrials.Behaviours.Networking;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace GorillaTrials.Behaviours;
 public class ControlPanel : MonoBehaviour
 {
     public static ControlPanel instance;
-    public GameObject controlPanelRoot, achievementUI, communityUI, accountUI, profileUI, notificationUI, friendsUI;
+    public GameObject controlPanelRoot, achievementUI, communityUI, accountUI, profileUI, notificationUI, friendsUI, badgesUI;
     public int currentPage = 1;
     public int maxPage = 2;
     public int minPage = 1;
@@ -63,6 +64,12 @@ public class ControlPanel : MonoBehaviour
     public int eventRequiredAmount;
     public int eventPlayerRank;
     
+    public int badgeCurrentPage = 1;
+    public int badgeTotalPages = 1;
+    private readonly List<GameObject> _spawnedBadges = new();
+    private int _equippedBadgeId = -1;
+    private List<int> _ownedBadgeIds = new();
+    
     public void Awake()
     {
         instance = this;
@@ -92,6 +99,7 @@ public class ControlPanel : MonoBehaviour
         TrialButton accountManager = controlPanelRoot.transform.Find("UI/ControlCenter/Buttons/AccountManager").AddComponent<TrialButton>();
         TrialButton notifications = controlPanelRoot.transform.Find("UI/ControlCenter/Notifications").AddComponent<TrialButton>();
         TrialButton friends = controlPanelRoot.transform.Find("UI/ControlCenter/Friends").AddComponent<TrialButton>();
+        TrialButton badges = controlPanelRoot.transform.Find("UI/ControlCenter/Badges").AddComponent<TrialButton>();
         
         communityUI = controlPanelRoot.transform.Find("UI/CommunityTrials").gameObject;
         achievementUI = controlPanelRoot.transform.Find("UI/Achievements").gameObject;
@@ -99,6 +107,7 @@ public class ControlPanel : MonoBehaviour
         profileUI = controlPanelRoot.transform.Find("UI/ViewingPlayer").gameObject;
         notificationUI = controlPanelRoot.transform.Find("UI/Notifications").gameObject;
         friendsUI = controlPanelRoot.transform.Find("UI/Friends").gameObject;
+        badgesUI = controlPanelRoot.transform.Find("UI/Badges").gameObject;
 
         achievements.onPressed = () =>
         {
@@ -149,6 +158,14 @@ public class ControlPanel : MonoBehaviour
             friendsUI.transform.Find("SearchResults").gameObject.SetActive(false);
             friendsCurrentPage = 1;
             LoadFriends();
+        };
+        
+        badges.onPressed = () =>
+        {
+            controlPanelRoot.transform.Find("UI/ControlCenter").gameObject.SetActive(false);
+            badgesUI.SetActive(true);
+            badgeCurrentPage = 1;
+            LoadBadges();
         };
 
         
@@ -623,8 +640,45 @@ public class ControlPanel : MonoBehaviour
         {
             StartCoroutine(GetEventLeaderboard());
         };
+        
+        TrialButton badgereturn = badgesUI.transform.Find("Buttons/Return").AddComponent<TrialButton>();
+        TrialButton badgenextpage = badgesUI.transform.Find("Buttons/NextPage").AddComponent<TrialButton>();
+        TrialButton badgeprevpage = badgesUI.transform.Find("Buttons/PrevPage").AddComponent<TrialButton>();
+        TrialButton badgerefresh = badgesUI.transform.Find("Buttons/Refresh").AddComponent<TrialButton>();
+
+        badgereturn.onPressed = () =>
+        {
+            controlPanelRoot.transform.Find("UI/ControlCenter").gameObject.SetActive(true);
+            controlPanelRoot.transform.Find("UI/Badges").gameObject.SetActive(false);
+        };
+
+        badgenextpage.onPressed = () =>
+        {
+            if (badgeCurrentPage < badgeTotalPages)
+            {
+                badgeCurrentPage++;
+                StartCoroutine(FetchInventory());
+            }
+        };
+        
+        badgeprevpage.onPressed = () =>
+        {
+            if (badgeCurrentPage > 1)
+            {
+                badgeCurrentPage--;
+                StartCoroutine(FetchInventory());
+            }
+        };
+        
+        badgerefresh.onPressed = () =>
+        {
+            StartCoroutine(FetchInventory());
+        };
+
     }
 
+    #region Community Trials
+    
     public void LoadCommunityTrials()
     {
         StartCoroutine(FetchCommunityTrials());
@@ -738,6 +792,10 @@ public class ControlPanel : MonoBehaviour
         }
     }
     
+    #endregion
+    
+    #region Account
+    
     private void UpdateUploadedTrialsUI()
     {
         if (createdTrials == null || createdTrials.Length == 0)
@@ -791,69 +849,6 @@ public class ControlPanel : MonoBehaviour
             {
                 trialSlot.gameObject.SetActive(false);
             }
-        }
-    }
-    
-    private void UpdateProfileUploadedTrialsUI()
-    {
-        var trials = profile?.uploadedTrials;
-        var hasTrialsObj = profileUI.transform.Find("UploadedTrials/HasTrials")?.gameObject;
-        var noTrialsObj = profileUI.transform.Find("UploadedTrials/NoUploadedTrials")?.gameObject;
-
-        if (trials == null || trials.Length == 0)
-        {
-            hasTrialsObj?.SetActive(false);
-            noTrialsObj?.SetActive(true);
-            return;
-        }
-
-        hasTrialsObj?.SetActive(true);
-        noTrialsObj?.SetActive(false);
-
-        Transform trialsContainer = profileUI.transform.Find("UploadedTrials/HasTrials/Trials");
-        if (trialsContainer == null)
-        {
-            Logging.Error("Uploaded trials container not found!");
-            return;
-        }
-
-        for (int i = 1; i <= 6; i++)
-        {
-            Transform trialSlot = trialsContainer.Find(i.ToString());
-            if (trialSlot == null) continue;
-
-            if (i <= trials.Length)
-            {
-                CommunityTrialData trial = trials[i - 1];
-
-                trialSlot.gameObject.SetActive(true);
-                trialSlot.Find("TrialName").GetComponent<TextMeshProUGUI>().text = trial.name;
-                trialSlot.Find("TrialDescription").GetComponent<TextMeshProUGUI>().text = trial.description;
-                trialSlot.Find("TrialID").GetComponent<TextMeshProUGUI>().text = $"ID: {trial.trialId}";
-                trialSlot.Find("CreatedAt").GetComponent<TextMeshProUGUI>().text = $"{FormatDate(trial.uploadedAt)}" + (trial.isRanked ? " [RANKED]" : "");
-
-                Transform downloadBtn = trialSlot.Find("Download");
-                TrialButton btn = downloadBtn.GetComponent<TrialButton>() ?? downloadBtn.gameObject.AddComponent<TrialButton>();
-                string trialId = trial.trialId;
-                btn.onPressed = () => { DownloadTrial(trialId); };
-            }
-            else
-            {
-                trialSlot.gameObject.SetActive(false);
-            }
-        }
-    }
-
-    private string FormatDate(string dateString)
-    {
-        try
-        {
-            DateTime date = DateTime.Parse(dateString);
-            return date.ToString("MMM dd, yyyy");
-        }
-        catch
-        {
-            return dateString;
         }
     }
     
@@ -962,6 +957,181 @@ public class ControlPanel : MonoBehaviour
         else
         {
             return $"{seconds}.{milliseconds:D3}";
+        }
+    }
+    
+    private IEnumerator SavePlayerProfileCoroutine()
+    {
+        if (!string.IsNullOrEmpty(username))
+        {
+            yield return SaveUsername(username);
+        }
+        
+        yield return SaveBio(bio);
+        
+        string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+        while (string.IsNullOrEmpty(playerId))
+        {
+            yield return new WaitForSeconds(3f);
+            playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+        }
+        
+        yield return FetchPlayerProfileCoroutine(playerId);
+    }
+    
+    private IEnumerator SaveUsername(string newUsername)
+    {
+        string url = $"{Constants.ServerURL}/profile/setusername";
+        
+        var requestData = new { username = newUsername };
+        string jsonData = JsonConvert.SerializeObject(requestData);
+        
+        using (UnityWebRequest request = UnityWebRequest.Post(url, jsonData, "application/json"))
+        {
+            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+            yield return request.SendWebRequest();
+            
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Error($"Failed to save username: {request.error}");
+                string errorMessage = request.downloadHandler.text;
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    Logging.Error($"Server response: {errorMessage}");
+                    if (HUDManager.instance != null)
+                    {
+                        HUDManager.instance.SetHUDText($"Failed to save username.\nCheck logs for more details.");
+                    }
+                }
+                yield break;
+            }
+        }
+    }
+    
+    private IEnumerator SaveBio(string newBio)
+    {
+        string url = $"{Constants.ServerURL}/profile/setbio";
+        
+        var requestData = new { bio = newBio ?? "" };
+        string jsonData = JsonConvert.SerializeObject(requestData);
+        
+        using (UnityWebRequest request = UnityWebRequest.Post(url, jsonData, "application/json"))
+        {
+            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+            yield return request.SendWebRequest();
+            
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Error($"Failed to save bio: {request.error}");
+                string errorMessage = request.downloadHandler.text;
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    Logging.Error($"Server response: {errorMessage}");
+                    if (HUDManager.instance != null)
+                    {
+                        HUDManager.instance.SetHUDText($"Failed to save bio.\nCheck logs for more details.");
+                    }
+                }
+                yield break;
+            }
+        }
+    }
+    
+    private void OpenKeyboardForUsername()
+    {
+        TrialKeyboard keyboard = FindFirstObjectByType<TrialKeyboard>();
+
+        keyboard.forUsername = true;
+        
+        keyboard.SetMaxLength(12);
+        
+        keyboard.SetText("@");
+        
+        keyboard.onSubmit = (text) =>
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                string processedUsername = text.StartsWith("@") ? text : "@" + text;
+                
+                if (processedUsername.Length < 4)
+                {
+                    if (HUDManager.instance != null)
+                    {
+                        HUDManager.instance.SetHUDText("Username must be at least 3 characters (excluding @)");
+                    }
+                    keyboard.keyboard.SetActive(false);
+                    return;
+                }
+                
+                username = processedUsername;
+                accountUI.transform.Find("AccountInfo/UsernameHeader/Username/Text").GetComponent<TextMeshProUGUI>().text = username;
+                StartCoroutine(SavePlayerProfileCoroutine());
+                
+                if (HUDManager.instance != null)
+                {
+                    HUDManager.instance.SetHUDText("Username updated!");
+                }
+            }
+            keyboard.forUsername = false;
+            keyboard.keyboard.SetActive(false);
+        };
+        
+        keyboard.onCancel = () =>
+        {
+            keyboard.forUsername = false;
+            keyboard.keyboard.SetActive(false);
+        };
+        
+        keyboard.keyboard.SetActive(true);
+    }
+    
+    private void OpenKeyboardForBio()
+    {
+        TrialKeyboard keyboard = FindFirstObjectByType<TrialKeyboard>();
+        if (keyboard == null)
+        {
+            Logging.Error("TrialKeyboard not found!");
+            return;
+        }
+        
+        keyboard.SetMaxLength(200);
+        
+        keyboard.onSubmit = (text) =>
+        {
+            bio = text ?? "";
+            accountUI.transform.Find("AccountInfo/BioHeader/Text").GetComponent<TextMeshProUGUI>().text = bio;
+            StartCoroutine(SavePlayerProfileCoroutine());
+            
+            keyboard.keyboard.SetActive(false);
+            
+            if (HUDManager.instance != null)
+            {
+                HUDManager.instance.SetHUDText("Bio updated!");
+            }
+        };
+        
+        keyboard.onCancel = () =>
+        {
+            keyboard.keyboard.SetActive(false);
+        };
+        
+        keyboard.keyboard.SetActive(true);
+    }
+    
+    #endregion
+    
+    #region Utilities
+    
+    private string FormatDate(string dateString)
+    {
+        try
+        {
+            DateTime date = DateTime.Parse(dateString);
+            return date.ToString("MMM dd, yyyy");
+        }
+        catch
+        {
+            return dateString;
         }
     }
     
@@ -1125,9 +1295,11 @@ public class ControlPanel : MonoBehaviour
             }
         }
     }
-
-
-
+    
+    #endregion
+    
+    #region Achievements
+    
     public void UpdateAchievements()
     {
         List<Achievement> allAchievements = Plugin.achievementManager.GetAllAchievements();
@@ -1190,6 +1362,10 @@ public class ControlPanel : MonoBehaviour
             }
         }
     }
+    
+    #endregion
+    
+    #region Notifications
     
     private IEnumerator NotificationPoller()
     {
@@ -1367,6 +1543,7 @@ public class ControlPanel : MonoBehaviour
                 }
                 else
                 {
+                    notificationSlot.Find("Name").GetComponent<TextMeshProUGUI>().text = "Notification";
                     markread.onPressed = () => StartCoroutine(MarkNotificationAsRead(notification.notificationId));
                     basicButtons.gameObject.SetActive(true);
                 }
@@ -1378,9 +1555,70 @@ public class ControlPanel : MonoBehaviour
         }
     }
     
+    public IEnumerator MarkNotificationAsRead(string notificationId)
+    {
+        string url = $"{Constants.ServerURL}/notifications/read/{notificationId}";
+        
+        using (UnityWebRequest request = UnityWebRequest.Post(url, "", "application/json"))
+        {
+            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+            yield return request.SendWebRequest();
+            
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Error($"Failed to mark notification as read: {request.error}");
+                string errorMessage = request.downloadHandler.text;
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    Logging.Error($"Server response: {errorMessage}");
+                }
+                yield break;
+            }
+            LoadNotifications();
+        }
+    }
+    
+    #endregion
+    
+    #region Friends
+    
     public void LoadFriends()
     {
         StartCoroutine(FetchFriends());
+    }
+    
+    public IEnumerator SendFriendRequest(string playerId)
+    {
+        string url = $"{Constants.ServerURL}/profile/addfriend";
+        
+        var requestData = new { friendId = playerId };
+        string jsonData = JsonConvert.SerializeObject(requestData);
+        
+        using (UnityWebRequest request = UnityWebRequest.Post(url, jsonData, "application/json"))
+        {
+            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+            yield return request.SendWebRequest();
+            
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Error($"Failed to send friend request: {request.error}");
+                string errorMessage = request.downloadHandler.text;
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    Logging.Error($"Server response: {errorMessage}");
+                    if (HUDManager.instance != null)
+                    {
+                        HUDManager.instance.SetHUDText($"Failed to send friend request: {errorMessage}");
+                    }
+                }
+                yield break;
+            }
+            
+            if (HUDManager.instance != null)
+            {
+                HUDManager.instance.SetHUDText("Friend request sent!");
+            }
+        }
     }
     
     private IEnumerator FetchFriends()
@@ -1793,7 +2031,11 @@ public class ControlPanel : MonoBehaviour
             }
         }
     }
-
+    
+    #endregion
+    
+    #region Challenges
+    
     private IEnumerator AcceptChallenge(string challengeId, string trialServerName, float timeToBeat,
         string challengerUsername)
     {
@@ -1887,28 +2129,9 @@ public class ControlPanel : MonoBehaviour
         }
     }
     
-    public IEnumerator MarkNotificationAsRead(string notificationId)
-    {
-        string url = $"{Constants.ServerURL}/notifications/read/{notificationId}";
-        
-        using (UnityWebRequest request = UnityWebRequest.Post(url, "", "application/json"))
-        {
-            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
-            yield return request.SendWebRequest();
-            
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Logging.Error($"Failed to mark notification as read: {request.error}");
-                string errorMessage = request.downloadHandler.text;
-                if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    Logging.Error($"Server response: {errorMessage}");
-                }
-                yield break;
-            }
-            LoadNotifications();
-        }
-    }
+    #endregion
+    
+    #region Profiles
     
     
     public void ViewPlayerProfile(string playerId)
@@ -2014,6 +2237,61 @@ public class ControlPanel : MonoBehaviour
             }
         }
     }
+    
+    private void UpdateProfileUploadedTrialsUI()
+    {
+        var trials = profile?.uploadedTrials;
+        var hasTrialsObj = profileUI.transform.Find("UploadedTrials/HasTrials")?.gameObject;
+        var noTrialsObj = profileUI.transform.Find("UploadedTrials/NoUploadedTrials")?.gameObject;
+
+        if (trials == null || trials.Length == 0)
+        {
+            hasTrialsObj?.SetActive(false);
+            noTrialsObj?.SetActive(true);
+            return;
+        }
+
+        hasTrialsObj?.SetActive(true);
+        noTrialsObj?.SetActive(false);
+
+        Transform trialsContainer = profileUI.transform.Find("UploadedTrials/HasTrials/Trials");
+        if (trialsContainer == null)
+        {
+            Logging.Error("Uploaded trials container not found!");
+            return;
+        }
+
+        for (int i = 1; i <= 6; i++)
+        {
+            Transform trialSlot = trialsContainer.Find(i.ToString());
+            if (trialSlot == null) continue;
+
+            if (i <= trials.Length)
+            {
+                CommunityTrialData trial = trials[i - 1];
+
+                trialSlot.gameObject.SetActive(true);
+                trialSlot.Find("TrialName").GetComponent<TextMeshProUGUI>().text = trial.name;
+                trialSlot.Find("TrialDescription").GetComponent<TextMeshProUGUI>().text = trial.description;
+                trialSlot.Find("TrialID").GetComponent<TextMeshProUGUI>().text = $"ID: {trial.trialId}";
+                trialSlot.Find("CreatedAt").GetComponent<TextMeshProUGUI>().text = $"{FormatDate(trial.uploadedAt)}" + (trial.isRanked ? " [RANKED]" : "");
+
+                Transform downloadBtn = trialSlot.Find("Download");
+                TrialButton btn = downloadBtn.GetComponent<TrialButton>() ?? downloadBtn.gameObject.AddComponent<TrialButton>();
+                string trialId = trial.trialId;
+                btn.onPressed = () => { DownloadTrial(trialId); };
+            }
+            else
+            {
+                trialSlot.gameObject.SetActive(false);
+            }
+        }
+    }
+    
+    #endregion
+
+    #region Events
+    
     
     private IEnumerator CheckForEvent()
     {
@@ -2181,198 +2459,6 @@ public class ControlPanel : MonoBehaviour
         }
     }
     
-    public IEnumerator SendFriendRequest(string playerId)
-    {
-        string url = $"{Constants.ServerURL}/profile/addfriend";
-        
-        var requestData = new { friendId = playerId };
-        string jsonData = JsonConvert.SerializeObject(requestData);
-        
-        using (UnityWebRequest request = UnityWebRequest.Post(url, jsonData, "application/json"))
-        {
-            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
-            yield return request.SendWebRequest();
-            
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Logging.Error($"Failed to send friend request: {request.error}");
-                string errorMessage = request.downloadHandler.text;
-                if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    Logging.Error($"Server response: {errorMessage}");
-                    if (HUDManager.instance != null)
-                    {
-                        HUDManager.instance.SetHUDText($"Failed to send friend request: {errorMessage}");
-                    }
-                }
-                yield break;
-            }
-            
-            if (HUDManager.instance != null)
-            {
-                HUDManager.instance.SetHUDText("Friend request sent!");
-            }
-        }
-    }
-    
-    private IEnumerator SavePlayerProfileCoroutine()
-    {
-        if (!string.IsNullOrEmpty(username))
-        {
-            yield return SaveUsername(username);
-        }
-        
-        yield return SaveBio(bio);
-        
-        string playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
-        while (string.IsNullOrEmpty(playerId))
-        {
-            yield return new WaitForSeconds(3f);
-            playerId = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
-        }
-        
-        yield return FetchPlayerProfileCoroutine(playerId);
-    }
-    
-    private IEnumerator SaveUsername(string newUsername)
-    {
-        string url = $"{Constants.ServerURL}/profile/setusername";
-        
-        var requestData = new { username = newUsername };
-        string jsonData = JsonConvert.SerializeObject(requestData);
-        
-        using (UnityWebRequest request = UnityWebRequest.Post(url, jsonData, "application/json"))
-        {
-            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
-            yield return request.SendWebRequest();
-            
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Logging.Error($"Failed to save username: {request.error}");
-                string errorMessage = request.downloadHandler.text;
-                if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    Logging.Error($"Server response: {errorMessage}");
-                    if (HUDManager.instance != null)
-                    {
-                        HUDManager.instance.SetHUDText($"Failed to save username.\nCheck logs for more details.");
-                    }
-                }
-                yield break;
-            }
-        }
-    }
-    
-    private IEnumerator SaveBio(string newBio)
-    {
-        string url = $"{Constants.ServerURL}/profile/setbio";
-        
-        var requestData = new { bio = newBio ?? "" };
-        string jsonData = JsonConvert.SerializeObject(requestData);
-        
-        using (UnityWebRequest request = UnityWebRequest.Post(url, jsonData, "application/json"))
-        {
-            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
-            yield return request.SendWebRequest();
-            
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Logging.Error($"Failed to save bio: {request.error}");
-                string errorMessage = request.downloadHandler.text;
-                if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    Logging.Error($"Server response: {errorMessage}");
-                    if (HUDManager.instance != null)
-                    {
-                        HUDManager.instance.SetHUDText($"Failed to save bio.\nCheck logs for more details.");
-                    }
-                }
-                yield break;
-            }
-        }
-    }
-    
-    private void OpenKeyboardForUsername()
-    {
-        TrialKeyboard keyboard = FindFirstObjectByType<TrialKeyboard>();
-
-        keyboard.forUsername = true;
-        
-        keyboard.SetMaxLength(12);
-        
-        keyboard.SetText("@");
-        
-        keyboard.onSubmit = (text) =>
-        {
-            if (!string.IsNullOrEmpty(text))
-            {
-                string processedUsername = text.StartsWith("@") ? text : "@" + text;
-                
-                if (processedUsername.Length < 4)
-                {
-                    if (HUDManager.instance != null)
-                    {
-                        HUDManager.instance.SetHUDText("Username must be at least 3 characters (excluding @)");
-                    }
-                    keyboard.keyboard.SetActive(false);
-                    return;
-                }
-                
-                username = processedUsername;
-                accountUI.transform.Find("AccountInfo/UsernameHeader/Username/Text").GetComponent<TextMeshProUGUI>().text = username;
-                StartCoroutine(SavePlayerProfileCoroutine());
-                
-                if (HUDManager.instance != null)
-                {
-                    HUDManager.instance.SetHUDText("Username updated!");
-                }
-            }
-            keyboard.forUsername = false;
-            keyboard.keyboard.SetActive(false);
-        };
-        
-        keyboard.onCancel = () =>
-        {
-            keyboard.forUsername = false;
-            keyboard.keyboard.SetActive(false);
-        };
-        
-        keyboard.keyboard.SetActive(true);
-    }
-    
-    private void OpenKeyboardForBio()
-    {
-        TrialKeyboard keyboard = FindFirstObjectByType<TrialKeyboard>();
-        if (keyboard == null)
-        {
-            Logging.Error("TrialKeyboard not found!");
-            return;
-        }
-        
-        keyboard.SetMaxLength(200);
-        
-        keyboard.onSubmit = (text) =>
-        {
-            bio = text ?? "";
-            accountUI.transform.Find("AccountInfo/BioHeader/Text").GetComponent<TextMeshProUGUI>().text = bio;
-            StartCoroutine(SavePlayerProfileCoroutine());
-            
-            keyboard.keyboard.SetActive(false);
-            
-            if (HUDManager.instance != null)
-            {
-                HUDManager.instance.SetHUDText("Bio updated!");
-            }
-        };
-        
-        keyboard.onCancel = () =>
-        {
-            keyboard.keyboard.SetActive(false);
-        };
-        
-        keyboard.keyboard.SetActive(true);
-    }
-    
     public static string GetDateSuffix(int day)
     {
         if (day % 100 >= 11 && day % 100 <= 13)
@@ -2493,8 +2579,259 @@ public class ControlPanel : MonoBehaviour
             Logging.Error($"error updating event leaderboard: {ex.Message}");
         }
     }
-
     
+    #endregion
+
+    #region Badges
+
+    public void LoadBadges()
+    {
+        StartCoroutine(FetchInventory());
+    }
+
+    public IEnumerator FetchInventory()
+    {
+        string url = $"{Constants.ServerURL}/inventory?page={badgeCurrentPage}";
+        
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.SetRequestHeader("Authorization", Plugin.APIKey.Value);
+            yield return request.SendWebRequest();
+            
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Logging.Error($"Failed to fetch badge inventory: {request.error}");
+                Logging.Error($"Response: {request.downloadHandler.text}");
+                yield break;
+            }
+            
+            string jsonResponse = request.downloadHandler.text;
+            
+            InventoryResponse response = JsonConvert.DeserializeObject<InventoryResponse>(jsonResponse);
+            
+            if (response != null && response.inventory != null)
+            {
+                badgeTotalPages = response.totalPages;
+                
+                _ownedBadgeIds.Clear();
+                foreach (string badgeEntry in response.inventory)
+                {
+                    int badgeId = BadgeNameToId(badgeEntry);
+                    if (badgeId != -1)
+                    {
+                        _ownedBadgeIds.Add(badgeId);
+                    }
+                    else
+                    {
+                        Logging.Warning($"Unknown badge entry in inventory: {badgeEntry}");
+                    }
+                }
+                
+                UpdateBadgesUI();
+            }
+            else
+            {
+                Logging.Warning("No badges found in inventory response");
+                _ownedBadgeIds.Clear();
+                UpdateBadgesUI();
+            }
+        }
+    }
+    
+    private void UpdateBadgesUI()
+    {
+        TextMeshProUGUI pageText = badgesUI.transform.Find("Text/Page").GetComponent<TextMeshProUGUI>();
+        pageText.text = $"Page {badgeCurrentPage}/{badgeTotalPages}";
+        
+        Transform badgesContainer = badgesUI.transform.Find("ActualBadges");
+        
+        if (badgesContainer == null)
+        {
+            Logging.Error("Badges container not found");
+            return;
+        }
+        
+        if (badgeTotalPages == 0 || _ownedBadgeIds.Count == 0)
+        {
+            pageText.text = "No Badges!";
+            
+            for (int i = 1; i <= 6; i++)
+            {
+                badgesContainer.Find(i.ToString())?.gameObject.SetActive(false);
+            }
+            return;
+        }
+        
+        for (int i = 1; i <= 6; i++)
+        {
+            Transform badgeSlot = badgesContainer.Find(i.ToString());
+            if (badgeSlot == null) continue;
+            
+            int badgeIndex = i - 1;
+            
+            if (badgeIndex < _ownedBadgeIds.Count)
+            {
+                badgeSlot.gameObject.SetActive(true);
+                
+                badgeSlot.Find("Name").GetComponent<TextMeshProUGUI>().text = GetBadgeNameForIndex(badgeIndex);
+                badgeSlot.Find("Description").GetComponent<TextMeshProUGUI>().text = GetBadgeDescriptionForIndex(badgeIndex);
+                
+                Transform equipTransform = badgeSlot.Find("Equip");
+                if (equipTransform != null)
+                {
+                    equipTransform.gameObject.layer = (int)UnityLayer.GorillaInteractable;
+                    
+                    TrialButton equipButton = equipTransform.GetComponent<TrialButton>();
+                    if (equipButton == null)
+                    {
+                        equipButton = equipTransform.gameObject.AddComponent<TrialButton>();
+                    }
+                    
+                    int index = badgeIndex;
+                    equipButton.onPressed = () => SelectCosmetic(index);
+                }
+            }
+            else
+            {
+                badgeSlot.gameObject.SetActive(false);
+            }
+        }
+    }
+    
+    public void SelectCosmetic(int index)
+    {
+        GameObject badgePrefab = GetBadgeForIndex(index);
+        int badgeId = GetBadgeIdAtIndex(index);
+        
+        if (badgeId != -1 && badgeId == _equippedBadgeId)
+        {
+            RigBadgeManager.Instance.ClearBadge(VRRig.LocalRig);
+            _equippedBadgeId = -1;
+            if (NetworkBadgeSolution.Instance != null)
+            {
+                NetworkBadgeSolution.Instance.SetProperty("BadgeIndex", -1);
+            }
+            return;
+        }
+
+        if (badgePrefab != null)
+        {
+            RigBadgeManager.Instance.ClearBadge(VRRig.LocalRig);
+            _equippedBadgeId = badgeId;
+            RigBadgeManager.Instance.SpawnLocalBadge(badgePrefab);
+            if (NetworkBadgeSolution.Instance != null)
+            {
+                NetworkBadgeSolution.Instance.SetProperty("BadgeIndex", badgeId);
+            }
+        }
+    }
+    
+    private GameObject GetBadgeForIndex(int index)
+    {
+        if (index < 0 || index >= _ownedBadgeIds.Count)
+            return null;
+        
+        int badgeId = _ownedBadgeIds[index];
+        
+        return badgeId switch
+        {
+            0 => RigBadgeManager.Instance.bronzeBadge,
+            1 => RigBadgeManager.Instance.silverBadge,
+            2 => RigBadgeManager.Instance.goldBadge,
+            3 => RigBadgeManager.Instance.wrBadge,
+            4 => RigBadgeManager.Instance.contribBadge,
+            5 => RigBadgeManager.Instance.moderatorBadge,
+            6 => RigBadgeManager.Instance.betaBadge,
+            _ => null
+        };
+    }
+    
+    private string GetBadgeNameForIndex(int index)
+    {
+        if (index < 0 || index >= _ownedBadgeIds.Count)
+            return null;
+        
+        int badgeId = _ownedBadgeIds[index];
+        
+        return badgeId switch
+        {
+            0 => "Bronze",
+            1 => "Silver",
+            2 => "Gold",
+            3 => "Trophy",
+            4 => "Command Line",
+            5 => "Shield",
+            6 => "Tester",
+            _ => ""
+        };
+    }
+    
+    private string GetBadgeDescriptionForIndex(int index)
+    {
+        if (index < 0 || index >= _ownedBadgeIds.Count)
+            return null;
+        
+        int badgeId = _ownedBadgeIds[index];
+        
+        return badgeId switch
+        {
+            0 => "Achieved bronze rank on all official trials!",
+            1 => "Achieved silver rank on all official trials!",
+            2 => "Achieved gold rank on all official trials!",
+            3 => "Achieved a World Record on an official trial!",
+            4 => "Developer",
+            5 => "Moderator",
+            6 => "Beta Tester",
+            _ => ""
+        };
+    }
+
+    private int GetBadgeIdAtIndex(int index)
+    {
+        if (index < 0 || index >= _ownedBadgeIds.Count)
+            return -1;
+        return _ownedBadgeIds[index];
+    }
+
+    // inventory entries come through as badge names ("bronze"); numeric ids kept for older servers
+    private static int BadgeNameToId(string badgeEntry)
+    {
+        if (string.IsNullOrEmpty(badgeEntry))
+            return -1;
+
+        if (int.TryParse(badgeEntry, out int badgeId))
+            return badgeId;
+
+        switch (badgeEntry.Trim().ToLowerInvariant())
+        {
+            case "bronze": return 0;
+            case "silver": return 1;
+            case "gold": return 2;
+            case "trophy": return 3;
+            case "command line":
+            case "commandline": return 4;
+            case "shield": return 5;
+            case "tester": return 6;
+            default: return -1;
+        }
+    }
+
+    #endregion
+    
+    #region Data Models
+    
+    [Serializable]
+    public class InventoryResponse
+    {
+        public string[] inventory;
+        public int currentPage;
+        public int totalPages;
+        public int totalItems;
+        public int perPage;
+        public bool hasNextPage;
+        public bool hasPrevPage;
+    }
+
     [Serializable]
     public class BrowseTrialsResponse
     {
@@ -2633,4 +2970,6 @@ public class ControlPanel : MonoBehaviour
     {
         public int rank;
     }
+    
+    #endregion
 }

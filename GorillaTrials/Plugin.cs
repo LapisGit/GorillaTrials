@@ -16,12 +16,9 @@ using UnityEngine.Networking;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
-using GorillaLibrary.Attributes;
 
-[assembly: ModdedWardrobeSection("GorillaTrials", typeof(BadgeWardrobe))]
 namespace GorillaTrials
 {
-    [ModdedGamemode("gtrials", "GORILLATRIALS", GameModeType.Casual)]
     [BepInPlugin(Constants.GUID, Constants.Name, Constants.Version)]
     public class Plugin : BaseUnityPlugin
     {
@@ -32,7 +29,6 @@ namespace GorillaTrials
         public static ConfigEntry<float> EarlyEndTime;
 
         public static bool WrongVersion;
-        public static bool InModdedGamemode;
         public static AchievementManager achievementManager;
         
         internal static WebSocketClient WebSocketClientInstance;
@@ -195,12 +191,6 @@ namespace GorillaTrials
                         .GetComponent<TextMeshProUGUI>().text = "You already seem to have an account!";
                 }
                 
-                BadgeWardrobe tempBadgeWardrobe = FindObjectOfType<BadgeWardrobe>();
-                if (tempBadgeWardrobe != null)
-                {
-                    tempBadgeWardrobe.StartFetchingInventory();
-                }
-                
                 yield break;
             }
 
@@ -237,12 +227,6 @@ namespace GorillaTrials
                         {
                             FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page6/SuccessText").gameObject
                                 .SetActive(true);
-                        }
-                        
-                        BadgeWardrobe tempBadgeWardrobe2 = FindObjectOfType<BadgeWardrobe>();
-                        if (tempBadgeWardrobe2 != null)
-                        {
-                            tempBadgeWardrobe2.StartFetchingInventory();
                         }
                     }
                     else
@@ -293,18 +277,6 @@ namespace GorillaTrials
         {
             public string message;
             public string api_key;
-        }
-
-        [ModdedGamemodeJoin]
-        public void OnModdedGamemodeJoin()
-        {
-            InModdedGamemode = true;
-        }
-
-        [ModdedGamemodeLeave]
-        public void OnModdedGamemodeLeave()
-        {
-            InModdedGamemode = false;
         }
     }
 }

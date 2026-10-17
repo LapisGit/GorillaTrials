@@ -1,8 +1,7 @@
 using GorillaTrials.Tools;
-using GorillaLibrary.Models;
-using GorillaLibrary.Extensions;
 using System;
 using System.Collections;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -125,7 +124,6 @@ internal class NetworkedBadgePlayer : MonoBehaviour
 
         if (badgeIndex == -1)
         {
-            Logging.Message("Badge removed");
             return;
         }
 
@@ -136,7 +134,7 @@ internal class NetworkedBadgePlayer : MonoBehaviour
             return;
         }
 
-        Transform badgeParent = PlayerRig.GetBone(GorillaRigBone.Body);
+        Transform badgeParent = PlayerRig.transform.Find("rig/body_pivot/body");
         _currentBadgeInstance = Instantiate(badgePrefab, badgeParent, false);
         _currentBadgeInstance.name = badgePrefab.name;
         ApplyBadgeTransform(_currentBadgeInstance.transform);

@@ -66,7 +66,7 @@ namespace GorillaTrials.Behaviours
             rightHand = GTPlayer.Instance.RightHand.handFollower.gameObject;
             Head = GTPlayer.Instance.headCollider.gameObject;
 
-            string url = "https://suwiparty.lapiscreates.tech/Trial.json";
+            string url = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/trials.json";
             using UnityWebRequest request = UnityWebRequest.Get(url);
             await request.SendWebRequest();
 
@@ -158,7 +158,9 @@ namespace GorillaTrials.Behaviours
 
             if (!System.IO.Directory.Exists(downloadedTrialsDir))
             {
-                Logging.Info("No downloadedtrials folder found, skipping downloaded trials loading");
+#if DEBUG
+                Logging.Info("No downloadedtrials folder found, skipping downloaded trials loading");          
+#endif
                 return;
             }
 
@@ -189,8 +191,9 @@ namespace GorillaTrials.Behaviours
                     if (isRanked)
                     {
                         string friendlyId = rankedTrialIds[data.trialId];
+#if DEBUG
                         Logging.Info($"Trial {data.trialId} is ranked with friendly ID: {friendlyId}");
-                        
+#endif
                         if (data.customMapTrial)
                         {
                             data.customMapTrial = false;

@@ -3,7 +3,6 @@ using GorillaTrials.Tools;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
-using GorillaLibrary.Models;
 using GorillaNetworking;
 
 namespace GorillaTrials.Behaviours.Networking;

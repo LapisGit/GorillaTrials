@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
-using GorillaLibrary.Extensions;
-using GorillaLibrary.Models;
+using GorillaLocomotion;
 using GorillaTrials.Tools;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
@@ -49,9 +49,15 @@ public class RigBadgeManager : MonoBehaviour
             return null;
         }
 
-        ClearBadge(VRRig.LocalRig);
+        Transform badgeParent = GetBadgeParent(VRRig.LocalRig);
+        if (badgeParent == null)
+        {
+            return null;
+        }
 
-        activeBadge = Instantiate(badgePrefab, VRRig.LocalRig.GetBone(GorillaRigBone.Body), false);
+        ClearBadge(VRRig.LocalRig);
+        
+        activeBadge = Instantiate(badgePrefab, badgeParent, false);
         ApplyConfiguredTransform(activeBadge.transform);
         
         activeBadge.AddComponent<BadgeMarker>();
@@ -61,12 +67,29 @@ public class RigBadgeManager : MonoBehaviour
     
     public void SpawnOtherPlayerBadge(GameObject badgePrefab, VRRig rig)
     {
+        Transform badgeParent = GetBadgeParent(rig);
+        if (badgeParent == null)
+        {
+            return;
+        }
+
         ClearBadge(rig);
-        
-        var otherBadge = Instantiate(badgePrefab, rig.GetBone(GorillaRigBone.Body), false);
+
+        var otherBadge = Instantiate(badgePrefab, badgeParent, false);
         ApplyConfiguredTransform(otherBadge.transform);
         
         otherBadge.AddComponent<BadgeMarker>();
+    }
+
+    private static Transform GetBadgeParent(VRRig rig)
+    {
+        if (rig == null)
+        {
+            Logging.Warning("rig is null");
+            return null;
+        }
+
+        return rig.transform.Find("rig/body_pivot/body");
     }
 
     public void SetBadgeTransform(Vector3 localPosition, Vector3 localEulerAngles, Vector3 localScale)

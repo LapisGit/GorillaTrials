@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-        <GamePath>C:\Program Files (x86)\Steam\steamapps\common\Gorilla Tag</GamePath>
+        <GamePath>/home/lapis/.steam/steam/steamapps/common/Gorilla Tag/</GamePath>
 		<GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
 		<BepInExAssemblyPath>$(GamePath)\BepInEx\core</BepInExAssemblyPath>
 		<PluginsPath>$(GamePath)\BepInEx\plugins</PluginsPath>
@@ -55,9 +55,6 @@
 		</Reference>
 		<Reference Include="BepInEx.Preloader">
 		  <HintPath>$(BepInExAssemblyPath)\BepInEx.Preloader.dll</HintPath>
-		</Reference>
-		<Reference Include="GorillaLibrary">
-		  <HintPath>$(PluginsPath)\GorillaLibrary.dll</HintPath>
 		</Reference>
 		<Reference Include="Cinemachine">
 			<HintPath>$(GameAssemblyPath)\Cinemachine.dll</HintPath>
