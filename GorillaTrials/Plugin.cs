@@ -1,46 +1,45 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.Logging;
-using GorillaNetworking;
+﻿using GorillaNetworking;
 using GorillaTrials.Behaviours;
 using GorillaTrials.Behaviours.Networking;
 using GorillaTrials.Models;
 using GorillaTrials.Tools;
-using HarmonyLib;
 using System;
 using System.Collections;
-using System.Net.Http;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using GorillaGameModes;
+using GorillaTrials;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using Utilla.Attributes;
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
+using HarmonyLib;
 
 namespace GorillaTrials
 {
     [BepInPlugin(Constants.GUID, Constants.Name, Constants.Version)]
-    [BepInDependency("org.legoandmars.gorillatag.utilla", "1.5.0")]
-    [ModdedGamemode("gtrials", "GORILLATRIALS", GameModeType.Casual)]
     public class Plugin : BaseUnityPlugin
     {
         public static new ManualLogSource Logger;
 
-        public static new ConfigFile Config;
         public static ConfigEntry<string> APIKey;
         public static ConfigEntry<bool> PBNotify;
         public static ConfigEntry<float> EarlyEndTime;
 
         public static bool WrongVersion;
-        public static bool InModdedGamemode;
         public static AchievementManager achievementManager;
+        
+        internal static WebSocketClient WebSocketClientInstance;
 
         public void Awake()
         {
             Logger = base.Logger;
-
-            Config = base.Config;
+            Config.SaveOnConfigSet = true;
+            GorillaTagger.OnPlayerSpawned(OnGameInit);
+            
             achievementManager = new AchievementManager(Config);
 
             achievementManager.RegisterAchievement(new Achievement("first_trial", "First Trial!",
@@ -90,45 +89,47 @@ namespace GorillaTrials
                 1.5f,
                 "The value in seconds that determines how long you have to hold your primary face button to end a trial early."
             );
+            Config.Save();
+            
+            WebSocketClientInstance = new WebSocketClient();
+            WebSocketClientInstance.Start();
+        }
 
-
-
-            GorillaTagger.OnPlayerSpawned(() =>
-            {
-
-
-                GameObject root = new(Constants.Name);
-                DontDestroyOnLoad(root);
-                root.AddComponent<TrialManager>();
-                root.AddComponent<NetworkHandler>();
-                root.AddComponent<EarlyEnd>();
-                //root.AddComponent<TimeManager>();
-                root.AddComponent<ControlPanel>();
-                root.AddComponent<CustomMapManager>();
-                root.AddComponent<AchievementChecker>();
-                root.AddComponent<HUDManager>();
-                root.AddComponent<FirstTimeUIManager>();
-                HUDManager.instance.Init();
-                root.AddComponent<ReplayManager>();
-                root.AddComponent<TrialEditor>();
-                root.AddComponent<TrialKeyboard>();
+        private void OnGameInit()
+        {
+            Logging.Info("game init");
+            GameObject root = new(Constants.Name);
+            DontDestroyOnLoad(root);
+            root.AddComponent<TrialManager>();
+            root.AddComponent<NetworkHandler>();
+            root.AddComponent<NetworkBadgeSolution_RaiseEvent>();
+            root.AddComponent<EarlyEnd>();
+            //root.AddComponent<TimeManager>();
+            root.AddComponent<ControlPanel>();
+            root.AddComponent<CustomMapManager>();
+            root.AddComponent<AchievementChecker>();
+            root.AddComponent<HUDManager>();
+            root.AddComponent<FirstTimeUIManager>();
+            root.AddComponent<RigBadgeManager>();
+            HUDManager.instance.Init();
+            root.AddComponent<ReplayManager>();
+            root.AddComponent<TrialEditor>();
+            root.AddComponent<TrialKeyboard>();
 #if DEBUG
-                //root.AddComponent<DebugEditor>();
+            //root.AddComponent<DebugEditor>();
 #endif
-                CompareVersion("https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt",
-                    version =>
-                    {
+            CompareVersion("https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/version.txt",
+                version =>
+                {
 #if RELEASE
                     WrongVersion = version == EVersionCompareResult.Outdated;
 #endif
-                    });
-                StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
-            });
-
-
+                });
+            StartCoroutine(PostRequest($"{Constants.ServerURL}/createaccount"));
+            
             Harmony.CreateAndPatchAll(typeof(Plugin).Assembly, Constants.GUID);
         }
-
+        
         public async void CompareVersion(string url, Action<EVersionCompareResult> onVersionRecieved)
         {
             using UnityWebRequest request = UnityWebRequest.Get(url);
@@ -139,8 +140,8 @@ namespace GorillaTrials
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Logger.LogFatal($"Failed to check version {url}");
-                Logger.LogError(request.error);
+                Logging.Fatal($"Failed to check version {url}");
+                Logging.Error(request.error);
 
                 onVersionRecieved?.Invoke(EVersionCompareResult.Invalid);
                 return;
@@ -183,6 +184,8 @@ namespace GorillaTrials
 
             if (APIKey.Value != "Your-API-Key-Here")
             {
+                WebSocketClientInstance.Authenticate(APIKey.Value);
+                
                 if (FirstTimeUIManager.instance != null && FirstTimeUIManager.instance.UI != null)
                 {
                     FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page6/ErrorText").gameObject.SetActive(false);
@@ -190,6 +193,7 @@ namespace GorillaTrials
                     FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page6/SuccessText")
                         .GetComponent<TextMeshProUGUI>().text = "You already seem to have an account!";
                 }
+                
                 yield break;
             }
 
@@ -221,6 +225,7 @@ namespace GorillaTrials
                     {
                         APIKey.Value = response.api_key;
                         Config.Save();
+                        WebSocketClientInstance.Authenticate(APIKey.Value);
                         if (FirstTimeUIManager.instance != null && FirstTimeUIManager.instance.UI != null)
                         {
                             FirstTimeUIManager.instance.UI.transform.Find("StuffLol/Page6/SuccessText").gameObject
@@ -275,18 +280,6 @@ namespace GorillaTrials
         {
             public string message;
             public string api_key;
-        }
-
-        [ModdedGamemodeJoin]
-        public void OnModdedGamemodeJoin()
-        {
-            InModdedGamemode = true;
-        }
-
-        [ModdedGamemodeLeave]
-        public void OnModdedGamemodeLeave()
-        {
-            InModdedGamemode = false;
         }
     }
 }

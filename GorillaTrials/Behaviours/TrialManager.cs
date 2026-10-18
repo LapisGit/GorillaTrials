@@ -66,7 +66,7 @@ namespace GorillaTrials.Behaviours
             rightHand = GTPlayer.Instance.RightHand.handFollower.gameObject;
             Head = GTPlayer.Instance.headCollider.gameObject;
 
-            string url = "https://suwiparty.lapis.codes/Trial.json";
+            string url = "https://raw.githubusercontent.com/LapisGit/GorillaTrials/refs/heads/main/trials.json";
             using UnityWebRequest request = UnityWebRequest.Get(url);
             await request.SendWebRequest();
 
@@ -147,7 +147,7 @@ namespace GorillaTrials.Behaviours
 
         private void LoadDownloadedTrials()
         {
-            string executableDir = System.IO.Path.GetDirectoryName(Paths.ExecutablePath);
+            string executableDir = System.IO.Path.GetDirectoryName(Paths.GameRootPath);
             if (string.IsNullOrEmpty(executableDir))
             {
                 Logging.Error("Failed to get executable directory path for loading downloaded trials");
@@ -158,7 +158,9 @@ namespace GorillaTrials.Behaviours
 
             if (!System.IO.Directory.Exists(downloadedTrialsDir))
             {
-                Logging.Info("No downloadedtrials folder found, skipping downloaded trials loading");
+#if DEBUG
+                Logging.Info("No downloadedtrials folder found, skipping downloaded trials loading");          
+#endif
                 return;
             }
 
@@ -189,8 +191,9 @@ namespace GorillaTrials.Behaviours
                     if (isRanked)
                     {
                         string friendlyId = rankedTrialIds[data.trialId];
+#if DEBUG
                         Logging.Info($"Trial {data.trialId} is ranked with friendly ID: {friendlyId}");
-                        
+#endif
                         if (data.customMapTrial)
                         {
                             data.customMapTrial = false;
@@ -236,7 +239,8 @@ namespace GorillaTrials.Behaviours
                         [points],
                         data.bronzeTime,
                         data.silverTime,
-                        data.goldTime
+                        data.goldTime,
+                        System.IO.Path.GetFileName(filePath)
                     );
                 }
                 catch (Exception ex)
@@ -247,14 +251,14 @@ namespace GorillaTrials.Behaviours
         }
 
 
-        public void CreateTrial(string displayName, string trialId, Vector3 position, float angle, ETrialType trialType = ETrialType.Box, ETrialDifficulty trialDifficulty = ETrialDifficulty.Easy, float maxTime = 0, bool customMapTrial = false, object[] parameters = null, float bronzeTime = 0, float silverTime = 0, float goldTime = 0)
+        public void CreateTrial(string displayName, string trialId, Vector3 position, float angle, ETrialType trialType = ETrialType.Box, ETrialDifficulty trialDifficulty = ETrialDifficulty.Easy, float maxTime = 0, bool customMapTrial = false, object[] parameters = null, float bronzeTime = 0, float silverTime = 0, float goldTime = 0, string downloadedFileName = null, bool isPlaytest = false)
         {
             Trial trial = null;
 
             if (trialType == ETrialType.Box && parameters is not null && parameters.ElementAtOrDefault(0) is List<Vector3> points)
-                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, points, bronzeTime, silverTime, goldTime);
+                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, points, bronzeTime, silverTime, goldTime, downloadedFileName, isPlaytest);
             else if (trialType == ETrialType.Zone && parameters?.ElementAtOrDefault(0) is List<Vector3> zonePoints)
-                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, zonePoints, bronzeTime, silverTime, goldTime);
+                trial = new(position, angle, displayName, trialId, trialType, trialDifficulty, maxTime, null, customMapTrial, zonePoints, bronzeTime, silverTime, goldTime, downloadedFileName, isPlaytest);
 
 
             if (trial is not null)
@@ -293,16 +297,19 @@ namespace GorillaTrials.Behaviours
             if (!Started)
                 return;
 
-            if (submitTime.HasValue && currentTrial.isFromCustomMap == false || submitTime.HasValue && currentTrial.onApprovedMap)
+            if (submitTime.HasValue)
             {
-                Logging.Info($"Submiting time {submitTime.Value}");
-                ControlPanel.IncrementTrialsCompleted();
-                SubmitTrial(submitTime.Value);
-            }
-
-            if (currentTrial.isFromCustomMap && !currentTrial.onApprovedMap)
-            {
-                Logging.Info("Trial was created by a Custom Map and was not approved, not submitting a time.");
+                if (currentTrial.isFromCustomMap && !currentTrial.onApprovedMap)
+                {
+                    Logging.Info("Trial was created by a Custom Map and was not approved, not submitting a time.");
+                    UpdateLocalPersonalBest(submitTime.Value, currentTrial);
+                }
+                else
+                {
+                    Logging.Info($"Submiting time {submitTime.Value}");
+                    ControlPanel.IncrementTrialsCompleted();
+                    SubmitTrial(submitTime.Value, currentTrial);
+                }
             }
 
             StartCoroutine(currentTrial.GetLeaderboardCoroutine(currentTrial.TrialServerName));
@@ -316,35 +323,42 @@ namespace GorillaTrials.Behaviours
             currentTrial = null;
         }
 
-        public void SubmitTrial(double submitTime)
+        private void UpdateLocalPersonalBest(double submitTime, Trial trial)
         {
-            string pbKey = string.Concat("PB_", currentTrial.TrialServerName);
-            refreshBoard = currentTrial.TrialServerName;
-            Logging.Info(PlayerPrefs.GetFloat(pbKey, 0));
+            // Trial is a MonoBehaviour created with `new`, so Unity's overloaded `==` treats it as
+            // null ("fake null"). Use a reference check so a valid currentTrial isn't rejected.
+            if (trial is null)
+            {
+                Logging.Warning("No current trial when updating local PB.");
+                return;
+            }
+
+            string pbKey = string.Concat("PB_", trial.TrialServerName);
+            Logging.Info("pbkey: " + PlayerPrefs.GetFloat(pbKey, 0));
             if (submitTime < PlayerPrefs.GetFloat(pbKey, 0) || PlayerPrefs.GetFloat(pbKey, 0) == 0)
             {
                 isPB = true;
-                Logging.Info($"New personal best for {currentTrial.TrialServerName}: {submitTime} seconds");
+                Logging.Info($"New personal best for {trial.TrialServerName}: {submitTime} seconds");
                 PlayerPrefs.SetFloat(pbKey, (float)submitTime);
                 PlayerPrefs.Save();
                 ControlPanel.instance.CalculateSumOfBest();
-                currentTrial.SetPersonalBest(submitTime);
+                trial.SetPersonalBest(submitTime);
                 ReplayManager.Instance.StopRecording();
-                ReplayManager.Instance.SaveRecording($"{currentTrial.TrialServerName}_{submitTime}");
-                
-                BadgeType earnedBadge = currentTrial.CheckBadgeEarned((float)submitTime);
-                bool newBadgeEarned = currentTrial.SaveBadgeIfBetter(earnedBadge);
-                
+                ReplayManager.Instance.SaveRecording($"{trial.TrialServerName}_{submitTime}");
+
+                BadgeType earnedBadge = trial.CheckBadgeEarned((float)submitTime);
+                bool newBadgeEarned = trial.SaveBadgeIfBetter(earnedBadge);
+
                 if (Plugin.PBNotify.Value)
                 {
                     TimeSpan timeSpan = TimeSpan.FromSeconds(submitTime);
                     string hudText = $"New PB! {string.Concat("PB: ", timeSpan.TotalHours >= 1 ? timeSpan.ToString(@"h\:mm\:ss\.fff") : timeSpan.ToString(@"mm\:ss\.fff"))}";
-                    
+
                     if (newBadgeEarned && earnedBadge != BadgeType.None)
                     {
                         hudText += $"\n{earnedBadge} Badge Earned!";
                     }
-                    
+
                     HUDManager.instance.SetHUDText(hudText);
                 }
             }
@@ -353,10 +367,17 @@ namespace GorillaTrials.Behaviours
                 float currentPB = PlayerPrefs.GetFloat(pbKey, 0);
                 if (currentPB > 0)
                 {
-                    BadgeType earnedBadge = currentTrial.CheckBadgeEarned(currentPB);
-                    currentTrial.SaveBadgeIfBetter(earnedBadge);
+                    BadgeType earnedBadge = trial.CheckBadgeEarned(currentPB);
+                    trial.SaveBadgeIfBetter(earnedBadge);
                 }
             }
+        }
+
+        public void SubmitTrial(double submitTime, Trial trial)
+        {
+            string pbKey = string.Concat("PB_", currentTrial.TrialServerName);
+            refreshBoard = currentTrial.TrialServerName;
+            UpdateLocalPersonalBest(submitTime, trial);
 
             string playerName = NetworkSystem.Instance.GetMyNickName().ToUpper();
             playerName = playerName[..Math.Min(playerName.Length, 12)];
@@ -429,10 +450,8 @@ namespace GorillaTrials.Behaviours
             Logging.Info("Trial results uploaded");
             
             TrialResult result = JsonConvert.DeserializeObject<TrialResult>(json);
-            Task.Run(() => ThreadingHelper.Instance.StartSyncInvoke(async () =>
-            {
-                await ReplayManager.Instance.UploadReplayWR(lastTrialPlayed, result.PlayerId, result.Time);
-            }));
+            
+            _ = ReplayManager.Instance.UploadReplayWR(lastTrialPlayed, result.PlayerId, result.Time);
             
             if (isPB)
             {
@@ -492,6 +511,34 @@ namespace GorillaTrials.Behaviours
                 catch (Exception ex)
                 {
                     Logging.Error($"Failed to refresh accepted challenge for {trial.TrialServerName}: {ex.Message}");
+                }
+            }
+        }
+
+        public void DeleteAllPlaytestTrials()
+        {
+            List<Trial> playtestTrials = trials.Where(t => t.isPlaytest).ToList();
+            
+            foreach (Trial trial in playtestTrials)
+            {
+                try
+                {
+                    if (Started && currentTrial == trial)
+                    {
+                        currentTrial.stateMachine.SwitchState(new Trial_End(trial, false));
+                    }
+                    
+                    if (trial.trialUIObject != null)
+                    {
+                        Destroy(trial.trialUIObject);
+                    }
+
+                    trials.Remove(trial);
+                    Logging.Info($"Deleted playtest trial: {trial.TrialServerName}");
+                }
+                catch (Exception ex)
+                {
+                    Logging.Error($"Error deleting playtest trial {trial.TrialServerName}: {ex.Message}");
                 }
             }
         }

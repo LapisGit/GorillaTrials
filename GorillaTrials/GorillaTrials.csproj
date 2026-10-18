@@ -10,7 +10,7 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-        <GamePath>E:\SteamLibrary\steamapps\common\Gorilla Tag</GamePath>
+        <GamePath>/home/lapis/.steam/steam/steamapps/common/Gorilla Tag/</GamePath>
 		<GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
 		<BepInExAssemblyPath>$(GamePath)\BepInEx\core</BepInExAssemblyPath>
 		<PluginsPath>$(GamePath)\BepInEx\plugins</PluginsPath>
@@ -18,7 +18,7 @@
 	
 	<PropertyGroup Condition="'$(CI)'=='TRUE'">
 		<GameAssemblyPath>.\Libs</GameAssemblyPath>
-		<BepInExAssemblyPath>.\Libs</BepInExAssemblyPath>
+		<MelonLoaderAssemblyPath>.\Libs</MelonLoaderAssemblyPath>
 		<PluginsPath>.\Libs</PluginsPath>
 		<WarningLevel>0</WarningLevel>
 	</PropertyGroup>
@@ -31,13 +31,15 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<MakeDir Directories="$(PluginsPath)\GorillaTrials" />
-		<Copy SourceFiles="$(TargetPath);bin/Debug/$(TargetFramework)/GorillaTrials.pdb" DestinationFiles="$(GamePath)/BepInEx/plugins/GorillaTrials/GorillaTrials.dll;$(GamePath)/BepInEx/plugins/GorillaTrials/GorillaTrials.pdb" />
+		<Copy SourceFiles="$(TargetPath);bin/Debug/$(TargetFramework)/GorillaTrials.pdb" DestinationFiles="$(PluginsPath)/GorillaTrials.dll;$(PluginsPath)/GorillaTrials.pdb" />
 	</Target>
 
 	<ItemGroup>
 		<Reference Include="0Harmony">
 			<HintPath>$(BepInExAssemblyPath)\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx">
+			<HintPath>$(BepInExAssemblyPath)\BepInEx.dll</HintPath>
 		</Reference>
 		<Reference Include="Assembly-CSharp" Publicize="true">
 			<HintPath>$(GameAssemblyPath)\Assembly-CSharp.dll</HintPath>
@@ -48,11 +50,11 @@
 		<Reference Include="BakeryRuntimeAssembly">
 			<HintPath>$(GameAssemblyPath)\BakeryRuntimeAssembly.dll</HintPath>
 		</Reference>
-		<Reference Include="BepInEx">
-			<HintPath>$(BepInExAssemblyPath)\BepInEx.dll</HintPath>
-		</Reference>
 		<Reference Include="BepInEx.Harmony">
-			<HintPath>$(BepInExAssemblyPath)\BepInEx.Harmony.dll</HintPath>
+		  <HintPath>$(BepInExAssemblyPath)\BepInEx.Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx.Preloader">
+		  <HintPath>$(BepInExAssemblyPath)\BepInEx.Preloader.dll</HintPath>
 		</Reference>
 		<Reference Include="Cinemachine">
 			<HintPath>$(GameAssemblyPath)\Cinemachine.dll</HintPath>
@@ -60,8 +62,29 @@
 		<Reference Include="Fusion.Runtime">
 			<HintPath>$(GameAssemblyPath)\Fusion.Runtime.dll</HintPath>
 		</Reference>
+		<Reference Include="HarmonyXInterop">
+		  <HintPath>$(BepInExAssemblyPath)\HarmonyXInterop.dll</HintPath>
+		</Reference>
+		<Reference Include="Mono.Cecil">
+		  <HintPath>$(BepInExAssemblyPath)\Mono.Cecil.dll</HintPath>
+		</Reference>
+		<Reference Include="Mono.Cecil.Mdb">
+		  <HintPath>$(BepInExAssemblyPath)\Mono.Cecil.Mdb.dll</HintPath>
+		</Reference>
+		<Reference Include="Mono.Cecil.Pdb">
+		  <HintPath>$(BepInExAssemblyPath)\Mono.Cecil.Pdb.dll</HintPath>
+		</Reference>
+		<Reference Include="Mono.Cecil.Rocks">
+		  <HintPath>$(BepInExAssemblyPath)\Mono.Cecil.Rocks.dll</HintPath>
+		</Reference>
 		<Reference Include="Mono.Security">
 			<HintPath>$(GameAssemblyPath)\Mono.Security.dll</HintPath>
+		</Reference>
+		<Reference Include="MonoMod.RuntimeDetour">
+		  <HintPath>$(BepInExAssemblyPath)\MonoMod.RuntimeDetour.dll</HintPath>
+		</Reference>
+		<Reference Include="MonoMod.Utils">
+		  <HintPath>$(BepInExAssemblyPath)\MonoMod.Utils.dll</HintPath>
 		</Reference>
 		<Reference Include="Newtonsoft.Json">
 			<HintPath>$(GameAssemblyPath)\Newtonsoft.Json.dll</HintPath>
@@ -311,9 +334,6 @@
 		</Reference>
 		<Reference Include="Modio">
 			<HintPath>$(GameAssemblyPath)\Modio.dll</HintPath>
-		</Reference>
-		<Reference Include="Utilla">
-		  <HintPath>$(PluginsPath)\Utilla\Utilla.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 

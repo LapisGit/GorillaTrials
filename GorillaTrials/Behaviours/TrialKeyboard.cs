@@ -31,8 +31,8 @@ namespace GorillaTrials.Behaviours
         {
             keyboardPrefab = await AssetLoader.LoadAsset<GameObject>("Keyboard");
             keyboard = Instantiate(keyboardPrefab);
-            keyboard.transform.rotation = Quaternion.Euler(30.8838f, 241.1243f, -0.0001f);
-            keyboard.transform.position = new Vector3(-68.9272f, 11.6256f, -83.9839f);
+            keyboard.transform.rotation = Quaternion.Euler(31.877f, 255.8669f, -0.0001f);
+            keyboard.transform.position = new Vector3(-69.3164f, 11.4783f, -83.8503f);
             keyboard.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             keyboard.SetActive(false);
             DontDestroyOnLoad(keyboard);
