@@ -27,7 +27,7 @@ namespace GorillaTrials.Behaviours.Networking
         {
             try
             {
-                _uri = new Uri("ws://localhost:2763/notifications");
+                _uri = new Uri("wss://trials.lapiscreates.tech/notifications");
 
                 _cts = new CancellationTokenSource();
                 _ws = new ClientWebSocket();
